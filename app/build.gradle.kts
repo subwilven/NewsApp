@@ -53,6 +53,7 @@ dependencies {
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.42")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     kapt("com.google.dagger:hilt-android-compiler:2.42")
 
     // Networking
@@ -60,6 +61,10 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("com.squareup.okhttp3:logging-interceptor:4.8.1")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.4.2")
+    implementation("androidx.navigation:navigation-ui-ktx:2.4.2")
 
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
