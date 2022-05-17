@@ -1,4 +1,21 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+
+    repositories {
+        google()
+        mavenCentral()
+        maven(url = " https://jitpack.io")
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:7.1.3")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.42")
+    }
+}
+
+
 plugins {
     id ("com.android.application") version "7.1.3" apply false
     id ("com.android.library") version "7.1.3" apply false
