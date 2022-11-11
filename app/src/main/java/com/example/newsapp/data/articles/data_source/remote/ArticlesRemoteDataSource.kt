@@ -8,9 +8,9 @@ import javax.inject.Inject
 
 class ArticlesRemoteDataSource @Inject constructor(
     private val articlesServices: ArticlesServices) :
-    ArticlesDataSource {
+    ArticlesDataSource<List<Article>> {
 
-    override suspend fun fetchArticles(pageNumber: Int): List<Article> {
+    override suspend fun fetchArticles(qurey: String, pageNumber: Int): List<Article> {
         return articlesServices.getArticles(
             "top-headlines",
             PAGE_SIZE,

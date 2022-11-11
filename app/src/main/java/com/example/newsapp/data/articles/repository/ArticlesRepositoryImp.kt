@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ArticlesRepositoryImp @Inject constructor(
-    private val localDataSource : ArticlesDataSource,
-    private val remoteDataSource : ArticlesDataSource,) : ArticlesRepository{
+    private val localDataSource : ArticlesDataSource<PagingData<Article>>,
+    private val remoteDataSource : ArticlesDataSource<List<Article>>,) : ArticlesRepository{
 
      //todo add remote mediaotr
     override fun getArticlesStream(query: String): Flow<PagingData<Article>> {
         return Pager(
             config = PagingConfig(pageSize = 20, enablePlaceholders = false),
-            pagingSourceFactory = {UsersDataSource(localDataSource)}
+            pagingSourceFactory = {UsersDataSource(query,remoteDataSource)}
         ).flow
     }
 }

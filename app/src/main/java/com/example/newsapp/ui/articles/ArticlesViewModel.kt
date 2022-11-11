@@ -19,7 +19,8 @@ class ArticlesViewModel @Inject constructor(
     private val fetchArticlesUseCase: FetchArticlesUseCase
 ) : ViewModel() {
 
-    //todo 1) apply dagger 2)use retrofit 2) create remote meduator  3) handle ui states 4) add search feature
+    //todo 1) create remote meduator  3) handle ui states 4) add search feature 5)
+    //todo 5) add general network state handling
     //todo inject
 
     //todo use savedState handler

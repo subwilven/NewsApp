@@ -2,6 +2,6 @@ package com.example.newsapp.data.articles.data_source
 
 import com.example.newsapp.model.articles.Article
 
-interface ArticlesDataSource {
-   suspend fun fetchArticles(pageNumber :Int) :List<Article>
+interface ArticlesDataSource<T> {
+   suspend fun fetchArticles(qurey :String,pageNumber :Int) : T
 }

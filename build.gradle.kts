@@ -2,7 +2,7 @@
 
 buildscript {
 
-    val compose_version by extra("1.1.0-beta01")
+    val compose_version by extra("1.3.2")
     val nav_version  by extra("2.5.3")
 
     repositories {
@@ -19,9 +19,9 @@ buildscript {
 
 
 plugins {
-    id ("com.android.application") version "7.1.3" apply false
-    id ("com.android.library") version "7.1.3" apply false
-    id ("org.jetbrains.kotlin.android") version "1.5.31" apply false
+    id ("com.android.application") version "7.2.2" apply false
+    id ("com.android.library") version "7.2.2" apply false
+    id ("org.jetbrains.kotlin.android") version "1.7.20" apply false
 }
 
 tasks {
