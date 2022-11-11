@@ -20,7 +20,9 @@ import com.example.newsapp.ui.favorite.MyFavoritesScreen
 import com.example.newsapp.ui.feed.ArticlesScreen
 import com.example.newsapp.R
 import com.example.newsapp.ui.theme.NewsAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

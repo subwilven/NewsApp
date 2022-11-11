@@ -3,11 +3,11 @@ package com.example.newsapp.data
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.newsapp.data.feed.data_source.local.FeedsDao
+import com.example.newsapp.data.articles.data_source.local.ArticlesDao
 
 abstract class AppDatabase  : RoomDatabase() {
 
-    abstract fun feedsDao(): FeedsDao
+    abstract fun feedsDao(): ArticlesDao
 
     companion object {
         private const val databaseName = "newsApp-db"

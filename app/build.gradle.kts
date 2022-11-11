@@ -11,7 +11,7 @@ plugins {
 val apiKey: String = gradleLocalProperties(rootDir).getProperty("api.base.url")
 
 android {
-    compileSdk  = 32
+    compileSdk  = 33
 
     defaultConfig {
 
@@ -68,12 +68,15 @@ dependencies {
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.42")
+    implementation("androidx.paging:paging-runtime:3.1.1")
 
-
-
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.paging:paging-compose:1.0.0-alpha15")
     implementation("androidx.navigation:navigation-compose:${rootProject.extra["nav_version"]}")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation ("androidx.compose.runtime:runtime-livedata:${rootProject.extra["compose_version"]}")
     implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")
     implementation("androidx.compose.ui:ui-tooling-preview:${rootProject.extra["compose_version"]}")
     implementation("androidx.activity:activity-compose:1.3.1")
