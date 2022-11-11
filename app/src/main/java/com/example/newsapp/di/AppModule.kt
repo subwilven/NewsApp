@@ -37,7 +37,7 @@ class AppModule {
     @Singleton
     @Provides
     fun provideArticlesRepository(
-        @RemoteDataSource articlesDataSource: ArticlesDataSource,
+        @LocalDataSource articlesDataSource: ArticlesDataSource,
         @RemoteDataSource remoteDataSource: ArticlesDataSource
     ): ArticlesRepository {
         return ArticlesRepositoryImp(articlesDataSource, remoteDataSource)

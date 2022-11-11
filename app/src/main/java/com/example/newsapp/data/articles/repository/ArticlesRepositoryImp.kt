@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.newsapp.data.articles.data_source.ArticlesDataSource
-import com.example.newsapp.model.Article
+import com.example.newsapp.model.articles.Article
 import com.example.newsapp.ui.articles.UsersDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

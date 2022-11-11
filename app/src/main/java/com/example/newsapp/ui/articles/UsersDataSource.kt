@@ -3,9 +3,7 @@ package com.example.newsapp.ui.articles
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.newsapp.data.articles.data_source.ArticlesDataSource
-import com.example.newsapp.model.Article
-import com.example.newsapp.model.Result
-import com.example.newsapp.use_cases.FetchArticlesUseCase
+import com.example.newsapp.model.articles.Article
 
 class UsersDataSource(private val articlesDataSource : ArticlesDataSource) : PagingSource<Int, Article>() {
 

@@ -1,7 +1,6 @@
 package com.example.newsapp.data.articles.data_source.remote
 
-import com.example.newsapp.model.network.ArticlesResponse
-import retrofit2.Call
+import com.example.newsapp.model.articles.ArticlesResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
