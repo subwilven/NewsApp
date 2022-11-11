@@ -12,6 +12,6 @@ class FetchArticlesUseCase @Inject constructor(
 ) : StreamUseCase<Unit, PagingData<Article>>() {
 
     override fun execute(parameters: Unit): Flow<PagingData<Article>>  {
-        return repository.getArticlesStream("")
+        return repository.getArticlesStream(null)
     }
 }

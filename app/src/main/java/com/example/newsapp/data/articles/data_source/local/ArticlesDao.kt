@@ -12,11 +12,12 @@ interface ArticlesDao {
 
     @Query(
         "SELECT * FROM article WHERE " +
-                "title LIKE :queryString OR description LIKE :queryString " +
+                "(:queryString IS NULL OR title LIKE :queryString) " +
+                "OR (:queryString IS NULL OR description LIKE :queryString )" +
                 "ORDER BY publishedAt DESC, title ASC"
     )
-    fun getArticlesByQuery(queryString: String): PagingSource<Int, Article>
+    fun getArticlesByQuery(queryString: String?): PagingSource<Int, Article>
 
-    @Query("DELETE FROM article")
-    suspend fun clearRepos()
+    @Query("DELETE FROM article WHERE title LIKE (:queryString OR description LIKE :queryString )")
+    suspend fun clearArticlesByQuery(queryString: String?)
 }

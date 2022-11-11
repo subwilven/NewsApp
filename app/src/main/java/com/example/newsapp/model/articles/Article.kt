@@ -13,7 +13,7 @@ data class Article(
 
     @ColumnInfo(name = "author")
     @SerializedName("author")
-    val author: String,
+    val author: String?,
 
     @ColumnInfo(name = "title")
     @SerializedName("title")
@@ -21,22 +21,22 @@ data class Article(
 
     @ColumnInfo(name = "description")
     @SerializedName("description")
-    val description: String,
+    val description: String?,
 
     @ColumnInfo(name = "article_url")
     @SerializedName("url")
-    val articleUrl: String,
+    val articleUrl: String?,
 
     @ColumnInfo(name = "image_url")
     @SerializedName("urlToImage")
-    var imageUrl: String,
+    var imageUrl: String?,
 
     @ColumnInfo(name = "publishedAt")
     @SerializedName("publishedAt")
-    val publishedAt: String,
+    val publishedAt: String?,
 
     @ColumnInfo(name = "content")
     @SerializedName("content")
-    val content: String
+    val content: String?
 
 )

@@ -2,11 +2,12 @@ package com.example.newsapp.ui.articles
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.newsapp.data.articles.data_source.ArticlesDataSource
+import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
 import com.example.newsapp.model.articles.Article
 
 class UsersDataSource(private val query : String,
-                      private val articlesDataSource : ArticlesDataSource<List<Article>>) : PagingSource<Int, Article>() {
+                      private val articlesDataSource : ArticlesRemoteDataSource
+) : PagingSource<Int, Article>() {
 
     override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
