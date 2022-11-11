@@ -1,0 +1,25 @@
+package com.example.newsapp.di
+
+import com.example.newsapp.data.articles.data_source.ArticlesDataSource
+import com.example.newsapp.data.articles.repository.ArticlesRepository
+import com.example.newsapp.data.articles.repository.ArticlesRepositoryImp
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+class RepositoriesModule {
+
+    @Singleton
+    @Provides
+    fun provideArticlesRepository(
+        @LocalDataSource articlesDataSource: ArticlesDataSource,
+        @RemoteDataSource remoteDataSource: ArticlesDataSource
+    ): ArticlesRepository {
+        return ArticlesRepositoryImp(articlesDataSource, remoteDataSource)
+    }
+
+}
