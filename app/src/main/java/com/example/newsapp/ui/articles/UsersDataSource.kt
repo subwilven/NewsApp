@@ -21,7 +21,7 @@ class UsersDataSource(private val articlesDataSource : ArticlesDataSource) : Pag
             val nextPageNumber = params.key ?: 1
             //todo handle result
             //todo handle get this source the data source
-            val response : List<Article> = articlesDataSource.fetchArticles()
+            val response : List<Article> = articlesDataSource.fetchArticles(nextPageNumber)
             LoadResult.Page(
                 data = response,
                 prevKey = null,

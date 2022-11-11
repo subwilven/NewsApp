@@ -1,6 +1,8 @@
 package com.example.newsapp.di
 
 import com.example.newsapp.BuildConfig
+import com.example.newsapp.data.articles.data_source.remote.ArticlesServices
+import com.example.newsapp.util.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -32,13 +34,11 @@ object RetrofitModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        headersInterceptor: Interceptor,
         logging: HttpLoggingInterceptor,
     ): OkHttpClient {
         val okHttpClient = OkHttpClient.Builder()
             .readTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
             .connectTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
-            .addInterceptor(headersInterceptor)
 
         if (BuildConfig.DEBUG) {
             okHttpClient.addNetworkInterceptor(logging)
@@ -60,6 +60,13 @@ object RetrofitModule {
     fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
-        .baseUrl(BuildConfig.API_BASE_URL)
+        .baseUrl(BASE_URL)
         .build()
+
+    @Provides
+    @Singleton
+    fun provideArticlesServices(retrofit: Retrofit): ArticlesServices {
+        return retrofit.create(ArticlesServices::class.java)
+    }
+
 }

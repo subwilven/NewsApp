@@ -4,6 +4,8 @@ import android.content.Context
 import com.example.newsapp.data.AppDatabase
 import com.example.newsapp.data.articles.data_source.ArticlesDataSource
 import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
+import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
+import com.example.newsapp.data.articles.data_source.remote.ArticlesServices
 import com.example.newsapp.data.articles.repository.ArticlesRepository
 import com.example.newsapp.data.articles.repository.ArticlesRepositoryImp
 import com.example.newsapp.use_cases.FetchArticlesUseCase
@@ -12,6 +14,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -33,21 +36,26 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideArticlesRepository(articlesDataSource: ArticlesDataSource): ArticlesRepository {
-        return ArticlesRepositoryImp(articlesDataSource,articlesDataSource)
+    fun provideArticlesRepository(
+        @RemoteDataSource articlesDataSource: ArticlesDataSource,
+        @RemoteDataSource remoteDataSource: ArticlesDataSource
+    ): ArticlesRepository {
+        return ArticlesRepositoryImp(articlesDataSource, remoteDataSource)
     }
 
     @Singleton
     @Provides
-    fun provideArticlesDataSource(): ArticlesDataSource {
+    @LocalDataSource
+    fun provideArticlesLocalDataSource(): ArticlesDataSource {
         return ArticlesLocalDataSource()
     }
 
-//    @Singleton
-//    @Provides
-//    fun provideArticlesRepository(articlesRepository: ArticlesRepository): ArticlesRepository {
-//        return ArticlesRepositoryImp()
-//    }
+    @Singleton
+    @Provides
+    @RemoteDataSource
+    fun provideArticlesRemoteDataSource(articlesServices: ArticlesServices): ArticlesDataSource {
+        return ArticlesRemoteDataSource(articlesServices)
+    }
 
 
 }
