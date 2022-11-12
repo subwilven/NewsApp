@@ -1,10 +1,13 @@
 package com.example.newsapp.ui.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -33,6 +36,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+val LocalScaffoldState = compositionLocalOf<ScaffoldState> { error("ScaffoldState not set") }
+
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreenView() {
     val navController = rememberNavController()
@@ -44,8 +51,9 @@ fun MainScreenView() {
             snackbarHost = { state -> MySnackHost(state) },
             bottomBar = { BottomNavigation(navController = navController) }
         ) {
-
-            NavigationGraph(scaffoldState,navController = navController)
+            CompositionLocalProvider(LocalScaffoldState provides scaffoldState) {
+                NavigationGraph(navController = navController)
+            }
         }
     }
 
@@ -90,10 +98,10 @@ fun BottomNavigation(navController: NavController) {
 }
 
 @Composable
-fun NavigationGraph( scaffoldState: ScaffoldState,navController: NavHostController) {
+fun NavigationGraph( navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Articles.screen_route) {
         composable(BottomNavItem.Articles.screen_route) {
-            ArticlesScreen(scaffoldState)
+            ArticlesScreen()
         }
         composable(BottomNavItem.MyFavorites.screen_route) {
             MyFavoritesScreen()

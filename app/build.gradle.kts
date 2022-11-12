@@ -83,10 +83,14 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:1.3.1")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.3.1")
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
+
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
 
+    //Image Loading
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    
     // Networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

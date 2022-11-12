@@ -1,22 +1,36 @@
 package com.example.newsapp.ui.articles
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
+import com.example.newsapp.ui.main.LocalScaffoldState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +38,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ArticlesScreen(
-    scaffoldState: ScaffoldState,
     articlesViewModel: ArticlesViewModel = hiltViewModel()
 ) {
 
@@ -42,7 +55,9 @@ fun ArticlesScreen(
     } else {
         ArticlesContent(articlesList)
     }
-
+//    showSnackBar(LocalScaffoldState.current,
+//        coroutineScope,
+//        "uytufssft")
 
 //    else if(uiState.errorMessage?.isNotEmpty()== true){
 //        showSnackBar(scaffoldState,coroutineScope,uiState.errorMessage?:"")
@@ -113,7 +128,7 @@ fun ArticlesList(articles: LazyPagingItems<Article>) {
     LazyColumn {
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
-                Text(text = it.title ?: "")
+                ArticleItem(it)
             }
         }
         when (articles.loadState.append) {
@@ -124,6 +139,38 @@ fun ArticlesList(articles: LazyPagingItems<Article>) {
             is LoadState.Error -> {
 
             }
+        }
+    }
+}
+
+@Composable
+fun ArticleItem(article: Article) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        AsyncImage(
+            model = article.imageUrl,
+            placeholder = painterResource(R.drawable.ic_launcher_background),
+            contentDescription = article.description,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.clip(RoundedCornerShape(12.dp))
+        )
+
+        article.author?.let {
+            Text(
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(vertical = 8.dp),
+                text = it
+            )
+        }
+        Text(
+            style = MaterialTheme.typography.body1,
+            modifier = Modifier.padding(vertical = 4.dp),
+            text = article.title
+        )
+        article.publishedAt?.let {
+            Text(
+                style = MaterialTheme.typography.overline,
+                text = it
+            )
         }
     }
 }

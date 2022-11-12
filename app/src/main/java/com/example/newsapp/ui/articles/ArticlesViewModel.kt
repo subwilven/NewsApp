@@ -23,6 +23,9 @@ class ArticlesViewModel @Inject constructor(
 
     //todo 1) handle ui states 4) add search feature 5)
     //todo 5) add general network state handling
+    //todo pares dates via retfofit
+    //todo gradle catalog
+    //todo add dark theme
     //todo inject
 
     //todo use savedState handler
