@@ -18,6 +18,6 @@ interface ArticlesDao {
     )
     fun getArticlesByQuery(queryString: String?): PagingSource<Int, Article>
 
-    @Query("DELETE FROM article WHERE title LIKE (:queryString OR description LIKE :queryString )")
-    suspend fun clearArticlesByQuery(queryString: String?)
+    @Query("DELETE FROM article")
+    suspend fun deleteAllArticles()
 }

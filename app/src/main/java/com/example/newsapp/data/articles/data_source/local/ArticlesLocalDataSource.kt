@@ -5,6 +5,6 @@ import com.example.newsapp.model.articles.Article
 
 interface ArticlesLocalDataSource {
    fun fetchArticles(query :String?) : PagingSource<Int,Article>
-   suspend fun insertAllArticles(articles : List<Article>){}
-   suspend fun deleteByQuery(query :String?){}
+   suspend fun insertAllArticles(articles : List<Article>)
+   suspend fun deleteAllArticles()
 }

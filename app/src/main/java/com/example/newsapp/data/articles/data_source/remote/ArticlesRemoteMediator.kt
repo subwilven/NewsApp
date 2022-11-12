@@ -59,7 +59,7 @@ class ArticlesRemoteMediator(
             val response = remoteDatabase.fetchArticles(query,loadKey ?:0)
 
             if (loadType == LoadType.REFRESH) {
-                localDatabase.deleteByQuery(query)
+                localDatabase.deleteAllArticles()
             }
 
             localDatabase.insertAllArticles(response)

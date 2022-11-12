@@ -14,7 +14,7 @@ class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao) :
         articlesDao.insertAll(articles)
     }
 
-    override suspend fun deleteByQuery(query: String?) {
-        articlesDao.clearArticlesByQuery(query)
+    override suspend fun deleteAllArticles() {
+        articlesDao.deleteAllArticles()
     }
 }

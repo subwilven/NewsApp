@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -24,6 +25,7 @@ import com.example.newsapp.ui.favorite.MyFavoritesScreen
 import com.example.newsapp.ui.articles.ArticlesScreen
 import com.example.newsapp.R
 import com.example.newsapp.ui.theme.NewsAppTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,6 +46,12 @@ val LocalScaffoldState = compositionLocalOf<ScaffoldState> { error("ScaffoldStat
 fun MainScreenView() {
     val navController = rememberNavController()
     val scaffoldState: ScaffoldState = rememberScaffoldState()
+    val systemUiController = rememberSystemUiController()
+
+    systemUiController.setSystemBarsColor(
+        color = Color.Transparent,
+        darkIcons = isSystemInDarkTheme().not()
+    )
 
     NewsAppTheme {
         Scaffold(scaffoldState = scaffoldState,
@@ -51,9 +59,9 @@ fun MainScreenView() {
             snackbarHost = { state -> MySnackHost(state) },
             bottomBar = { BottomNavigation(navController = navController) }
         ) {
-            CompositionLocalProvider(LocalScaffoldState provides scaffoldState) {
+//            CompositionLocalProvider(LocalScaffoldState provides scaffoldState) {
                 NavigationGraph(navController = navController)
-            }
+//            }
         }
     }
 
@@ -61,8 +69,8 @@ fun MainScreenView() {
 
 @Composable
 fun MyTopAppBar() {
-    TopAppBar(title = { Text("Top AppBar") },
-        backgroundColor = Color(0xFF008800),
+    TopAppBar(title = { Text("News App") },
+        backgroundColor = MaterialTheme.colors.background,
     )
 }
 
@@ -86,7 +94,7 @@ fun BottomNavigation(navController: NavController) {
     )
 
     BottomNavigation(
-        backgroundColor = colorResource(id = R.color.teal_200),
+        backgroundColor =  MaterialTheme.colors.background,
         contentColor = Color.Black
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
