@@ -82,7 +82,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.6.1")
     debugImplementation("androidx.compose.ui:ui-tooling:1.3.1")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.3.1")
-
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")

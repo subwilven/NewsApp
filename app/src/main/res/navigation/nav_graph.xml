@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_favorite" />
     <fragment
         android:id="@+id/feedFragment"
-        android:name="com.example.newsapp.ui.feed.FeedFragment"
+        android:name="com.example.newsapp.ui.articles.FeedFragment"
         android:label="@string/feeds"
         tools:layout="@layout/fragment_feed" />
 </navigation>

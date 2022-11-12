@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.use_cases.FetchArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -19,7 +21,7 @@ class ArticlesViewModel @Inject constructor(
     private val fetchArticlesUseCase: FetchArticlesUseCase
 ) : ViewModel() {
 
-    //todo 1) create remote meduator  3) handle ui states 4) add search feature 5)
+    //todo 1) handle ui states 4) add search feature 5)
     //todo 5) add general network state handling
     //todo inject
 
