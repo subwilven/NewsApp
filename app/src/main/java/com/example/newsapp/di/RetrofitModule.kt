@@ -3,6 +3,7 @@ package com.example.newsapp.di
 import com.example.newsapp.BuildConfig
 import com.example.newsapp.data.articles.data_source.remote.ArticlesServices
 import com.example.newsapp.util.BASE_URL
+import com.example.newsapp.util.DATE_FORMAT_SERVER
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -51,6 +52,7 @@ object RetrofitModule {
     @Singleton
     fun provideGson(): Gson {
         return GsonBuilder()
+            .setDateFormat(DATE_FORMAT_SERVER)
             .setLenient()
             .create()
     }

@@ -8,11 +8,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
+import androidx.paging.map
 import com.example.newsapp.model.articles.Article
+import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.use_cases.FetchArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 
@@ -36,7 +39,7 @@ class ArticlesViewModel @Inject constructor(
     var uiState by mutableStateOf(ArticleUiState())
         private set
 
-    val articlesDataFlow: Flow<PagingData<Article>>
+    val articlesDataFlow: Flow<PagingData<ArticleUi>>
 
 //    StateFlow<Result<List<Feed>>> = flow {
 //        emit(fetchFeedUseCase(Unit))
@@ -48,6 +51,7 @@ class ArticlesViewModel @Inject constructor(
 
     init {
         articlesDataFlow = fetchArticlesUseCase(Unit)
+            .map {  pagingData-> pagingData.map { ArticleUi(it) } }
             .cachedIn(viewModelScope)
         val articlesFlow = MutableSharedFlow<Article>()
 //        val searches = articlesFlow

@@ -3,7 +3,10 @@ package com.example.newsapp.model.articles
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.newsapp.util.DateConverterRoom
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 @Entity(tableName = "article")
 data class Article(
@@ -33,7 +36,7 @@ data class Article(
 
     @ColumnInfo(name = "publishedAt")
     @SerializedName("publishedAt")
-    val publishedAt: String?,
+    val publishedAt: Date?,
 
     @ColumnInfo(name = "content")
     @SerializedName("content")

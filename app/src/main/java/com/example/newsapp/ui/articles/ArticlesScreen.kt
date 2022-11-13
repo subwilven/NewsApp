@@ -22,6 +22,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
+import com.example.newsapp.model.articles.ArticleUi
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
@@ -62,7 +63,7 @@ fun ArticlesScreen(
 
 }
 
-private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
+private fun shouldShowEmptyList(articlesList: LazyPagingItems<ArticleUi>) =
     articlesList.loadState.refresh is LoadState.NotLoading &&
             articlesList.itemCount == 0
 
@@ -97,7 +98,7 @@ fun showSnackBar(
 }
 
 @Composable
-fun ArticlesContent(articles: LazyPagingItems<Article>) {
+fun ArticlesContent(articles: LazyPagingItems<ArticleUi>) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
 
     SwipeRefresh(
@@ -117,7 +118,7 @@ fun ArticlesContent(articles: LazyPagingItems<Article>) {
 }
 
 @Composable
-fun ArticlesList(articles: LazyPagingItems<Article>) {
+fun ArticlesList(articles: LazyPagingItems<ArticleUi>) {
     LazyColumn {
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
@@ -138,7 +139,7 @@ fun ArticlesList(articles: LazyPagingItems<Article>) {
 }
 
 @Composable
-fun ArticleItem(article: Article) {
+fun ArticleItem(article: ArticleUi) {
     Column(modifier = Modifier.padding(16.dp)) {
         AsyncImage(
             model = article.imageUrl,
