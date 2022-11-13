@@ -21,12 +21,13 @@ class ArticlesViewModel @Inject constructor(
     private val fetchArticlesUseCase: FetchArticlesUseCase
 ) : ViewModel() {
 
-    //todo 1) handle ui states 4) add search feature 5)
+    //todo 1)handle erorr in paging
+    // handle ui states 4) add search feature 5)
     //todo 5) add general network state handling
     //todo pares dates via retfofit
     //todo gradle catalog
     //todo add dark theme
-    //todo inject
+    //todo check hilt extention
 
     //todo use savedState handler
     val initialQuery: String = " "
