@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 class FetchArticlesUseCase @Inject constructor(
     private val repository: ArticlesRepository
-) : StreamUseCase<Unit, PagingData<Article>>() {
+) : StreamUseCase<String?, PagingData<Article>>() {
 
-    override fun execute(parameters: Unit): Flow<PagingData<Article>>  {
-        return repository.getArticlesStream(null)
+    override fun execute(query: String?): Flow<PagingData<Article>>  {
+        return repository.getArticlesStream(query)
     }
 }

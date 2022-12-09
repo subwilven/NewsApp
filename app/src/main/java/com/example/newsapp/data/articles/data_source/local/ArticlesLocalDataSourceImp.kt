@@ -14,6 +14,10 @@ class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao) :
         articlesDao.insertAll(articles)
     }
 
+    override suspend fun insertAllArticlesAndDeleteOld(articles: List<Article>) {
+        articlesDao.insertAndDeleteOldArticles(articles)
+    }
+
     override suspend fun deleteAllArticles() {
         articlesDao.deleteAllArticles()
     }

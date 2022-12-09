@@ -5,7 +5,6 @@ import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSour
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteMediator
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.ui.articles.UsersDataSource
 import com.example.newsapp.util.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -20,6 +19,8 @@ class ArticlesRepositoryImp @Inject constructor(
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
             remoteMediator = ArticlesRemoteMediator(query,remoteDataSource,localDataSource),
-        ) { localDataSource.fetchArticles(query) }.flow
+        ) {
+            localDataSource.fetchArticles(query)
+        }.flow
     }
 }
