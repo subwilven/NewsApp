@@ -23,4 +23,6 @@ class ArticlesRepositoryImp @Inject constructor(
             localDataSource.fetchArticles(query)
         }.flow
     }
+
+    override fun getArticleById(articleId: Int) = localDataSource.getArticleById(articleId)
 }

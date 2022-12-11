@@ -16,15 +16,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.newsapp.model.BottomNavItem
 import com.example.newsapp.ui.favorite.MyFavoritesScreen
 import com.example.newsapp.ui.articles.ArticlesScreen
 import com.example.newsapp.R
+import com.example.newsapp.ui.articleDetail.ArticleDetailScreen
 import com.example.newsapp.ui.theme.NewsAppTheme
+import com.example.newsapp.util.ARG_ARTICLE_ID
+import com.example.newsapp.util.NewsAppScreens
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -108,12 +113,18 @@ fun BottomNavigation(navController: NavController) {
 
 @Composable
 fun NavigationGraph( navController: NavHostController) {
-    NavHost(navController, startDestination = BottomNavItem.Articles.screen_route) {
-        composable(BottomNavItem.Articles.screen_route) {
-            ArticlesScreen()
+    NavHost(navController, startDestination = NewsAppScreens.ArticlesScreen.route) {
+        composable(NewsAppScreens.ArticlesScreen.route) {
+            ArticlesScreen(navController)
         }
-        composable(BottomNavItem.MyFavorites.screen_route) {
+        composable(NewsAppScreens.FavoritesScreen.route) {
             MyFavoritesScreen()
+        }
+        composable(NewsAppScreens.ArticleDetailsScreen.route+"/{$ARG_ARTICLE_ID}",
+            arguments = listOf(navArgument(name = ARG_ARTICLE_ID) {
+            type = NavType.IntType
+        })) {
+            ArticleDetailScreen()
         }
     }
 }

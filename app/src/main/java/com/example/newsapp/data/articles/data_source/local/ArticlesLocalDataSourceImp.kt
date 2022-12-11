@@ -21,4 +21,6 @@ class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao) :
     override suspend fun deleteAllArticles() {
         articlesDao.deleteAllArticles()
     }
+
+    override fun getArticleById(articleId :Int) = articlesDao.getArticleById(articleId)
 }

@@ -4,6 +4,7 @@ import android.provider.SyncStateContract.Helpers.insert
 import androidx.paging.PagingSource
 import androidx.room.*
 import com.example.newsapp.model.articles.Article
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -23,6 +24,9 @@ interface ArticlesDao {
     @Query("DELETE FROM article")
     suspend fun deleteAllArticles()
 
+    //todo can we remove the flow here ?
+    @Query("SELECT * FROM article WHERE id IS :articleId")
+    fun getArticleById(articleId :Int) : Flow<Article>
 
     @Transaction
     suspend fun insertAndDeleteOldArticles(articles: List<Article>) {

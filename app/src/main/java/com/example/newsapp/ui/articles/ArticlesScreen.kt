@@ -21,6 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -28,7 +30,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.newsapp.R
+import com.example.newsapp.model.articles.Article
 import com.example.newsapp.model.articles.ArticleUi
+import com.example.newsapp.util.NewsAppScreens
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
@@ -39,7 +43,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ArticlesScreen(
-    articlesViewModel: ArticlesViewModel = hiltViewModel(),
+    navController: NavController,
+    articlesViewModel: ArticlesViewModel = androidx.hilt.navigation.compose.hiltViewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
 
@@ -47,11 +52,13 @@ fun ArticlesScreen(
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
 
     articlesList?.let {
-
+//todo should we create remember for this callbacks ?
         ArticlesContent(articlesList, uiState.query ?: "",onValueChange = {
             articlesViewModel.query(it)
         }, onClearClicked = {
             articlesViewModel.query(null)
+        }, onArticleClicked = {
+            navController.navigate(NewsAppScreens.ArticleDetailsScreen.route+"/${it.id}")
         })
 
     }
@@ -109,6 +116,7 @@ fun showSnackBar(
 fun ArticlesContent(
     articles: LazyPagingItems<ArticleUi>, query: String,
     onValueChange: (String) -> Unit,
+    onArticleClicked: (ArticleUi) -> Unit,
     onClearClicked : () -> Unit
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
@@ -167,7 +175,7 @@ fun ArticlesContent(
             if (shouldShowEmptyList) {
 
             } else {
-                ArticlesList(articles)
+                ArticlesList(articles,onArticleClicked)
             }
 
         }
@@ -176,11 +184,11 @@ fun ArticlesContent(
 }
 
 @Composable
-fun ArticlesList(articles: LazyPagingItems<ArticleUi>) {
+fun ArticlesList(articles: LazyPagingItems<ArticleUi>,onArticleClicked: (ArticleUi) -> Unit,) {
     LazyColumn {
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
-                ArticleItem(it)
+                ArticleItem(it,onArticleClicked)
                 Divider(color = Color.LightGray, thickness = 1.dp)
             }
         }
@@ -197,8 +205,10 @@ fun ArticlesList(articles: LazyPagingItems<ArticleUi>) {
 }
 
 @Composable
-fun ArticleItem(article: ArticleUi) {
-    Column(modifier = Modifier.padding(16.dp)) {
+fun ArticleItem(article: ArticleUi,onArticleClicked: (ArticleUi) -> Unit,) {
+    Column(modifier = Modifier.padding(16.dp).clickable {
+        onArticleClicked.invoke(article)
+    }) {
         AsyncImage(
             model = article.imageUrl,
             error = painterResource(R.drawable.no_image_placeholder),
@@ -236,5 +246,5 @@ fun ArticleItem(article: ArticleUi) {
 @ExperimentalMaterialApi
 fun ComposablePreview() {
     ArticlesContent(flow<PagingData<ArticleUi>>{}.collectAsLazyPagingItems(),
-        "",{},{})
+        "",{},{},{})
 }
