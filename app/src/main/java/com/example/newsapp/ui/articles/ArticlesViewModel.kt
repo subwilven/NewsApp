@@ -1,24 +1,26 @@
 package com.example.newsapp.ui.articles
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import androidx.paging.map
 import com.example.newsapp.model.articles.ArticleUi
+import com.example.newsapp.use_cases.ChangeFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class ArticlesViewModel @Inject constructor(
-    private val fetchArticlesUseCase: FetchArticlesUseCase
+    private val fetchArticlesUseCase: FetchArticlesUseCase,
+    private val changeFavoriteStateUseCase: ChangeFavoriteStateUseCase,
 ) : ViewModel() {
 
     //todo 1)handle erorr in paging
@@ -44,9 +46,7 @@ class ArticlesViewModel @Inject constructor(
             .onStart { emit(null) }
 
         val articlesDataFlow = searches.flatMapLatest { query ->
-            val result =fetchArticlesUseCase(query)
-                .map { pagingData -> pagingData.map {ArticleUi(it) } }
-            result
+            fetchArticlesUseCase.execute(query)
         } .cachedIn(viewModelScope)
 
         uiState = uiState.copy(articlesDataFlow = articlesDataFlow)
@@ -58,6 +58,13 @@ class ArticlesViewModel @Inject constructor(
             uiState = uiState.copy(query = query)
             searchFlow.emit(query)
         }
+    }
+
+    fun changeArticleFavoriteState(articleUi: ArticleUi){
+        viewModelScope.launch {
+            changeFavoriteStateUseCase.execute(articleUi)
+        }
+
     }
 
 }

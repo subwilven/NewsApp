@@ -118,7 +118,7 @@ fun NavigationGraph( navController: NavHostController) {
             ArticlesScreen(navController)
         }
         composable(NewsAppScreens.FavoritesScreen.route) {
-            MyFavoritesScreen()
+            MyFavoritesScreen(navController)
         }
         composable(NewsAppScreens.ArticleDetailsScreen.route+"/{$ARG_ARTICLE_ID}",
             arguments = listOf(navArgument(name = ARG_ARTICLE_ID) {

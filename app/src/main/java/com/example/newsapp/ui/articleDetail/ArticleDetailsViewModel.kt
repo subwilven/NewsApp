@@ -7,9 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.ui.articles.ArticleUiState
-import com.example.newsapp.use_cases.AddToFavoriteUseCase
-import com.example.newsapp.use_cases.FetchArticlesUseCase
+import com.example.newsapp.use_cases.ChangeFavoriteStateUseCase
 import com.example.newsapp.use_cases.GetArticleByIdUseCase
 import com.example.newsapp.util.ARG_ARTICLE_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +19,7 @@ import javax.inject.Inject
 class ArticleDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getArticleByIdUseCase: GetArticleByIdUseCase,
-    private val addToFavoriteUseCase: AddToFavoriteUseCase,
+    private val changeFavoriteStateUseCase: ChangeFavoriteStateUseCase,
 ) : ViewModel() {
 
     var articleDetails by mutableStateOf<ArticleUi?>(null)
@@ -36,6 +34,6 @@ class ArticleDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getArticleById(articleId:Int) = getArticleByIdUseCase(articleId).first()
+    private suspend fun getArticleById(articleId:Int) = getArticleByIdUseCase.execute(articleId)
 
 }

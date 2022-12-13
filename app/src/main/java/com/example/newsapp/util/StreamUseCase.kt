@@ -7,13 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 
-abstract class StreamUseCase<in P, R>() {
+abstract class StreamUseCase<R>() {
 
-    operator fun invoke(parameters: P): Flow<R> {
-        return execute(parameters)
-    }
+    abstract operator fun invoke(vararg arg :Any) :R
 
-    @Throws(RuntimeException::class)
-    protected abstract  fun execute(parameters: P): Flow<R>
 
 }

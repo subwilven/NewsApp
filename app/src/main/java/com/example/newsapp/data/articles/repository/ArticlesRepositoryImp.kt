@@ -24,5 +24,11 @@ class ArticlesRepositoryImp @Inject constructor(
         }.flow
     }
 
-    override fun getArticleById(articleId: Int) = localDataSource.getArticleById(articleId)
+    override suspend fun getArticleById(articleId: Int) = localDataSource.getArticleById(articleId)
+
+    override fun getFavoritesArticles() = localDataSource.getFavoritesArticles()
+
+    override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean)
+           = localDataSource.changeFavoriteState(articleId,isFavorite)
+
 }

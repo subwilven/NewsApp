@@ -2,6 +2,7 @@ package com.example.newsapp.data.articles.data_source.local
 
 import androidx.paging.PagingSource
 import com.example.newsapp.model.articles.Article
+import kotlinx.coroutines.flow.Flow
 
 class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao) :
     ArticlesLocalDataSource {
@@ -22,5 +23,11 @@ class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao) :
         articlesDao.deleteAllArticles()
     }
 
-    override fun getArticleById(articleId :Int) = articlesDao.getArticleById(articleId)
+    override suspend fun getArticleById(articleId :Int) = articlesDao.getArticleById(articleId)
+
+    override fun getFavoritesArticles() =articlesDao.getFavoritesArticles()
+
+    override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean){
+        articlesDao.updateFavoriteState(articleId,isFavorite)
+    }
 }

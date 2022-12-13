@@ -6,5 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ArticlesRepository {
     fun getArticlesStream(query: String?): Flow<PagingData<Article>>
-    fun getArticleById(articleId: Int): Flow<Article>
+    suspend fun getArticleById(articleId: Int): Article
+    fun getFavoritesArticles(): Flow<List<Article>>
+    suspend fun changeFavoriteState(articleId:Int,isFavorite :Boolean)
 }

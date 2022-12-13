@@ -4,32 +4,46 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.newsapp.R
+import com.example.newsapp.ui.articles.ArticleItem
+import com.example.newsapp.ui.articles.ArticlesViewModel
+import com.example.newsapp.util.NewsAppScreens
 
 @Composable
-fun MyFavoritesScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "My Network Screen",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
-        )
+fun MyFavoritesScreen(
+    navController: NavController,
+    myFavoritesViewModel: MyFavoritesViewModel = hiltViewModel(),
+) {
+    val favoritesList = myFavoritesViewModel
+        .favoritesArticles
+        .collectAsState(initial = listOf())
+
+    LazyColumn {
+        items(favoritesList.value.count()) { index ->
+            favoritesList.value[index].let {
+                ArticleItem(it, {
+                    navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
+                },{ myFavoritesViewModel.changeArticleFavoriteState(it) })
+                Divider(color = Color.LightGray, thickness = 1.dp)
+            }
+        }
     }
+
+
+
 }

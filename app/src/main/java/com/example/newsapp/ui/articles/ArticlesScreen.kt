@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ArticlesScreen(
     navController: NavController,
-    articlesViewModel: ArticlesViewModel = androidx.hilt.navigation.compose.hiltViewModel(),
+    articlesViewModel: ArticlesViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
 
@@ -53,12 +53,14 @@ fun ArticlesScreen(
 
     articlesList?.let {
 //todo should we create remember for this callbacks ?
-        ArticlesContent(articlesList, uiState.query ?: "",onValueChange = {
+        ArticlesContent(articlesList, uiState.query ?: "", onValueChange = {
             articlesViewModel.query(it)
         }, onClearClicked = {
             articlesViewModel.query(null)
         }, onArticleClicked = {
-            navController.navigate(NewsAppScreens.ArticleDetailsScreen.route+"/${it.id}")
+            navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
+        }, onFavoriteClicked = {
+            articlesViewModel.changeArticleFavoriteState(it)
         })
 
     }
@@ -117,7 +119,8 @@ fun ArticlesContent(
     articles: LazyPagingItems<ArticleUi>, query: String,
     onValueChange: (String) -> Unit,
     onArticleClicked: (ArticleUi) -> Unit,
-    onClearClicked : () -> Unit
+    onFavoriteClicked: (ArticleUi) -> Unit,
+    onClearClicked: () -> Unit
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
@@ -134,61 +137,76 @@ fun ArticlesContent(
                     .clip(shape)
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 singleLine = true,
-                decorationBox ={ innerTextField ->
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Max)
-                        .background(Color.LightGray, shape)
-                        .padding(8.dp),){
-                          Image(painterResource(R.drawable.ic_search_24),
-                              "content description",
-                              modifier = Modifier.padding(horizontal = 4.dp))
-                        Box( modifier = Modifier.weight(1f).fillMaxHeight() ,
-                            contentAlignment  =CenterStart) {
+                decorationBox = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Max)
+                            .background(Color.LightGray, shape)
+                            .padding(8.dp),
+                    ) {
+                        Image(
+                            painterResource(R.drawable.ic_search_24),
+                            "content description",
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            contentAlignment = CenterStart
+                        ) {
                             innerTextField()
-                            if(query.isEmpty())
-                                Text(text = "search",
-                                     color = Color.Gray,
-                                    style = MaterialTheme.typography.caption,)
+                            if (query.isEmpty())
+                                Text(
+                                    text = "search",
+                                    color = Color.Gray,
+                                    style = MaterialTheme.typography.caption,
+                                )
                         }
 
-                        if(query.isNotEmpty()) {
-                        Image(painterResource(R.drawable.ic_cancel_24),
-                            "content description",
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .clickable {
-                                    onClearClicked.invoke()
-                                })}
+                        if (query.isNotEmpty()) {
+                            Image(painterResource(R.drawable.ic_cancel_24),
+                                "content description",
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clickable {
+                                        onClearClicked.invoke()
+                                    })
+                        }
                     }
                 }
             )
         }
-        if(shouldFullLoadingProgressBar){
+        if (shouldFullLoadingProgressBar) {
             LoadingFullScreen()
-        }else
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(shouldShowEmptyList),
-            onRefresh = { articles.refresh() },
-        ) {
+        } else
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(shouldShowEmptyList),
+                onRefresh = { articles.refresh() },
+            ) {
 
-            if (shouldShowEmptyList) {
+                if (shouldShowEmptyList) {
 
-            } else {
-                ArticlesList(articles,onArticleClicked)
+                } else {
+                    ArticlesList(articles, onArticleClicked,onFavoriteClicked)
+                }
+
             }
-
-        }
 
     }
 }
 
 @Composable
-fun ArticlesList(articles: LazyPagingItems<ArticleUi>,onArticleClicked: (ArticleUi) -> Unit,) {
+fun ArticlesList(
+    articles: LazyPagingItems<ArticleUi>,
+    onArticleClicked: (ArticleUi) -> Unit,
+    onFavoriteClicked: (ArticleUi) -> Unit
+) {
     LazyColumn {
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
-                ArticleItem(it,onArticleClicked)
+                ArticleItem(it, onArticleClicked, onFavoriteClicked)
                 Divider(color = Color.LightGray, thickness = 1.dp)
             }
         }
@@ -205,10 +223,15 @@ fun ArticlesList(articles: LazyPagingItems<ArticleUi>,onArticleClicked: (Article
 }
 
 @Composable
-fun ArticleItem(article: ArticleUi,onArticleClicked: (ArticleUi) -> Unit,) {
-    Column(modifier = Modifier.padding(16.dp).clickable {
-        onArticleClicked.invoke(article)
-    }) {
+fun ArticleItem(
+    article: ArticleUi, onArticleClicked: (ArticleUi) -> Unit,
+    onFavoriteClicked: (ArticleUi) -> Unit,
+) {
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .clickable {
+            onArticleClicked.invoke(article)
+        }) {
         AsyncImage(
             model = article.imageUrl,
             error = painterResource(R.drawable.no_image_placeholder),
@@ -228,11 +251,29 @@ fun ArticleItem(article: ArticleUi,onArticleClicked: (ArticleUi) -> Unit,) {
                 text = it
             )
         }
-        Text(
-            style = MaterialTheme.typography.body1,
-            modifier = Modifier.padding(vertical = 4.dp),
-            text = article.title
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max)
+        ) {
+            Text(
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .weight(0.9f),
+                text = article.title
+            )
+            Image(painter = if (article.isFavorite) painterResource(R.drawable.ic_favorite_24)
+            else painterResource(R.drawable.ic_favorite_border_24),
+                contentDescription = "sdf",
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(0.1f)
+                    .clickable {
+                        onFavoriteClicked.invoke(article)
+                    })
+        }
+
         article.publishedAt?.let {
             Text(
                 style = MaterialTheme.typography.overline,
@@ -241,10 +282,11 @@ fun ArticleItem(article: ArticleUi,onArticleClicked: (ArticleUi) -> Unit,) {
         }
     }
 }
+
 @Preview
 @Composable
 @ExperimentalMaterialApi
 fun ComposablePreview() {
-    ArticlesContent(flow<PagingData<ArticleUi>>{}.collectAsLazyPagingItems(),
-        "",{},{},{})
+    ArticlesContent(flow<PagingData<ArticleUi>> {}.collectAsLazyPagingItems(),
+        "", {}, {}, {},{})
 }
