@@ -36,10 +36,10 @@ fun MyFavoritesScreen(
     LazyColumn {
         items(favoritesList.value.count()) { index ->
             favoritesList.value[index].let {
-                ArticleItem(it, {
-                    navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
-                },{ myFavoritesViewModel.changeArticleFavoriteState(it) })
-                Divider(color = Color.LightGray, thickness = 1.dp)
+//                ArticleItem(it, {
+//                    navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
+//                },{ myFavoritesViewModel.changeArticleFavoriteState(it) })
+//                Divider(color = Color.LightGray, thickness = 1.dp)
             }
         }
     }

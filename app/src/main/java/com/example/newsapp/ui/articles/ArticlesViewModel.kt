@@ -1,8 +1,5 @@
 package com.example.newsapp.ui.articles
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -12,13 +9,15 @@ import com.example.newsapp.use_cases.ChangeFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
 import com.example.newsapp.use_cases.FetchSourcesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ArticlesViewModel @Inject constructor(
     private val fetchArticlesUseCase: FetchArticlesUseCase,
@@ -38,6 +37,8 @@ class ArticlesViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ArticleUiState())
     val uiState = _uiState.asStateFlow()
 
+    val actionsChannel = Channel<ArticlesActions>()
+
     var oldSelectedSourcesList = mutableListOf<SourceUi>()
 
     private val searchFlow = MutableSharedFlow<String?>()
@@ -50,43 +51,63 @@ class ArticlesViewModel @Inject constructor(
 
         val articlesDataFlow = searches.flatMapLatest { query ->
             fetchArticlesUseCase.execute(query)
-        } .cachedIn(viewModelScope)
+        }.cachedIn(viewModelScope)
 
-        _uiState.tryEmit( _uiState.value.copy(articlesDataFlow = articlesDataFlow))
-
+        _uiState.tryEmit(_uiState.value.copy(articlesDataFlow = articlesDataFlow))
+        actionsChannel.receiveAsFlow().onEach { processActions(it) }.launchIn(viewModelScope)
     }
 
-    fun query(query: String?) {
+    private fun processActions(articlesActions: ArticlesActions) {
+        when (articlesActions) {
+            is ArticlesActions.SearchArticlesAction
+               -> onSearchArticles(articlesActions.query)
+            is ArticlesActions.AddToFavoriteAction
+               -> changeArticleFavoriteState(articlesActions.article)
+        }
+    }
+
+    private fun Flow<ArticlesActions>.process() = onEach {
+        when (it) {
+            is ArticlesActions.SearchArticlesAction -> onSearchArticles(it.query)
+            is ArticlesActions.AddToFavoriteAction -> changeArticleFavoriteState(it.article)
+            else -> {}
+//            ArticlesActions.RefreshArticlesAction -> onRefreshMovies()
+        }
+    }
+
+
+    private fun onSearchArticles(query: String?) {
         viewModelScope.launch {
             _uiState.emit(_uiState.value.copy(query = query))
             searchFlow.emit(query)
         }
     }
 
-    fun changeArticleFavoriteState(articleUi: ArticleUi){
+    private fun changeArticleFavoriteState(articleUi: ArticleUi) {
         viewModelScope.launch {
             changeFavoriteStateUseCase.execute(articleUi)
         }
     }
 
-    fun fetchArticlesSources(){
+    fun fetchArticlesSources() {
         viewModelScope.launch {
-          fetchSourcesUseCase. execute().onEach {
-              _uiState.emit(_uiState.value.copy(sourcesList = it))
-           }.collect()
+            fetchSourcesUseCase.execute().onEach {
+                _uiState.emit(_uiState.value.copy(sourcesList = it))
+            }.collect()
         }
     }
 
-    fun saveCurrentStateOfSelectedSources(){
+    fun saveCurrentStateOfSelectedSources() {
 
     }
 
     fun onSelectSource(sourceUi: SourceUi, index: Int) {
         val newSourcesList = _uiState.value.sourcesList.toMutableList()
-        newSourcesList[index] =sourceUi.copy(isSelected = sourceUi.isSelected.not() )
-        _uiState.tryEmit( uiState.value.copy(sourcesList = newSourcesList ))
+        newSourcesList[index] = sourceUi.copy(isSelected = sourceUi.isSelected.not())
+        _uiState.tryEmit(uiState.value.copy(sourcesList = newSourcesList))
     }
-    fun applySelectedSourcesFilter(){
+
+    fun applySelectedSourcesFilter() {
 
 
     }

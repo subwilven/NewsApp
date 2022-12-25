@@ -6,10 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
@@ -23,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
@@ -35,7 +31,8 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
@@ -49,22 +46,16 @@ fun ArticlesScreen(
 ) {
 
     val coroutineScope = rememberCoroutineScope()
-
     val uiState: ArticleUiState by articlesViewModel.uiState.collectAsState()
-
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
+
 
     articlesList?.let {
         //todo should we create remember for this callbacks ?
         ArticlesContent(articlesList, uiState.query ?: "",
-            onSearchQueryChanged = {
-                articlesViewModel.query(it)
-            }, onClearSearchClicked = {
-                articlesViewModel.query(null)
-            }, onArticleClicked = {
+            articlesViewModel.actionsChannel,
+            onArticleClicked = {
                 navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
-            }, onFavoriteClicked = {
-                articlesViewModel.changeArticleFavoriteState(it)
             }, onFilterIconClicked = {
                 coroutineScope.launch {
                     articlesViewModel.fetchArticlesSources()
@@ -128,12 +119,11 @@ fun showSnackBar(
 
 @Composable
 fun ArticlesContent(
-    articles: LazyPagingItems<ArticleUi>, query: String,
-    onSearchQueryChanged: (String) -> Unit,
+    articles: LazyPagingItems<ArticleUi>,
+    query: String,
+    actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
-    onFavoriteClicked: (ArticleUi) -> Unit,
-    onFilterIconClicked: () -> Unit,
-    onClearSearchClicked: () -> Unit
+    onFilterIconClicked: () -> Unit
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
@@ -143,7 +133,9 @@ fun ArticlesContent(
             Row {
                 BasicTextField(
                     value = query,
-                    onValueChange = onSearchQueryChanged,
+                    onValueChange = {
+                        actionFlow.trySend(ArticlesActions.SearchArticlesAction(it))
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(0.8f)
@@ -185,7 +177,11 @@ fun ArticlesContent(
                                     modifier = Modifier
                                         .padding(horizontal = 4.dp)
                                         .clickable {
-                                            onClearSearchClicked.invoke()
+                                            actionFlow.trySend(
+                                                ArticlesActions.SearchArticlesAction(
+                                                    null
+                                                )
+                                            )
                                         })
                             }
                         }
@@ -211,7 +207,7 @@ fun ArticlesContent(
                 if (shouldShowEmptyList) {
 
                 } else {
-                    ArticlesList(articles, onArticleClicked, onFavoriteClicked)
+                    ArticlesList(articles, actionFlow, onArticleClicked)
                 }
 
             }
@@ -222,13 +218,13 @@ fun ArticlesContent(
 @Composable
 fun ArticlesList(
     articles: LazyPagingItems<ArticleUi>,
+    actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
-    onFavoriteClicked: (ArticleUi) -> Unit
 ) {
     LazyColumn {
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
-                ArticleItem(it, onArticleClicked, onFavoriteClicked)
+                ArticleItem(it, actionFlow, onArticleClicked)
                 Divider(color = Color.LightGray, thickness = 1.dp)
             }
         }
@@ -246,8 +242,9 @@ fun ArticlesList(
 
 @Composable
 fun ArticleItem(
-    article: ArticleUi, onArticleClicked: (ArticleUi) -> Unit,
-    onFavoriteClicked: (ArticleUi) -> Unit,
+    article: ArticleUi,
+    actionFlow: Channel<ArticlesActions>,
+    onArticleClicked: (ArticleUi) -> Unit,
 ) {
     Column(modifier = Modifier
         .padding(16.dp)
@@ -292,7 +289,7 @@ fun ArticleItem(
                     .padding(4.dp)
                     .weight(0.1f)
                     .clickable {
-                        onFavoriteClicked.invoke(article)
+                        actionFlow.trySend(ArticlesActions.AddToFavoriteAction(article))
                     })
         }
 
@@ -353,6 +350,6 @@ fun MainScreen() {
 @Composable
 @ExperimentalMaterialApi
 fun ComposablePreview() {
-    ArticlesContent(flow<PagingData<ArticleUi>> {}.collectAsLazyPagingItems(),
-        "", {}, {}, {}, {}, {})
+//    ArticlesContent(flow<PagingData<ArticleUi>> {}.collectAsLazyPagingItems(),
+//        "", actionFlow(), {}, {})
 }
