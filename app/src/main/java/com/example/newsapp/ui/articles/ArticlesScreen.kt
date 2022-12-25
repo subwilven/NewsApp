@@ -7,6 +7,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterStart
@@ -27,6 +29,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
+import com.example.newsapp.model.sources.SourceUi
 import com.example.newsapp.util.NewsAppScreens
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -47,7 +50,7 @@ fun ArticlesScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val uiState = articlesViewModel.uiState
+    val uiState: ArticleUiState by articlesViewModel.uiState.collectAsState()
 
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
 
@@ -65,9 +68,11 @@ fun ArticlesScreen(
             }, onFilterIconClicked = {
                 coroutineScope.launch {
                     articlesViewModel.fetchArticlesSources()
-                    showBottomSheet.invoke { SelectSourcesBottomSheet(articlesViewModel) }
-
-
+                    showBottomSheet.invoke {
+                        SelectSourcesBottomSheet(uiState.sourcesList) { sourceUi, index ->
+                            articlesViewModel.onSelectSource(sourceUi, index)
+                        }
+                    }
                 }
             })
     }
@@ -302,22 +307,25 @@ fun ArticleItem(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SelectSourcesBottomSheet(articlesViewModel: ArticlesViewModel) {
+fun SelectSourcesBottomSheet(
+    sourcesList: List<SourceUi>,
+    onSourceSelected: (SourceUi, Int) -> Unit
+) {
 
-    val uiState = articlesViewModel.uiState
     val state = rememberScrollState()
+
     FlowRow(
         modifier = Modifier
             .padding(horizontal = 8.dp)
             .verticalScroll(state),
         mainAxisSpacing = 4.dp,
     ) {
-        uiState.sourcesList.onEachIndexed { index , sourceUi ->
+        sourcesList.onEachIndexed { index, sourceUi ->
 
             FilterChip(
                 selected = sourceUi.isSelected,
                 onClick = {
-                    articlesViewModel.onSelectSource(sourceUi,index)
+                    onSourceSelected.invoke(sourceUi, index)
                 },
                 border = BorderStroke(
                     ChipDefaults.OutlinedBorderSize,

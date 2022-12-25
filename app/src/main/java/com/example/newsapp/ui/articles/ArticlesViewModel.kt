@@ -35,8 +35,8 @@ class ArticlesViewModel @Inject constructor(
     //todo check hilt extention
     //todo  LaunchedEffect to apply the sort
 
-    var uiState by mutableStateOf(ArticleUiState())
-       // private set
+    private val _uiState = MutableStateFlow(ArticleUiState())
+    val uiState = _uiState.asStateFlow()
 
     var oldSelectedSourcesList = mutableListOf<SourceUi>()
 
@@ -52,13 +52,13 @@ class ArticlesViewModel @Inject constructor(
             fetchArticlesUseCase.execute(query)
         } .cachedIn(viewModelScope)
 
-        uiState = uiState.copy(articlesDataFlow = articlesDataFlow)
+        _uiState.tryEmit( _uiState.value.copy(articlesDataFlow = articlesDataFlow))
 
     }
 
     fun query(query: String?) {
         viewModelScope.launch {
-            uiState = uiState.copy(query = query)
+            _uiState.emit(_uiState.value.copy(query = query))
             searchFlow.emit(query)
         }
     }
@@ -72,7 +72,7 @@ class ArticlesViewModel @Inject constructor(
     fun fetchArticlesSources(){
         viewModelScope.launch {
           fetchSourcesUseCase. execute().onEach {
-               uiState = uiState.copy(sourcesList = it)
+              _uiState.emit(_uiState.value.copy(sourcesList = it))
            }.collect()
         }
     }
@@ -82,9 +82,9 @@ class ArticlesViewModel @Inject constructor(
     }
 
     fun onSelectSource(sourceUi: SourceUi, index: Int) {
-        val newSourcesList = uiState.sourcesList.toMutableList()
+        val newSourcesList = _uiState.value.sourcesList.toMutableList()
         newSourcesList[index] =sourceUi.copy(isSelected = sourceUi.isSelected.not() )
-        uiState = uiState.copy(sourcesList = newSourcesList )
+        _uiState.tryEmit( uiState.value.copy(sourcesList = newSourcesList ))
     }
     fun applySelectedSourcesFilter(){
 
