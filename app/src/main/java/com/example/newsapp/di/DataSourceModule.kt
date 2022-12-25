@@ -3,6 +3,7 @@ package com.example.newsapp.di
 import com.example.newsapp.data.articles.data_source.local.ArticlesDao
 import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
 import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSourceImp
+import com.example.newsapp.data.articles.data_source.local.SourcesDao
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSourceImp
 import com.example.newsapp.data.articles.data_source.remote.ArticlesServices
@@ -18,9 +19,9 @@ class DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideArticlesLocalDataSource(articlesDao: ArticlesDao)
+    fun provideArticlesLocalDataSource(articlesDao: ArticlesDao,sourcesDao: SourcesDao)
             : ArticlesLocalDataSource {
-        return ArticlesLocalDataSourceImp(articlesDao)
+        return ArticlesLocalDataSourceImp(articlesDao,sourcesDao)
     }
 
     @Singleton

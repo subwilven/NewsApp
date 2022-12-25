@@ -3,15 +3,16 @@ package com.example.newsapp.ui.main
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -25,13 +26,14 @@ import androidx.navigation.navArgument
 import com.example.newsapp.model.BottomNavItem
 import com.example.newsapp.ui.favorite.MyFavoritesScreen
 import com.example.newsapp.ui.articles.ArticlesScreen
-import com.example.newsapp.R
 import com.example.newsapp.ui.articleDetail.ArticleDetailScreen
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.util.ARG_ARTICLE_ID
 import com.example.newsapp.util.NewsAppScreens
+import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 @ExperimentalMaterialApi
@@ -46,36 +48,51 @@ class MainActivity : ComponentActivity() {
 
 val LocalScaffoldState = compositionLocalOf<ScaffoldState> { error("ScaffoldState not set") }
 
+var currentBottomSheetContent: @Composable  (ColumnScope.() -> Unit) = {Text("") }
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreenView() {
     val navController = rememberNavController()
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val systemUiController = rememberSystemUiController()
-
+    val bottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+    )
+    val coroutineScope = rememberCoroutineScope()
     systemUiController.setSystemBarsColor(
         color = Color.Transparent,
         darkIcons = isSystemInDarkTheme().not()
     )
-
+    BackHandler(bottomSheetState.isVisible) {
+        coroutineScope.launch { bottomSheetState.hide() }
+    }
     NewsAppTheme {
-        Scaffold(scaffoldState = scaffoldState,
-            topBar = { MyTopAppBar() },
-            snackbarHost = { state -> MySnackHost(state) },
-            bottomBar = { BottomNavigation(navController = navController) }
-        ) {
+        ModalBottomSheetLayout(
+            sheetState = bottomSheetState,
+            sheetContent = currentBottomSheetContent ){
+            Scaffold(scaffoldState = scaffoldState,
+                topBar = { MyTopAppBar() },
+                snackbarHost = { state -> MySnackHost(state) },
+                bottomBar = { BottomNavigation(navController = navController) }
+            ) {
 //            CompositionLocalProvider(LocalScaffoldState provides scaffoldState) {
-                NavigationGraph(navController = navController)
+                NavigationGraph(navController = navController){
+                    currentBottomSheetContent = it
+                    coroutineScope.launch { bottomSheetState.show() }
+                }
 //            }
+            }
         }
     }
-
 }
 
 @Composable
 fun MyTopAppBar() {
-    TopAppBar(title = { Text("News App") },
+    TopAppBar(
+        title = { Text("News App") },
         backgroundColor = MaterialTheme.colors.background,
     )
 }
@@ -92,6 +109,7 @@ fun MySnackHost(state: SnackbarHostState) {
             )
         })
 }
+
 @Composable
 fun BottomNavigation(navController: NavController) {
     val items = listOf(
@@ -100,30 +118,32 @@ fun BottomNavigation(navController: NavController) {
     )
 
     BottomNavigation(
-        backgroundColor =  MaterialTheme.colors.background,
+        backgroundColor = MaterialTheme.colors.background,
         contentColor = Color.Black
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
-            BottomNavigationItemView(item,currentRoute,navController)
+            BottomNavigationItemView(item, currentRoute, navController)
         }
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NavigationGraph( navController: NavHostController) {
+fun NavigationGraph(navController: NavHostController,showBottomSheet :(@Composable  (ColumnScope.() -> Unit)) -> Unit) {
     NavHost(navController, startDestination = NewsAppScreens.ArticlesScreen.route) {
         composable(NewsAppScreens.ArticlesScreen.route) {
-            ArticlesScreen(navController)
+            ArticlesScreen(navController,showBottomSheet)
         }
         composable(NewsAppScreens.FavoritesScreen.route) {
             MyFavoritesScreen(navController)
         }
-        composable(NewsAppScreens.ArticleDetailsScreen.route+"/{$ARG_ARTICLE_ID}",
+        composable(NewsAppScreens.ArticleDetailsScreen.route + "/{$ARG_ARTICLE_ID}",
             arguments = listOf(navArgument(name = ARG_ARTICLE_ID) {
-            type = NavType.IntType
-        })) {
+                type = NavType.IntType
+            })
+        ) {
             ArticleDetailScreen()
         }
     }

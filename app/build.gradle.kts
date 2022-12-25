@@ -84,7 +84,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.3.1")
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
-
+    implementation ("com.google.accompanist:accompanist-flowlayout:0.28.0")
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.44")

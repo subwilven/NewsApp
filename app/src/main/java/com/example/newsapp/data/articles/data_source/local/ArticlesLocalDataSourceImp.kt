@@ -2,9 +2,10 @@ package com.example.newsapp.data.articles.data_source.local
 
 import androidx.paging.PagingSource
 import com.example.newsapp.model.articles.Article
+import com.example.newsapp.model.sources.Source
 import kotlinx.coroutines.flow.Flow
 
-class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao) :
+class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao,private val sourcesDao: SourcesDao) :
     ArticlesLocalDataSource {
 
     override fun fetchArticles(query: String?): PagingSource<Int,Article> {
@@ -29,5 +30,10 @@ class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao) :
 
     override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean){
         articlesDao.updateFavoriteState(articleId,isFavorite)
+    }
+
+    override fun getSources() =sourcesDao.getAllSources()
+    override suspend fun insertAllSources(sources: List<Source>) {
+        sourcesDao.insertAll(sources)
     }
 }

@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.newsapp.model.articles.ArticleUi
+import com.example.newsapp.model.sources.SourceUi
 import com.example.newsapp.use_cases.ChangeFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
+import com.example.newsapp.use_cases.FetchSourcesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -20,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ArticlesViewModel @Inject constructor(
     private val fetchArticlesUseCase: FetchArticlesUseCase,
+    private val fetchSourcesUseCase: FetchSourcesUseCase,
     private val changeFavoriteStateUseCase: ChangeFavoriteStateUseCase,
 ) : ViewModel() {
 
@@ -30,12 +33,12 @@ class ArticlesViewModel @Inject constructor(
     //todo gradle catalog
     //todo add dark theme
     //todo check hilt extention
-
-    //todo use savedState handler
-
     //todo  LaunchedEffect to apply the sort
+
     var uiState by mutableStateOf(ArticleUiState())
-        private set
+       // private set
+
+    var oldSelectedSourcesList = mutableListOf<SourceUi>()
 
     private val searchFlow = MutableSharedFlow<String?>()
 
@@ -64,7 +67,27 @@ class ArticlesViewModel @Inject constructor(
         viewModelScope.launch {
             changeFavoriteStateUseCase.execute(articleUi)
         }
+    }
+
+    fun fetchArticlesSources(){
+        viewModelScope.launch {
+          fetchSourcesUseCase. execute().onEach {
+               uiState = uiState.copy(sourcesList = it)
+           }.collect()
+        }
+    }
+
+    fun saveCurrentStateOfSelectedSources(){
 
     }
 
+    fun onSelectSource(sourceUi: SourceUi, index: Int) {
+        val newSourcesList = uiState.sourcesList.toMutableList()
+        newSourcesList[index] =sourceUi.copy(isSelected = sourceUi.isSelected.not() )
+        uiState = uiState.copy(sourcesList = newSourcesList )
+    }
+    fun applySelectedSourcesFilter(){
+
+
+    }
 }

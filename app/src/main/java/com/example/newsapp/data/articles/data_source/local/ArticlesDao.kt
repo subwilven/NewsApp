@@ -23,7 +23,6 @@ interface ArticlesDao {
     @Query("DELETE FROM article WHERE isFavorite = 0")
     suspend fun deleteAllArticles()
 
-    //todo can we remove the flow here ?
     @Query("SELECT * FROM article WHERE id IS :articleId")
     suspend fun getArticleById(articleId :Int) : Article
 

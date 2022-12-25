@@ -5,20 +5,28 @@ import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSour
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteMediator
 import com.example.newsapp.model.articles.Article
+import com.example.newsapp.model.sources.Source
 import com.example.newsapp.util.PAGE_SIZE
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class ArticlesRepositoryImp @Inject constructor(
-    private val localDataSource : ArticlesLocalDataSource,
-    private val remoteDataSource : ArticlesRemoteDataSource,) : ArticlesRepository{
+    private val localDataSource: ArticlesLocalDataSource,
+    private val remoteDataSource: ArticlesRemoteDataSource,
+) : ArticlesRepository {
 
 
     override fun getArticlesStream(query: String?): Flow<PagingData<Article>> {
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
-            remoteMediator = ArticlesRemoteMediator(query,remoteDataSource,localDataSource),
+            remoteMediator = ArticlesRemoteMediator(query, remoteDataSource, localDataSource),
         ) {
             localDataSource.fetchArticles(query)
         }.flow
@@ -28,7 +36,17 @@ class ArticlesRepositoryImp @Inject constructor(
 
     override fun getFavoritesArticles() = localDataSource.getFavoritesArticles()
 
-    override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean)
-           = localDataSource.changeFavoriteState(articleId,isFavorite)
+    override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean) =
+        localDataSource.changeFavoriteState(articleId, isFavorite)
+
+    override suspend fun getSources(): Flow<List<Source>> {
+
+        val flow = localDataSource.getSources()
+
+        val fetchedSources = remoteDataSource.fetchSources().sources
+        localDataSource.insertAllSources(fetchedSources)
+
+        return flow
+    }
 
 }
