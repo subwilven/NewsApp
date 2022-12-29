@@ -6,7 +6,7 @@ import com.example.newsapp.model.sources.Source
 import kotlinx.coroutines.flow.Flow
 
 interface ArticlesLocalDataSource {
-   fun fetchArticles(query :String?) : PagingSource<Int,Article>
+   fun fetchArticles(searchInput :String?) : PagingSource<Int,Article>
    suspend fun insertAllArticles(articles : List<Article>)
    suspend fun insertAllArticlesAndDeleteOld(articles : List<Article>)
    suspend fun deleteAllArticles()

@@ -7,13 +7,7 @@ import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteMediat
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.model.sources.Source
 import com.example.newsapp.util.PAGE_SIZE
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -23,12 +17,12 @@ class ArticlesRepositoryImp @Inject constructor(
 ) : ArticlesRepository {
 
 
-    override fun getArticlesStream(query: String?): Flow<PagingData<Article>> {
+    override fun getArticlesStream(searchInput: String?): Flow<PagingData<Article>> {
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
-            remoteMediator = ArticlesRemoteMediator(query, remoteDataSource, localDataSource),
+            remoteMediator = ArticlesRemoteMediator(searchInput, remoteDataSource, localDataSource),
         ) {
-            localDataSource.fetchArticles(query)
+            localDataSource.fetchArticles(searchInput)
         }.flow
     }
 

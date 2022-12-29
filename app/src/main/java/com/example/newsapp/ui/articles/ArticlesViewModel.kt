@@ -49,8 +49,8 @@ class ArticlesViewModel @Inject constructor(
             .distinctUntilChanged()
             .onStart { emit(null) }
 
-        val articlesDataFlow = searches.flatMapLatest { query ->
-            fetchArticlesUseCase.execute(query)
+        val articlesDataFlow = searches.flatMapLatest { searchInput ->
+            fetchArticlesUseCase.execute(searchInput)
         }.cachedIn(viewModelScope)
 
         _uiState.tryEmit(_uiState.value.copy(articlesDataFlow = articlesDataFlow))
@@ -60,7 +60,7 @@ class ArticlesViewModel @Inject constructor(
     private fun processActions(articlesActions: ArticlesActions) {
         when (articlesActions) {
             is ArticlesActions.SearchArticlesAction
-               -> onSearchArticles(articlesActions.query)
+               -> onSearchArticles(articlesActions.searchInput)
             is ArticlesActions.AddToFavoriteAction
                -> changeArticleFavoriteState(articlesActions.article)
         }
@@ -68,7 +68,7 @@ class ArticlesViewModel @Inject constructor(
 
     private fun Flow<ArticlesActions>.process() = onEach {
         when (it) {
-            is ArticlesActions.SearchArticlesAction -> onSearchArticles(it.query)
+            is ArticlesActions.SearchArticlesAction -> onSearchArticles(it.searchInput)
             is ArticlesActions.AddToFavoriteAction -> changeArticleFavoriteState(it.article)
             else -> {}
 //            ArticlesActions.RefreshArticlesAction -> onRefreshMovies()
@@ -76,10 +76,10 @@ class ArticlesViewModel @Inject constructor(
     }
 
 
-    private fun onSearchArticles(query: String?) {
+    private fun onSearchArticles(searchInput: String?) {
         viewModelScope.launch {
-            _uiState.emit(_uiState.value.copy(query = query))
-            searchFlow.emit(query)
+            _uiState.emit(_uiState.value.copy(searchInput = searchInput))
+            searchFlow.emit(searchInput)
         }
     }
 

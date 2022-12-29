@@ -3,13 +3,12 @@ package com.example.newsapp.data.articles.data_source.local
 import androidx.paging.PagingSource
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.model.sources.Source
-import kotlinx.coroutines.flow.Flow
 
 class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao,private val sourcesDao: SourcesDao) :
     ArticlesLocalDataSource {
 
-    override fun fetchArticles(query: String?): PagingSource<Int,Article> {
-        return articlesDao.getArticlesByQuery(query)
+    override fun fetchArticles(searchInput: String?): PagingSource<Int,Article> {
+        return articlesDao.getArticlesByQuery(searchInput)
     }
 
     override suspend fun insertAllArticles(articles: List<Article>) {

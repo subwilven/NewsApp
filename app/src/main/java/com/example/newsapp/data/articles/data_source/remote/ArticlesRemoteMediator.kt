@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPagingApi::class)
 class ArticlesRemoteMediator(
-    private val query: String?,
+    private val searchInput: String?,
     private val remoteDatabase: ArticlesRemoteDataSource,
     private val localDatabase: ArticlesLocalDataSource,
 ) : RemoteMediator<Int, Article>() {
@@ -44,7 +44,7 @@ class ArticlesRemoteMediator(
             }
 
 
-            val response = remoteDatabase.fetchArticles(query,loadKey)
+            val response = remoteDatabase.fetchArticles(searchInput,loadKey)
             if (loadType == LoadType.REFRESH) {
                 localDatabase.insertAllArticlesAndDeleteOld(response.articles)
             }else{

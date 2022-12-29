@@ -52,7 +52,7 @@ fun ArticlesScreen(
 
     articlesList?.let {
         //todo should we create remember for this callbacks ?
-        ArticlesContent(articlesList, uiState.query ?: "",
+        ArticlesContent(articlesList, uiState.searchInput ?: "",
             articlesViewModel.actionsChannel,
             onArticleClicked = {
                 navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")

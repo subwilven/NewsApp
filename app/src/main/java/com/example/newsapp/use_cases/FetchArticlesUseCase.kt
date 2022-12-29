@@ -14,8 +14,8 @@ class FetchArticlesUseCase @Inject constructor(
     private val repository: ArticlesRepository
 ) {
 
-    fun execute(query: String?): Flow<PagingData<ArticleUi>> {
-        return repository.getArticlesStream(query)
+    fun execute(searchInput: String?): Flow<PagingData<ArticleUi>> {
+        return repository.getArticlesStream(searchInput)
             .map { pagingData -> pagingData.map { ArticleUi(it) } }
     }
 }
