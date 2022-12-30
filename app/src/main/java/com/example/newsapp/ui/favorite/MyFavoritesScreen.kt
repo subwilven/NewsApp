@@ -20,13 +20,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.newsapp.R
+import com.example.newsapp.navigation.AppNavigator
+import com.example.newsapp.navigation.AppNavigatorImpl
 import com.example.newsapp.ui.articles.ArticleItem
 import com.example.newsapp.ui.articles.ArticlesViewModel
 import com.example.newsapp.util.NewsAppScreens
 
 @Composable
 fun MyFavoritesScreen(
-    navController: NavController,
+    appNavigator: AppNavigator,
     myFavoritesViewModel: MyFavoritesViewModel = hiltViewModel(),
 ) {
     val favoritesList = myFavoritesViewModel

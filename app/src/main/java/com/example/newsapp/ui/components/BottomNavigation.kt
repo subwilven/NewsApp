@@ -7,10 +7,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.newsapp.model.BottomNavItem
+import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.ui.main.BottomNavigationItemView
 
 @Composable
-fun BottomNavigation(navController: NavController) {
+fun BottomNavigation(navController: NavController,appNavigator: AppNavigator) {
     val items = listOf(
         BottomNavItem.Articles,
         BottomNavItem.MyFavorites,
@@ -23,7 +24,7 @@ fun BottomNavigation(navController: NavController) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
-            BottomNavigationItemView(item, currentRoute, navController)
+            BottomNavigationItemView(item, currentRoute, appNavigator)
         }
     }
 }

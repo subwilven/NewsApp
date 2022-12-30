@@ -26,6 +26,9 @@ import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.model.sources.SourceUi
+import com.example.newsapp.navigation.AppNavigator
+import com.example.newsapp.navigation.AppNavigatorImpl
+import com.example.newsapp.navigation.Destination
 import com.example.newsapp.util.NewsAppScreens
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -39,7 +42,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ArticlesScreen(
-    navController: NavController,
+    appNavigator: AppNavigator,
     showBottomSheet: (@Composable (ColumnScope.() -> Unit)) -> Unit,
     articlesViewModel: ArticlesViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
@@ -55,7 +58,8 @@ fun ArticlesScreen(
         ArticlesContent(articlesList, uiState.searchInput ?: "",
             articlesViewModel.actionsChannel,
             onArticleClicked = {
-                navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
+                appNavigator.tryNavigateTo(Destination.ArticleDetailsScreen(it.id.toString()))
+                //navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
             }, onFilterIconClicked = {
                 coroutineScope.launch {
                     articlesViewModel.fetchArticlesSources()

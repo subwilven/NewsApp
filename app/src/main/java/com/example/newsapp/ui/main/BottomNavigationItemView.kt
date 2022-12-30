@@ -10,13 +10,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.newsapp.model.BottomNavItem
+import com.example.newsapp.navigation.AppNavigator
+import com.example.newsapp.navigation.AppNavigatorImpl
 import org.w3c.dom.Text
 
 @Composable
 fun RowScope.BottomNavigationItemView(
     item: BottomNavItem,
     currentRoute: String?,
-    navController: NavController
+    appNavigator: AppNavigator
 )  {
      BottomNavigationItem(
         icon = bottomNavItemIcon(item.title,item.icon),
@@ -24,18 +26,9 @@ fun RowScope.BottomNavigationItemView(
         selectedContentColor = Color.Black,
         unselectedContentColor = Color.Black.copy(0.4f),
         alwaysShowLabel = true,
-        selected = currentRoute == item.screen_route,
+        selected = currentRoute == item.destination.fullRoute,
         onClick = {
-            navController.navigate(item.screen_route) {
-
-                navController.graph.startDestinationRoute?.let { screen_route ->
-                    popUpTo(screen_route) {
-                        saveState = true
-                    }
-                }
-                launchSingleTop = true
-                restoreState = true
-            }
+            appNavigator.tryNavigateToBottomBarScreen(item.destination.fullRoute)
         }
     )
 }
