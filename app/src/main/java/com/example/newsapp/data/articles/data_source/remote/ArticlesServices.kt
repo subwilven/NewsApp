@@ -1,9 +1,8 @@
 package com.example.newsapp.data.articles.data_source.remote
 
 import com.example.newsapp.model.articles.ArticlesResponse
-import com.example.newsapp.model.sources.SourceResponse
+import com.example.newsapp.model.providers.ProviderResponse
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ArticlesServices {
@@ -19,7 +18,7 @@ interface ArticlesServices {
     ) : ArticlesResponse
 
     @GET("top-headlines/sources")
-    suspend  fun getSources(
+    suspend  fun getProviders(
         @Query("apiKey") key: String?
-    ): SourceResponse
+    ): ProviderResponse
 }

@@ -51,7 +51,7 @@ class ArticlesRemoteMediator(
                 localDatabase.insertAllArticles(response.articles)
             }
 
-            val hasMoreData = response.totalResults.toDouble().div(PAGE_SIZE).roundToInt() > pageNumber
+            val hasMoreData = response.totalResultCount.toDouble().div(PAGE_SIZE).roundToInt() > pageNumber
             MediatorResult.Success(
                 endOfPaginationReached = !hasMoreData
             )

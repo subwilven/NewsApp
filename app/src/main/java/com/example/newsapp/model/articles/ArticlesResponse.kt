@@ -1,3 +1,6 @@
 package com.example.newsapp.model.articles
 
-data class ArticlesResponse(val totalResults :Int,val articles: List<Article> )
+import com.google.gson.annotations.SerializedName
+
+data class ArticlesResponse(@SerializedName("totalResults") val totalResultCount :Int,
+                            @SerializedName("articles") val articles: List<Article> )

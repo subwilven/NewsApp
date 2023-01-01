@@ -5,9 +5,10 @@ import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSour
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteMediator
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.sources.Source
+import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.util.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -33,14 +34,13 @@ class ArticlesRepositoryImp @Inject constructor(
     override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean) =
         localDataSource.changeFavoriteState(articleId, isFavorite)
 
-    override suspend fun getSources(): Flow<List<Source>> {
-
-        val flow = localDataSource.getSources()
-
-        val fetchedSources = remoteDataSource.fetchSources().sources
-        localDataSource.insertAllSources(fetchedSources)
-
-        return flow
+    override  fun getProviders(): Flow<List<Provider>> {
+        return localDataSource.getProviders().onStart {
+            if (localDataSource.getProviderCounts() == 0) {
+                val fetchedSources = remoteDataSource.fetchProviders().providers
+                localDataSource.insertAllSources(fetchedSources)
+            }
+        }
     }
 
 }

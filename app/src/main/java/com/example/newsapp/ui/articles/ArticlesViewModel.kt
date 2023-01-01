@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.model.sources.SourceUi
+import com.example.newsapp.model.providers.ProviderUi
 import com.example.newsapp.use_cases.ChangeFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
-import com.example.newsapp.use_cases.FetchSourcesUseCase
+import com.example.newsapp.use_cases.FetchProvidersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +22,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ArticlesViewModel @Inject constructor(
     private val fetchArticlesUseCase: FetchArticlesUseCase,
-    private val fetchSourcesUseCase: FetchSourcesUseCase,
     private val changeFavoriteStateUseCase: ChangeFavoriteStateUseCase,
 ) : ViewModel() {
 
@@ -39,7 +39,7 @@ class ArticlesViewModel @Inject constructor(
 
     val actionsChannel = Channel<ArticlesActions>()
 
-    var oldSelectedSourcesList = mutableListOf<SourceUi>()
+    var oldSelectedSourcesList = mutableListOf<ProviderUi>()
 
     private val searchFlow = MutableSharedFlow<String?>()
 
@@ -53,16 +53,16 @@ class ArticlesViewModel @Inject constructor(
             fetchArticlesUseCase.execute(searchInput)
         }.cachedIn(viewModelScope)
 
-        _uiState.tryEmit(_uiState.value.copy(articlesDataFlow = articlesDataFlow))
+        updateUiState(_uiState.value.copy(articlesDataFlow = articlesDataFlow))
         actionsChannel.receiveAsFlow().onEach { processActions(it) }.launchIn(viewModelScope)
     }
 
     private fun processActions(articlesActions: ArticlesActions) {
         when (articlesActions) {
             is ArticlesActions.SearchArticlesAction
-               -> onSearchArticles(articlesActions.searchInput)
+            -> onSearchArticles(articlesActions.searchInput)
             is ArticlesActions.AddToFavoriteAction
-               -> changeArticleFavoriteState(articlesActions.article)
+            -> changeArticleFavoriteState(articlesActions.article)
         }
     }
 
@@ -77,10 +77,8 @@ class ArticlesViewModel @Inject constructor(
 
 
     private fun onSearchArticles(searchInput: String?) {
-        viewModelScope.launch {
-            _uiState.emit(_uiState.value.copy(searchInput = searchInput))
-            searchFlow.emit(searchInput)
-        }
+        updateUiState(_uiState.value.copy(searchInput = searchInput))
+        searchFlow.tryEmit(searchInput)
     }
 
     private fun changeArticleFavoriteState(articleUi: ArticleUi) {
@@ -89,26 +87,7 @@ class ArticlesViewModel @Inject constructor(
         }
     }
 
-    fun fetchArticlesSources() {
-        viewModelScope.launch {
-            fetchSourcesUseCase.execute().onEach {
-                _uiState.emit(_uiState.value.copy(sourcesList = it))
-            }.collect()
-        }
-    }
-
-    fun saveCurrentStateOfSelectedSources() {
-
-    }
-
-    fun onSelectSource(sourceUi: SourceUi, index: Int) {
-        val newSourcesList = _uiState.value.sourcesList.toMutableList()
-        newSourcesList[index] = sourceUi.copy(isSelected = sourceUi.isSelected.not())
-        _uiState.tryEmit(uiState.value.copy(sourcesList = newSourcesList))
-    }
-
-    fun applySelectedSourcesFilter() {
-
-
+    private fun updateUiState(articleUiState: ArticleUiState){
+        _uiState.tryEmit(articleUiState)
     }
 }

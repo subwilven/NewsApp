@@ -1,12 +1,11 @@
-package com.example.newsapp.model.sources
+package com.example.newsapp.model.providers
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "source")
-data  class Source(
+@Entity(tableName = "provider")
+data  class Provider(
     @PrimaryKey()
     @ColumnInfo(name = "id")
     val id:String,

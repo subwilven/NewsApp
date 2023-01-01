@@ -6,13 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.newsapp.data.articles.data_source.local.ArticlesDao
-import com.example.newsapp.data.articles.data_source.local.SourcesDao
+import com.example.newsapp.data.articles.data_source.local.ProvidersDao
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.sources.Source
+import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.util.DateConverterRoom
 
 @Database(
-    entities = [Article::class, Source::class],
+    entities = [Article::class, Provider::class],
     version = 1,
     exportSchema = false
 )
@@ -20,7 +20,7 @@ import com.example.newsapp.util.DateConverterRoom
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun articlesDao(): ArticlesDao
-    abstract fun sourcesDao(): SourcesDao
+    abstract fun providersDao(): ProvidersDao
 
     companion object {
         private const val databaseName = "newsApp-db"

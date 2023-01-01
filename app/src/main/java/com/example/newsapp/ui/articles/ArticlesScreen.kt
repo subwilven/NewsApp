@@ -3,6 +3,8 @@ package com.example.newsapp.ui.articles
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -17,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -25,11 +26,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.model.sources.SourceUi
+import com.example.newsapp.model.providers.ProviderUi
 import com.example.newsapp.navigation.AppNavigator
-import com.example.newsapp.navigation.AppNavigatorImpl
 import com.example.newsapp.navigation.Destination
-import com.example.newsapp.util.NewsAppScreens
+import com.example.newsapp.ui.components.LoadingFullScreen
+import com.example.newsapp.ui.providers.ProvidersListContent
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -62,11 +63,11 @@ fun ArticlesScreen(
                 //navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
             }, onFilterIconClicked = {
                 coroutineScope.launch {
-                    articlesViewModel.fetchArticlesSources()
                     showBottomSheet.invoke {
-                        SelectSourcesBottomSheet(uiState.sourcesList) { sourceUi, index ->
-                            articlesViewModel.onSelectSource(sourceUi, index)
-                        }
+                        ProvidersListContent()
+//                        { sourceUi, index ->
+//                            articlesViewModel.onSelectProvider(sourceUi, index)
+//                        }
                     }
                 }
             })
@@ -98,16 +99,6 @@ private fun shouldShowArticlesList(loadState: CombinedLoadStates) =
 private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
     loadState.mediator?.refresh is LoadState.Loading
 
-@Composable
-fun LoadingFullScreen() {
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colors.background)
-    ) {
-        CircularProgressIndicator(Modifier.align(Alignment.Center))
-    }
-}
 
 fun showSnackBar(
     scaffoldState: ScaffoldState,
@@ -131,6 +122,7 @@ fun ArticlesContent(
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
+    val lazyListState = rememberLazyListState()
     val shape = RoundedCornerShape(25.dp)
     Column {
         Surface {
@@ -207,13 +199,11 @@ fun ArticlesContent(
                 state = rememberSwipeRefreshState(shouldShowEmptyList),
                 onRefresh = { articles.refresh() },
             ) {
-
                 if (shouldShowEmptyList) {
 
                 } else {
-                    ArticlesList(articles, actionFlow, onArticleClicked)
+                    ArticlesList(articles,lazyListState, actionFlow, onArticleClicked)
                 }
-
             }
 
     }
@@ -222,10 +212,12 @@ fun ArticlesContent(
 @Composable
 fun ArticlesList(
     articles: LazyPagingItems<ArticleUi>,
+    lazyListState: LazyListState,
     actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
 ) {
-    LazyColumn {
+    LazyColumn(state = lazyListState) {
+
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
                 ArticleItem(it, actionFlow, onArticleClicked)
@@ -306,45 +298,6 @@ fun ArticleItem(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun SelectSourcesBottomSheet(
-    sourcesList: List<SourceUi>,
-    onSourceSelected: (SourceUi, Int) -> Unit
-) {
-
-    val state = rememberScrollState()
-
-    FlowRow(
-        modifier = Modifier
-            .padding(horizontal = 8.dp)
-            .verticalScroll(state),
-        mainAxisSpacing = 4.dp,
-    ) {
-        sourcesList.onEachIndexed { index, sourceUi ->
-
-            FilterChip(
-                selected = sourceUi.isSelected,
-                onClick = {
-                    onSourceSelected.invoke(sourceUi, index)
-                },
-                border = BorderStroke(
-                    ChipDefaults.OutlinedBorderSize,
-                    Color.Red
-                ),
-//                colors = ChipDefaults.chipColors(
-//                    backgroundColor = Color.White,
-//                    contentColor = Color.Red
-//                ),
-
-            ) {
-                Text(sourceUi.name)
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen() {
 

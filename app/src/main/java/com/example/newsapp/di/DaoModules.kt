@@ -2,7 +2,7 @@ package com.example.newsapp.di
 
 import com.example.newsapp.data.AppDatabase
 import com.example.newsapp.data.articles.data_source.local.ArticlesDao
-import com.example.newsapp.data.articles.data_source.local.SourcesDao
+import com.example.newsapp.data.articles.data_source.local.ProvidersDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,7 +21,7 @@ class DaoModules{
 
     @Singleton
     @Provides
-    fun provideSourcesDao(appDatabase: AppDatabase): SourcesDao {
-        return appDatabase.sourcesDao()
+    fun provideProvidersDao(appDatabase: AppDatabase): ProvidersDao {
+        return appDatabase.providersDao()
     }
 }
