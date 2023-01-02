@@ -3,7 +3,7 @@ package com.example.newsapp.ui.favorite
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.use_cases.ChangeFavoriteStateUseCase
+import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.use_cases.GetFavoritesArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -13,15 +13,16 @@ import javax.inject.Inject
 @HiltViewModel
 class MyFavoritesViewModel @Inject constructor(
     getFavoritesArticlesUseCase: GetFavoritesArticlesUseCase,
-    private val changeFavoriteStateUseCase: ChangeFavoriteStateUseCase,
+    private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
 
-    val favoritesArticles: Flow<List<ArticleUi>> = getFavoritesArticlesUseCase.execute()
+//    val favoritesArticles: Flow<List<ArticleUi>> = getFavoritesArticlesUseCase()
 
 
     init {
-
+//        fetchProvidersUseCase(null)
+//        fetchProvidersUseCase.observe()
 
 
 
@@ -29,7 +30,7 @@ class MyFavoritesViewModel @Inject constructor(
 
     fun changeArticleFavoriteState(articleUi: ArticleUi){
         viewModelScope.launch {
-            changeFavoriteStateUseCase.execute(articleUi)
+            toggleFavoriteStateUseCase(articleUi)
         }
 
     }

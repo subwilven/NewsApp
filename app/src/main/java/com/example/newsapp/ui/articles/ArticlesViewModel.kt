@@ -5,11 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.model.providers.ProviderUi
-import com.example.newsapp.use_cases.ChangeFavoriteStateUseCase
+import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
-import com.example.newsapp.use_cases.FetchProvidersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -22,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ArticlesViewModel @Inject constructor(
     private val fetchArticlesUseCase: FetchArticlesUseCase,
-    private val changeFavoriteStateUseCase: ChangeFavoriteStateUseCase,
+    private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
     //todo 1)handle erorr in paging
@@ -50,7 +48,7 @@ class ArticlesViewModel @Inject constructor(
             .onStart { emit(null) }
 
         val articlesDataFlow = searches.flatMapLatest { searchInput ->
-            fetchArticlesUseCase.execute(searchInput)
+            fetchArticlesUseCase.produce(searchInput)
         }.cachedIn(viewModelScope)
 
         updateUiState(_uiState.value.copy(articlesDataFlow = articlesDataFlow))
@@ -77,13 +75,16 @@ class ArticlesViewModel @Inject constructor(
 
 
     private fun onSearchArticles(searchInput: String?) {
-        updateUiState(_uiState.value.copy(searchInput = searchInput))
-        searchFlow.tryEmit(searchInput)
+        viewModelScope.launch {
+            updateUiState(_uiState.value.copy(searchInput = searchInput))
+            searchFlow.emit(searchInput)
+        }
+
     }
 
     private fun changeArticleFavoriteState(articleUi: ArticleUi) {
         viewModelScope.launch {
-            changeFavoriteStateUseCase.execute(articleUi)
+            toggleFavoriteStateUseCase(articleUi)
         }
     }
 

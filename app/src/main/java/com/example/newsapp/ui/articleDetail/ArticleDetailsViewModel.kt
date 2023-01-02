@@ -7,11 +7,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.use_cases.ChangeFavoriteStateUseCase
+import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.use_cases.GetArticleByIdUseCase
 import com.example.newsapp.util.ARG_ARTICLE_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +18,7 @@ import javax.inject.Inject
 class ArticleDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getArticleByIdUseCase: GetArticleByIdUseCase,
-    private val changeFavoriteStateUseCase: ChangeFavoriteStateUseCase,
+    private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
     var articleDetails by mutableStateOf<ArticleUi?>(null)
@@ -34,6 +33,6 @@ class ArticleDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getArticleById(articleId:Int) = getArticleByIdUseCase.execute(articleId)
+    private suspend fun getArticleById(articleId:Int) = getArticleByIdUseCase(articleId)
 
 }

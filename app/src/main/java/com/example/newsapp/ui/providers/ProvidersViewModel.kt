@@ -24,7 +24,8 @@ class ProvidersViewModel @Inject constructor(
     }
 
     private fun getProvidersList(){
-        fetchProvidersUseCase.execute().onEach { providersList ->
+        fetchProvidersUseCase(null)
+        fetchProvidersUseCase.observe().onEach { providersList ->
             delay(3000) //just dummy loading to show loading
             updateUiState(
                 _uiState.value.copy(
@@ -33,6 +34,7 @@ class ProvidersViewModel @Inject constructor(
                 )
             )
         }.launchIn(viewModelScope)
+
     }
 
     fun onProviderSelected(providerUi: ProviderUi, index: Int) {
