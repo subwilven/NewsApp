@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.articles
+package com.example.newsapp.ui.screens.articles
 
 import androidx.paging.PagingData
 import com.example.newsapp.model.articles.ArticleUi

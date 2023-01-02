@@ -10,11 +10,11 @@ import androidx.navigation.navArgument
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.AppNavigatorImpl
 import com.example.newsapp.navigation.Destination
-import com.example.newsapp.ui.articleDetail.ArticleDetailScreen
-import com.example.newsapp.ui.articles.ArticlesScreen
+import com.example.newsapp.ui.screens.articleDetail.ArticleDetailScreen
+import com.example.newsapp.ui.screens.articles.ArticlesScreen
 import com.example.newsapp.ui.components.MyNavHost
 import com.example.newsapp.ui.components.composable
-import com.example.newsapp.ui.favorite.MyFavoritesScreen
+import com.example.newsapp.ui.screens.favorite.MyFavoritesScreen
 import com.example.newsapp.util.ARG_ARTICLE_ID
 import com.example.newsapp.util.NewsAppScreens
 

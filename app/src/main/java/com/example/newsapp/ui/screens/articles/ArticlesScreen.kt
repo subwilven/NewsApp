@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.articles
+package com.example.newsapp.ui.screens.articles
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -30,7 +30,7 @@ import com.example.newsapp.model.providers.ProviderUi
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.Destination
 import com.example.newsapp.ui.components.LoadingFullScreen
-import com.example.newsapp.ui.providers.ProvidersListContent
+import com.example.newsapp.ui.screens.providers.ProvidersListContent
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState

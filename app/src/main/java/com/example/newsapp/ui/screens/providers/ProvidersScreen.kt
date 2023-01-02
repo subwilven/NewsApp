@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.providers
+package com.example.newsapp.ui.screens.providers
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.height

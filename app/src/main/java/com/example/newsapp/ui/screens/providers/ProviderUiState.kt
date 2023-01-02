@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.providers
+package com.example.newsapp.ui.screens.providers
 
 import com.example.newsapp.model.providers.ProviderUi
 

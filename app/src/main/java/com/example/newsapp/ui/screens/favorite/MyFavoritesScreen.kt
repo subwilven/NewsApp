@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.favorite
+package com.example.newsapp.ui.screens.favorite
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -22,8 +22,8 @@ import androidx.navigation.NavController
 import com.example.newsapp.R
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.AppNavigatorImpl
-import com.example.newsapp.ui.articles.ArticleItem
-import com.example.newsapp.ui.articles.ArticlesViewModel
+import com.example.newsapp.ui.screens.articles.ArticleItem
+import com.example.newsapp.ui.screens.articles.ArticlesViewModel
 import com.example.newsapp.util.NewsAppScreens
 
 @Composable
