@@ -10,9 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun LoadingFullScreen() {
+fun LoadingFullScreen(modifier: Modifier = Modifier) {
     Box(
-        Modifier
+        modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colors.background)
     ) {

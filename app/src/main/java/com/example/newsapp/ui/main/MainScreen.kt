@@ -31,6 +31,7 @@ fun MainScreenView() {
     val systemUiController = rememberSystemUiController()
     val bottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
     val coroutineScope = rememberCoroutineScope()
@@ -56,7 +57,7 @@ fun MainScreenView() {
                 bottomBar = { BottomNavigation(navController = navController,appNavigator) }
             ) {
 //            CompositionLocalProvider(LocalScaffoldState provides scaffoldState) {
-                NavigationGraph(navController = navController,appNavigator){
+                NavigationGraph(navController = navController,appNavigator,bottomSheetState){
                     currentBottomSheetContent = it
                     coroutineScope.launch { bottomSheetState.show() }
                 }

@@ -6,8 +6,6 @@ import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.newsapp.navigation.Destination
-import com.example.newsapp.ui.screens.articles.ArticlesScreen
-import com.example.newsapp.util.NewsAppScreens
 
 @Composable
 fun MyNavHost(

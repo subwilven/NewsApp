@@ -19,6 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -31,6 +33,7 @@ import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.Destination
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.screens.providers.ProvidersListContent
+import com.example.newsapp.ui.screens.providers.ProvidersScreen
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -40,23 +43,24 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ArticlesScreen(
     appNavigator: AppNavigator,
     showBottomSheet: (@Composable (ColumnScope.() -> Unit)) -> Unit,
+    modelBottomSheetState : ModalBottomSheetState,
     articlesViewModel: ArticlesViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
 
     val coroutineScope = rememberCoroutineScope()
-    val uiState: ArticleUiState by articlesViewModel.uiState.collectAsState()
+    val uiState: ArticleUiState by articlesViewModel.uiState.collectAsStateWithLifecycle()
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
 
 
     articlesList?.let {
         //todo should we create remember for this callbacks ?
-        ArticlesContent(articlesList, uiState.searchInput ?: "",
+        ArticlesContent(articlesList, uiState.filterData.searchInput ?: "",
             articlesViewModel.actionsChannel,
             onArticleClicked = {
                 appNavigator.tryNavigateTo(Destination.ArticleDetailsScreen(it.id.toString()))
@@ -64,10 +68,10 @@ fun ArticlesScreen(
             }, onFilterIconClicked = {
                 coroutineScope.launch {
                     showBottomSheet.invoke {
-                        ProvidersListContent()
-//                        { sourceUi, index ->
-//                            articlesViewModel.onSelectProvider(sourceUi, index)
-//                        }
+                        ProvidersScreen(modelBottomSheetState)
+                        { selectedProviders ->
+                            articlesViewModel.actionsChannel.trySend(ArticlesActions.FilterByProvidersAction(selectedProviders))
+                        }
                     }
                 }
             })

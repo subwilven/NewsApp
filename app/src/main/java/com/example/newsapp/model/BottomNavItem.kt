@@ -1,7 +1,6 @@
 package com.example.newsapp.model
 
 import com.example.newsapp.navigation.Destination
-import com.example.newsapp.util.NewsAppScreens
 
 
 sealed class BottomNavItem(var title: String, var icon: Int, var destination: Destination) {

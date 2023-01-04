@@ -1,5 +1,6 @@
 package com.example.newsapp.ui.screens.articles
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -32,12 +33,12 @@ class ArticlesViewModel @Inject constructor(
     //todo check hilt extention
     //todo  LaunchedEffect to apply the sort
 
+    //todo handle showing snackbar on error look at Jetnews
+
     private val _uiState = MutableStateFlow(ArticleUiState())
     val uiState = _uiState.asStateFlow()
 
     val actionsChannel = Channel<ArticlesActions>()
-
-    var oldSelectedSourcesList = mutableListOf<ProviderUi>()
 
     private val searchFlow = MutableSharedFlow<String?>()
 
@@ -61,25 +62,26 @@ class ArticlesViewModel @Inject constructor(
             -> onSearchArticles(articlesActions.searchInput)
             is ArticlesActions.AddToFavoriteAction
             -> changeArticleFavoriteState(articlesActions.article)
+            is ArticlesActions.FilterByProvidersAction
+            -> onProvidersSelected(articlesActions.selectedProviders)
         }
     }
-
-    private fun Flow<ArticlesActions>.process() = onEach {
-        when (it) {
-            is ArticlesActions.SearchArticlesAction -> onSearchArticles(it.searchInput)
-            is ArticlesActions.AddToFavoriteAction -> changeArticleFavoriteState(it.article)
-            else -> {}
-//            ArticlesActions.RefreshArticlesAction -> onRefreshMovies()
-        }
-    }
-
 
     private fun onSearchArticles(searchInput: String?) {
         viewModelScope.launch {
-            updateUiState(_uiState.value.copy(searchInput = searchInput))
+            updateUiState(
+                _uiState.value.copy(
+                    filterData = _uiState.value.filterData.copy(
+                        searchInput = searchInput
+                    )
+                )
+            )
             searchFlow.emit(searchInput)
         }
+    }
 
+    private fun  onProvidersSelected(selectedProviders : List<ProviderUi>){
+        Log.e("selectedProviders","selectedProviders ${selectedProviders.size}")
     }
 
     private fun changeArticleFavoriteState(articleUi: ArticleUi) {
@@ -88,7 +90,7 @@ class ArticlesViewModel @Inject constructor(
         }
     }
 
-    private fun updateUiState(articleUiState: ArticleUiState){
+    private fun updateUiState(articleUiState: ArticleUiState) {
         _uiState.tryEmit(articleUiState)
     }
 }
