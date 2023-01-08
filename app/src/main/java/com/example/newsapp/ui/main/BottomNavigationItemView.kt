@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.newsapp.model.BottomNavItem
@@ -20,9 +21,10 @@ fun RowScope.BottomNavigationItemView(
     currentRoute: String?,
     appNavigator: AppNavigator
 )  {
+    val title = stringResource(id = item.titleRes)
      BottomNavigationItem(
-        icon = bottomNavItemIcon(item.title,item.icon),
-        label = bottomNavItemTitle(item.title),
+        icon = bottomNavItemIcon(title,item.icon),
+        label = bottomNavItemTitle(title),
         selectedContentColor = Color.Black,
         unselectedContentColor = Color.Black.copy(0.4f),
         alwaysShowLabel = true,
