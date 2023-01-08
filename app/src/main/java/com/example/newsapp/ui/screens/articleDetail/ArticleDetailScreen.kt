@@ -4,12 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -35,6 +32,7 @@ import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.ui.theme.NewsAppTheme
+import com.example.newsapp.util.getFavoriteIcon
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -45,8 +43,10 @@ fun ArticleDetailScreen(
 ) {
 
     val uiState = articlesViewModel.articleDetails.collectAsStateWithLifecycle()
-    uiState.value?.let {
-        CollapsingToolbar(it, appNavigator)
+    uiState.value?.let { article ->
+        CollapsingToolbar(article, appNavigator) {
+            articlesViewModel.changeArticleFavoriteState(article)
+        }
     }
 
 }
@@ -54,7 +54,11 @@ fun ArticleDetailScreen(
 private val headerHeight = 250.dp
 
 @Composable
-fun CollapsingToolbar(article: ArticleUi, appNavigator: AppNavigator) {
+fun CollapsingToolbar(
+    article: ArticleUi,
+    appNavigator: AppNavigator,
+    onFavoriteButtonClicked: () -> Unit
+) {
     val scroll: ScrollState = rememberScrollState(0)
 
     val headerHeightPx = with(LocalDensity.current) { headerHeight.toPx() }
@@ -63,9 +67,12 @@ fun CollapsingToolbar(article: ArticleUi, appNavigator: AppNavigator) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        Toolbar(scroll, headerHeightPx, toolbarHeightPx, appNavigator)
         Header(article.imageUrl, scroll, headerHeightPx)
         Body(article, scroll)
+        Toolbar(
+            scroll, headerHeightPx, toolbarHeightPx, article.isFavorite, appNavigator,
+            onFavoriteButtonClicked
+        )
     }
 }
 
@@ -119,31 +126,32 @@ private fun Body(article: ArticleUi, scroll: ScrollState) {
                     .fillMaxWidth()
                     .align(Alignment.Start),
                 style = MaterialTheme.typography.caption,
-                text = stringResource(R.string.published_by,it)
+                text = stringResource(R.string.published_by, it)
             )
         }
         Spacer(Modifier.height(16.dp))
         Divider()
         Spacer(Modifier.height(16.dp))
+
         Text(
             style = MaterialTheme.typography.body2,
             modifier = Modifier.padding(vertical = 4.dp),
             text = article.content ?: ""
         )
 
-        val context =  LocalContext.current
+
+        val context = LocalContext.current
         OutlinedButton(onClick = {
 
             val webIntent: Intent = Uri.parse(article.articleUrl).let { webpage ->
                 Intent(Intent.ACTION_VIEW, webpage)
             }
-            startActivity(context,webIntent,null)
+            startActivity(context, webIntent, null)
 
         }) {
             Text(text = stringResource(R.string.visit_orignal_article))
         }
     }
-
 
 
 }
@@ -153,7 +161,9 @@ private fun Toolbar(
     scroll: ScrollState,
     headerHeightPx: Float,
     toolbarHeightPx: Float,
-    appNavigator: AppNavigator
+    isFavorite: Boolean,
+    appNavigator: AppNavigator,
+    onFavoriteButtonClicked: () -> Unit
 ) {
     val toolbarBottom = headerHeightPx - toolbarHeightPx
     val showToolbar by remember {
@@ -179,6 +189,21 @@ private fun Toolbar(
             }
         },
         title = {},
+        actions = {
+            IconButton(
+                onClick = {
+                    onFavoriteButtonClicked.invoke()
+                }, modifier = Modifier
+                    .padding(end = 12.dp)
+                    .background(color = Color(0x59000000), shape = CircleShape)
+                    .size(32.dp)
+            ) {
+                Icon(
+                    painter = painterResource(getFavoriteIcon(isFavorite)),
+                    contentDescription = stringResource(id = R.string.favorite_icon)
+                )
+            }
+        },
         backgroundColor = if (showToolbar) MaterialTheme.colors.background
         else Color.Transparent,
         elevation = 0.dp

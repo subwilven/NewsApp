@@ -27,7 +27,7 @@ class ArticlesRepositoryImp @Inject constructor(
         }.flow
     }
 
-    override suspend fun getArticleById(articleId: Int) = localDataSource.getArticleById(articleId)
+    override  fun getArticleById(articleId: Int) = localDataSource.getArticleById(articleId)
 
     override fun getFavoritesArticles() = localDataSource.getFavoritesArticles()
 

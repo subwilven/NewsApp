@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,6 +36,7 @@ import com.example.newsapp.navigation.navigateToArticleDetails
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.screens.providers.ProvidersListContent
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
+import com.example.newsapp.util.getFavoriteIcon
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -287,9 +289,8 @@ fun ArticleItem(
                     .weight(0.9f),
                 text = article.title
             )
-            Image(painter = if (article.isFavorite) painterResource(R.drawable.ic_favorite_24)
-            else painterResource(R.drawable.ic_favorite_border_24),
-                contentDescription = "sdf",
+            Image(painter = painterResource(getFavoriteIcon(article.isFavorite)),
+                contentDescription = stringResource(id = R.string.favorite_icon),
                 modifier = Modifier
                     .padding(4.dp)
                     .weight(0.1f)

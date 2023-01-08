@@ -10,6 +10,8 @@ import com.example.newsapp.util.ARG_ARTICLE_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,15 +30,21 @@ class ArticleDetailsViewModel @Inject constructor(
     }
 
     private fun getArticleDetails(){
-        viewModelScope.launch {
-            getArticleId()?.let { articleId ->
-                _articleDetails.emit(getArticleById(articleId))
-            }
+        getArticleId()?.let { articleId ->
+            getArticleByIdUseCase(articleId)
+            getArticleByIdUseCase.observe().onEach {
+                _articleDetails.emit(it)
+            }.launchIn(viewModelScope)
         }
     }
 
     private fun getArticleId() =  savedStateHandle.get<Int>(ARG_ARTICLE_ID)
 
-    private suspend fun getArticleById(articleId:Int) = getArticleByIdUseCase(articleId)
+    fun changeArticleFavoriteState(articleUi: ArticleUi) {
+        viewModelScope.launch {
+            toggleFavoriteStateUseCase(articleUi)
+        }
+    }
+
 
 }

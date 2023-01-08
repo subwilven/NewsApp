@@ -8,4 +8,5 @@
     <string name="detail_placeholder">A paragraph generator is an online software that generates a text based on user-provided input. You can generate long paragraphs just by giving in input a list of keywords or a full sentence. The software then uses AI to generate a paragraph of text that try to respect your input and include the specific words.</string>
     <string name="published_by">Published by:%1$s</string>
     <string name="visit_orignal_article">Go to the orignal article</string>
+    <string name="favorite_icon">favorite_icon</string>
 </resources>

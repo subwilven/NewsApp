@@ -10,7 +10,7 @@ interface ArticlesLocalDataSource {
    suspend fun insertAllArticles(articles : List<Article>)
    suspend fun insertAllArticlesAndDeleteOld(articles : List<Article>)
    suspend fun deleteAllArticles()
-   suspend fun getArticleById(articleId :Int): Article
+   fun getArticleById(articleId :Int): Flow<Article>
    fun getFavoritesArticles() : Flow<List<Article>>
    suspend fun changeFavoriteState(articleId:Int,isFavorite :Boolean)
    fun getProviders() : Flow<List<Provider>>

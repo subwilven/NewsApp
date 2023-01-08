@@ -23,7 +23,7 @@ class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao,private va
         articlesDao.deleteAllArticles()
     }
 
-    override suspend fun getArticleById(articleId :Int) = articlesDao.getArticleById(articleId)
+    override fun getArticleById(articleId :Int) = articlesDao.getArticleById(articleId)
 
     override fun getFavoritesArticles() =articlesDao.getFavoritesArticles()
 

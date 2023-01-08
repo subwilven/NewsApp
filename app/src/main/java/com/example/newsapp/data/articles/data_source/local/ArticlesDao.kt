@@ -24,7 +24,7 @@ interface ArticlesDao {
     suspend fun deleteAllArticles()
 
     @Query("SELECT * FROM article WHERE id IS :articleId")
-    suspend fun getArticleById(articleId :Int) : Article
+    fun getArticleById(articleId :Int) : Flow<Article>
 
     @Query("SELECT * FROM article WHERE isFavorite = 1")
     fun getFavoritesArticles() : Flow<List<Article>>
