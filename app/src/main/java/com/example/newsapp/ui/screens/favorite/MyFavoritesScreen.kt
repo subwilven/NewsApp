@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
@@ -58,15 +59,17 @@ private fun FavoriteArticleItem(article : ArticleUi,onArticleClicked : (ArticleU
             Text(
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier
-                    .padding(vertical = 4.dp),
+                    .padding(vertical = 4.dp).padding(end = 8.dp),
                 text = article.title,
-                maxLines = 2
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(vertical = 4.dp),
+                modifier = Modifier.padding(vertical = 4.dp).padding(end = 8.dp),
                 text = article.description ?: "",
-                maxLines = 3
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
             )
 
         }
