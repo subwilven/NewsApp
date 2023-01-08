@@ -5,15 +5,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
 import com.example.newsapp.navigation.AppNavigatorImpl
 import com.example.newsapp.navigation.NavigationEffects
 import com.example.newsapp.ui.components.MySnackHost
 import com.example.newsapp.ui.components.MyTopAppBar
-import com.example.newsapp.ui.components.BottomNavigation
+import com.example.newsapp.ui.components.MyBottomNavigation
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
@@ -35,6 +35,8 @@ fun MainScreenView() {
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
     val coroutineScope = rememberCoroutineScope()
+    val showToolbarAndBottomBar: MutableState<Boolean> = rememberSaveable { mutableStateOf(true) }
+
     systemUiController.setSystemBarsColor(
         color = Color.Transparent,
         darkIcons = isSystemInDarkTheme().not()
@@ -47,21 +49,20 @@ fun MainScreenView() {
         navigationChannel = appNavigator.navigationChannel,
         navHostController = navController
     )
+
     NewsAppTheme {
         ModalBottomSheetLayout(
             sheetState = bottomSheetState,
             sheetContent = currentBottomSheetContent ){
             Scaffold(scaffoldState = scaffoldState,
-                topBar = { MyTopAppBar() },
+                topBar = { MyTopAppBar(showToolbarAndBottomBar.value) },
                 snackbarHost = { state -> MySnackHost(state) },
-                bottomBar = { BottomNavigation(navController = navController,appNavigator) }
+                bottomBar = { MyBottomNavigation(navController = navController,appNavigator,showToolbarAndBottomBar.value) }
             ) {
-//            CompositionLocalProvider(LocalScaffoldState provides scaffoldState) {
-                NavigationGraph(navController = navController,appNavigator,bottomSheetState){
+                NavigationGraph(navController = navController,appNavigator,bottomSheetState,showToolbarAndBottomBar){
                     currentBottomSheetContent = it
                     coroutineScope.launch { bottomSheetState.show() }
                 }
-//            }
             }
         }
     }
