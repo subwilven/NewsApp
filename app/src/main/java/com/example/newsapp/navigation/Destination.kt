@@ -1,5 +1,6 @@
 package com.example.newsapp.navigation
 
+import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.util.ARG_ARTICLE_ID
 
 sealed class Destination(protected val route: String, vararg params: String) {
@@ -19,8 +20,8 @@ sealed class Destination(protected val route: String, vararg params: String) {
 
     object ArticleDetailsScreen : Destination("article_details", ARG_ARTICLE_ID) {
 
-        operator fun invoke(articleId: String): String = route.appendParams(
-            ARG_ARTICLE_ID to articleId,
+        operator fun invoke(articleId: Int): String = route.appendParams(
+            ARG_ARTICLE_ID to articleId.toString(),
         )
     }
 }
@@ -35,4 +36,8 @@ internal fun String.appendParams(vararg params: Pair<String, Any?>): String {
     }
 
     return builder.toString()
+}
+
+fun navigateToArticleDetails(appNavigator: AppNavigator,article: ArticleUi){
+    appNavigator.tryNavigateTo(Destination.ArticleDetailsScreen(article.id))
 }

@@ -1,29 +1,89 @@
 package com.example.newsapp.ui.screens.favorite
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.example.newsapp.R
+import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.navigation.AppNavigator
+import com.example.newsapp.navigation.Destination
+import com.example.newsapp.navigation.navigateToArticleDetails
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun MyFavoritesScreen(
     appNavigator: AppNavigator,
     myFavoritesViewModel: MyFavoritesViewModel = hiltViewModel(),
 ) {
-//    val favoritesList = myFavoritesViewModel
-//        .favoritesArticles
-//        .collectAsState(initial = listOf())
-//
-//    LazyColumn {
-//        items(favoritesList.value.count()) { index ->
-//            favoritesList.value[index].let {
-////                ArticleItem(it, {
-////                    navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
-////                },{ myFavoritesViewModel.changeArticleFavoriteState(it) })
-////                Divider(color = Color.LightGray, thickness = 1.dp)
-//            }
-//        }
-//    }
+    val uiState = myFavoritesViewModel
+        .uiState
+        .collectAsStateWithLifecycle()
+
+    LazyColumn {
+        items(uiState.value.favoriteArticles.count()) { index ->
+            uiState.value.favoriteArticles[index].let {
+                FavoriteArticleItem(it){ article ->
+                    navigateToArticleDetails(appNavigator,article)
+                }
+
+            }
+        }
+    }
+}
 
 
+@Composable
+private fun FavoriteArticleItem(article : ArticleUi,onArticleClicked : (ArticleUi) -> Unit ){
 
+    Row(Modifier.padding(vertical = 8.dp, horizontal = 16.dp).clickable {
+        onArticleClicked.invoke(article)
+    }){
+        Column(modifier = Modifier.weight(0.7f)){
+            Text(
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier
+                    .padding(vertical = 4.dp),
+                text = article.title,
+                maxLines = 2
+            )
+            Text(
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(vertical = 4.dp),
+                text = article.description ?: "",
+                maxLines = 3
+            )
+
+        }
+
+        AsyncImage(
+            model = article.imageUrl,
+            error = painterResource(R.drawable.no_image_placeholder),
+            placeholder = painterResource(R.drawable.placeholder),
+            contentDescription = article.description,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .height(75.dp)
+                .width(75.dp)
+                .align(Alignment.CenterVertically)
+        )
+
+    }
+    Divider()
 }

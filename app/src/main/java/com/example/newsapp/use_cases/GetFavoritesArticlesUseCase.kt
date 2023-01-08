@@ -14,6 +14,10 @@ class GetFavoritesArticlesUseCase @Inject constructor(
 ) :FlowUseCase<List<ArticleUi>,Any?>(dispatcher){
 
     override fun doWork(params: Any?): Flow<List<ArticleUi>> {
-        return repository.getFavoritesArticles().map { it.map { article -> ArticleUi(article) } }
+        return repository.getFavoritesArticles().map {
+            it.map {
+                    article -> ArticleUi(article)
+            }
+        }
     }
 }

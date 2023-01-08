@@ -31,6 +31,7 @@ import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.model.providers.ProviderUi
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.Destination
+import com.example.newsapp.navigation.navigateToArticleDetails
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.screens.providers.ProvidersListContent
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
@@ -62,9 +63,8 @@ fun ArticlesScreen(
         //todo should we create remember for this callbacks ?
         ArticlesContent(articlesList, uiState.filterData.searchInput ?: "",
             articlesViewModel.actionsChannel,
-            onArticleClicked = {
-                appNavigator.tryNavigateTo(Destination.ArticleDetailsScreen(it.id.toString()))
-                //navController.navigate(NewsAppScreens.ArticleDetailsScreen.route + "/${it.id}")
+            onArticleClicked = { article->
+                navigateToArticleDetails(appNavigator,article)
             }, onFilterIconClicked = {
                 coroutineScope.launch {
                     showBottomSheet.invoke {
@@ -127,66 +127,11 @@ fun ArticlesContent(
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
     val lazyListState = rememberLazyListState()
-    val shape = RoundedCornerShape(25.dp)
+
     Column {
         Surface {
             Row {
-                BasicTextField(
-                    value = query,
-                    onValueChange = {
-                        actionFlow.trySend(ArticlesActions.SearchArticlesAction(it))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.8f)
-                        .wrapContentHeight()
-                        .clip(shape)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    singleLine = true,
-                    decorationBox = { innerTextField ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Max)
-                                .background(Color.LightGray, shape)
-                                .padding(8.dp),
-                        ) {
-                            Image(
-                                painterResource(R.drawable.ic_search_24),
-                                "content description",
-                                modifier = Modifier.padding(horizontal = 4.dp)
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxHeight(),
-                                contentAlignment = CenterStart
-                            ) {
-                                innerTextField()
-                                if (query.isEmpty())
-                                    Text(
-                                        text = "search",
-                                        color = Color.Gray,
-                                        style = MaterialTheme.typography.caption,
-                                    )
-                            }
-
-                            if (query.isNotEmpty()) {
-                                Image(painterResource(R.drawable.ic_cancel_24),
-                                    "content description",
-                                    modifier = Modifier
-                                        .padding(horizontal = 4.dp)
-                                        .clickable {
-                                            actionFlow.trySend(
-                                                ArticlesActions.SearchArticlesAction(
-                                                    null
-                                                )
-                                            )
-                                        })
-                            }
-                        }
-                    }
-                )
+                SearchInputField(Modifier.weight(0.8f),query,actionFlow)
                 Image(painterResource(R.drawable.ic_filter_24),
                     "content description",
                     modifier = Modifier
@@ -211,6 +156,66 @@ fun ArticlesContent(
             }
 
     }
+}
+@Composable
+fun SearchInputField(modifier: Modifier,query: String,actionFlow: Channel<ArticlesActions>,){
+    val shape = RoundedCornerShape(25.dp)
+    BasicTextField(
+        value = query,
+        onValueChange = {
+            actionFlow.trySend(ArticlesActions.SearchArticlesAction(it))
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clip(shape)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        singleLine = true,
+        decorationBox = { innerTextField ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max)
+                    .background(Color.LightGray, shape)
+                    .padding(8.dp),
+            ) {
+                Image(
+                    painterResource(R.drawable.ic_search_24),
+                    "content description",
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    contentAlignment = CenterStart
+                ) {
+                    innerTextField()
+                    if (query.isEmpty())
+                        Text(
+                            text = "search",
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.caption,
+                        )
+                }
+
+                if (query.isNotEmpty()) {
+                    Image(painterResource(R.drawable.ic_cancel_24),
+                        "content description",
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .clickable {
+                                actionFlow.trySend(
+                                    ArticlesActions.SearchArticlesAction(
+                                        null
+                                    )
+                                )
+                            })
+                }
+            }
+        }
+    )
+
 }
 
 @Composable
