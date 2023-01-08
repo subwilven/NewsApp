@@ -133,11 +133,14 @@ fun ArticlesContent(
     Column {
         Surface {
             Row {
-                SearchInputField(Modifier.weight(0.8f),query,actionFlow)
-                Image(painterResource(R.drawable.ic_filter_24),
+                SearchInputField(Modifier.weight(0.85f),query,actionFlow)
+                Icon(painterResource(R.drawable.ic_filter_24),
                     "content description",
                     modifier = Modifier
-                        .padding(horizontal = 4.dp)
+                        .padding(horizontal = 4.dp).padding(end = 8.dp)
+                        .weight(0.1f)
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically)
                         .clickable {
                             onFilterIconClicked.invoke()
                         })
@@ -171,7 +174,7 @@ fun SearchInputField(modifier: Modifier,query: String,actionFlow: Channel<Articl
             .fillMaxWidth()
             .wrapContentHeight()
             .clip(shape)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding( vertical = 8.dp).padding(start = 16.dp),
         singleLine = true,
         decorationBox = { innerTextField ->
             Row(
