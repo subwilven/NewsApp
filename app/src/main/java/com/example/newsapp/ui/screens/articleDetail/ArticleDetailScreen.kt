@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.navigation.AppNavigator
+import com.example.newsapp.navigation.launchWebView
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.util.getFavoriteIcon
 
@@ -142,12 +143,7 @@ private fun Body(article: ArticleUi, scroll: ScrollState) {
 
         val context = LocalContext.current
         OutlinedButton(onClick = {
-
-            val webIntent: Intent = Uri.parse(article.articleUrl).let { webpage ->
-                Intent(Intent.ACTION_VIEW, webpage)
-            }
-            startActivity(context, webIntent, null)
-
+            launchWebView(context,article.articleUrl)
         }) {
             Text(text = stringResource(R.string.visit_orignal_article))
         }

@@ -1,5 +1,9 @@
 package com.example.newsapp.navigation
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.ContextCompat
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.util.ARG_ARTICLE_ID
 
@@ -40,4 +44,11 @@ internal fun String.appendParams(vararg params: Pair<String, Any?>): String {
 
 fun navigateToArticleDetails(appNavigator: AppNavigator,article: ArticleUi){
     appNavigator.tryNavigateTo(Destination.ArticleDetailsScreen(article.id))
+}
+
+fun launchWebView(context: Context,url :String?){
+    val webIntent: Intent = Uri.parse(url).let { webpage ->
+        Intent(Intent.ACTION_VIEW, webpage)
+    }
+    ContextCompat.startActivity(context, webIntent, null)
 }
