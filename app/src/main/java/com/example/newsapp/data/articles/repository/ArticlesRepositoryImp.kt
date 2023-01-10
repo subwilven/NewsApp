@@ -4,6 +4,7 @@ import androidx.paging.*
 import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteMediator
+import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.util.PAGE_SIZE
@@ -18,12 +19,12 @@ class ArticlesRepositoryImp @Inject constructor(
 ) : ArticlesRepository {
 
 
-    override fun getArticlesStream(searchInput: String?): Flow<PagingData<Article>> {
+    override fun getArticlesStream(filterData: FilterData): Flow<PagingData<Article>> {
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
-            remoteMediator = ArticlesRemoteMediator(searchInput, remoteDataSource, localDataSource),
+            remoteMediator = ArticlesRemoteMediator(filterData, remoteDataSource, localDataSource),
         ) {
-            localDataSource.fetchArticles(searchInput)
+            localDataSource.fetchArticles(filterData.searchInput)
         }.flow
     }
 

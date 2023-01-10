@@ -1,10 +1,12 @@
 package com.example.newsapp.ui.screens.articles
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,7 +54,7 @@ import kotlinx.coroutines.launch
 fun ArticlesScreen(
     appNavigator: AppNavigator,
     showBottomSheet: (@Composable (ColumnScope.() -> Unit)) -> Unit,
-    modelBottomSheetState : ModalBottomSheetState,
+    modelBottomSheetState: ModalBottomSheetState,
     articlesViewModel: ArticlesViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
@@ -62,17 +65,23 @@ fun ArticlesScreen(
 
 
     articlesList?.let {
+        val shouldShowRedBadage = uiState.filterData.selectedProviders.isNotEmpty()
         //todo should we create remember for this callbacks ?
         ArticlesContent(articlesList, uiState.filterData.searchInput ?: "",
+            shouldShowRedBadage,
             articlesViewModel.actionsChannel,
-            onArticleClicked = { article->
-                navigateToArticleDetails(appNavigator,article)
+            onArticleClicked = { article ->
+                navigateToArticleDetails(appNavigator, article)
             }, onFilterIconClicked = {
                 coroutineScope.launch {
                     showBottomSheet.invoke {
                         ProvidersScreen(modelBottomSheetState)
                         { selectedProviders ->
-                            articlesViewModel.actionsChannel.trySend(ArticlesActions.FilterByProvidersAction(selectedProviders))
+                            articlesViewModel.actionsChannel.trySend(
+                                ArticlesActions.FilterByProvidersAction(
+                                    selectedProviders
+                                )
+                            )
                         }
                     }
                 }
@@ -122,6 +131,7 @@ fun showSnackBar(
 fun ArticlesContent(
     articles: LazyPagingItems<ArticleUi>,
     query: String,
+    showFilterRedBadge : Boolean,
     actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
     onFilterIconClicked: () -> Unit
@@ -133,17 +143,25 @@ fun ArticlesContent(
     Column {
         Surface {
             Row {
-                SearchInputField(Modifier.weight(0.85f),query,actionFlow)
-                Icon(painterResource(R.drawable.ic_filter_24),
-                    "content description",
+                SearchInputField(Modifier.weight(0.85f), query, actionFlow)
+                Box(
                     modifier = Modifier
-                        .padding(horizontal = 4.dp).padding(end = 8.dp)
+                        .padding(horizontal = 4.dp)
+                        .padding(end = 8.dp)
                         .weight(0.1f)
-                        .size(24.dp)
                         .align(Alignment.CenterVertically)
-                        .clickable {
-                            onFilterIconClicked.invoke()
-                        })
+                ) {
+                    Icon(painterResource(R.drawable.ic_filter_24),
+                        null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.Center)
+                            .clickable {
+                                onFilterIconClicked.invoke()
+                            })
+                   if(showFilterRedBadge)
+                     BadgeRedCircle(Modifier.align(Alignment.TopEnd))
+                }
             }
         }
         if (shouldFullLoadingProgressBar) {
@@ -154,16 +172,28 @@ fun ArticlesContent(
                 onRefresh = { articles.refresh() },
             ) {
                 if (shouldShowEmptyList) {
-
+                    //todo
                 } else {
-                    ArticlesList(articles,lazyListState, actionFlow, onArticleClicked)
+                    ArticlesList(articles, lazyListState, actionFlow, onArticleClicked)
                 }
             }
 
     }
 }
+
 @Composable
-fun SearchInputField(modifier: Modifier,query: String,actionFlow: Channel<ArticlesActions>,){
+fun BadgeRedCircle(modifier: Modifier) {
+    Canvas(modifier = modifier.size(10.dp), onDraw = {
+        val size = 11.dp.toPx()
+        drawCircle(
+            color = Color.Red,
+            radius = size / 2f
+        )
+    })
+}
+
+@Composable
+fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<ArticlesActions>) {
     val shape = RoundedCornerShape(25.dp)
     BasicTextField(
         value = query,

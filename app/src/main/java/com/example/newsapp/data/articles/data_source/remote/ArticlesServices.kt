@@ -11,9 +11,9 @@ interface ArticlesServices {
    suspend fun getArticles(
         @Query(value = "pageSize") pageSize: Int,
         @Query(value = "page") pageNumber: Int,
-        @Query(value = "country") country: String,
+        @Query(value = "country") country: String?,
         @Query(value = "q") query: String?,
-    //    @Query(value = "sources", encoded = true) sources: String?,
+        @Query(value = "sources", encoded = true) sources: String?,
         @Query("apiKey") key: String?
     ) : ArticlesResponse
 

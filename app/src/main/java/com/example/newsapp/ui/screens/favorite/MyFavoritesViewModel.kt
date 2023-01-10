@@ -14,7 +14,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MyFavoritesViewModel @Inject constructor(
     private val getFavoritesArticlesUseCase: GetFavoritesArticlesUseCase,
-    private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
 
@@ -33,15 +32,8 @@ class MyFavoritesViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun updateUiState(favoriteUiState: FavoriteUiState){
+    private fun updateUiState(favoriteUiState: FavoriteUiState){
         _uiState.tryEmit(favoriteUiState)
-    }
-
-    fun changeArticleFavoriteState(articleUi: ArticleUi){
-        viewModelScope.launch {
-            toggleFavoriteStateUseCase(articleUi)
-        }
-
     }
 
 }

@@ -5,8 +5,10 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
+import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.util.PAGE_SIZE
+import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.roundToInt
@@ -14,7 +16,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPagingApi::class)
 class ArticlesRemoteMediator(
-    private val searchInput: String?,
+    private val filterData: FilterData,
     private val remoteDatabase: ArticlesRemoteDataSource,
     private val localDatabase: ArticlesLocalDataSource,
 ) : RemoteMediator<Int, Article>() {
@@ -44,7 +46,7 @@ class ArticlesRemoteMediator(
             }
 
 
-            val response = remoteDatabase.fetchArticles(searchInput,loadKey)
+            val response = remoteDatabase.fetchArticles(filterData,loadKey)
             if (loadType == LoadType.REFRESH) {
                 localDatabase.insertAllArticlesAndDeleteOld(response.articles)
             }else{

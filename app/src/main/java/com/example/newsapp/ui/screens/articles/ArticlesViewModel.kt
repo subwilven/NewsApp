@@ -1,9 +1,10 @@
 package com.example.newsapp.ui.screens.articles
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.model.providers.ProviderUi
 import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
@@ -31,7 +32,6 @@ class ArticlesViewModel @Inject constructor(
     //todo gradle catalog
     //todo add dark theme
     //todo check hilt extention
-    //todo  LaunchedEffect to apply the sort
 
     //todo handle showing snackbar on error look at Jetnews
 
@@ -40,20 +40,46 @@ class ArticlesViewModel @Inject constructor(
 
     val actionsChannel = Channel<ArticlesActions>()
 
-    private val searchFlow = MutableSharedFlow<String?>()
+    private val searchFlow = MutableStateFlow<String?>(null)
+
+    private val selectedProvidersFlow = MutableStateFlow<List<ProviderUi>>(emptyList())
 
     init {
-        val searches = searchFlow
-            .debounce(500)
-            .distinctUntilChanged()
-            .onStart { emit(null) }
 
-        val articlesDataFlow = searches.flatMapLatest { searchInput ->
-            fetchArticlesUseCase.produce(searchInput)
+        val filterDataFlow = combineFilterFlows()
+        val articlesPagingDataFlow = createPagingListFlow(filterDataFlow)
+        updateUiStateOnFilterChanges(filterDataFlow, articlesPagingDataFlow)
+
+        actionsChannel.receiveAsFlow().onEach { processActions(it) }.launchIn(viewModelScope)
+    }
+
+    private fun combineFilterFlows() =
+        combine(searchFlow, selectedProvidersFlow) { inputSearch, selectedProviders ->
+            FilterData(
+                searchInput = inputSearch,
+                selectedProviders = selectedProviders
+            )
+        }
+
+    private fun createPagingListFlow(filterDataFlow: Flow<FilterData>) = filterDataFlow
+        .debounce(400)
+        .distinctUntilChanged()
+        .flatMapLatest { filterData ->
+            fetchArticlesUseCase.produce(filterData)
         }.cachedIn(viewModelScope)
 
-        updateUiState(_uiState.value.copy(articlesDataFlow = articlesDataFlow))
-        actionsChannel.receiveAsFlow().onEach { processActions(it) }.launchIn(viewModelScope)
+
+    private fun updateUiStateOnFilterChanges(
+        filterDataFlow: Flow<FilterData>,
+        articlesDataFlow: Flow<PagingData<ArticleUi>>
+    ) {
+        filterDataFlow.onEach { filterData ->
+            _uiState.value = ArticleUiState(
+                articlesDataFlow = articlesDataFlow,
+                filterData = filterData
+            )
+        }.launchIn(viewModelScope)
+
     }
 
     private fun processActions(articlesActions: ArticlesActions) {
@@ -68,20 +94,11 @@ class ArticlesViewModel @Inject constructor(
     }
 
     private fun onSearchArticles(searchInput: String?) {
-        viewModelScope.launch {
-            updateUiState(
-                _uiState.value.copy(
-                    filterData = _uiState.value.filterData.copy(
-                        searchInput = searchInput
-                    )
-                )
-            )
-            searchFlow.emit(searchInput)
-        }
+        searchFlow.tryEmit(searchInput)
     }
 
-    private fun  onProvidersSelected(selectedProviders : List<ProviderUi>){
-        Log.e("selectedProviders","selectedProviders ${selectedProviders.size}")
+    private fun onProvidersSelected(selectedProviders: List<ProviderUi>) {
+        selectedProvidersFlow.tryEmit(selectedProviders)
     }
 
     private fun changeArticleFavoriteState(articleUi: ArticleUi) {
@@ -90,7 +107,4 @@ class ArticlesViewModel @Inject constructor(
         }
     }
 
-    private fun updateUiState(articleUiState: ArticleUiState) {
-        _uiState.tryEmit(articleUiState)
-    }
 }
