@@ -8,4 +8,5 @@ sealed class ProvidersActions {
         ProvidersActions()
 
     object ResetChanges : ProvidersActions()
+    object ClearFilter : ProvidersActions()
 }

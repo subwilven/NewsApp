@@ -1,22 +1,29 @@
 package com.example.newsapp.ui.screens.providers
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.newsapp.R
 import com.example.newsapp.model.providers.ProviderUi
+import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.ui.components.LoadingFullScreen
+import com.example.newsapp.util.getFavoriteIcon
 import com.google.accompanist.flowlayout.FlowRow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -28,6 +35,7 @@ fun ProvidersScreen(
 
     val uiState: ProviderUiState by providersViewModel.uiState.collectAsStateWithLifecycle()
 
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(modelBottomSheetState.isVisible) {
         if (!modelBottomSheetState.isVisible) {
@@ -36,7 +44,7 @@ fun ProvidersScreen(
     }
 
     LaunchedEffect(uiState.shouldNavigateBack) {
-        if(uiState.shouldNavigateBack){
+        if (uiState.shouldNavigateBack) {
             onProvidersSelected(uiState.selectedProvidersList)
             modelBottomSheetState.hide()
         }
@@ -53,8 +61,16 @@ fun ProvidersScreen(
                 )
             )
         },
+        onClearButtonClicked = {
+            providersViewModel.processActions(ProvidersActions.ClearFilter)
+        },
         onFilterButtonClicked = {
-           providersViewModel.processActions(ProvidersActions.SubmitFilter)
+            providersViewModel.processActions(ProvidersActions.SubmitFilter)
+        },
+        onCloseClicked = {
+            coroutineScope.launch {
+                modelBottomSheetState.hide()
+            }
         }
     )
 }
@@ -64,20 +80,65 @@ fun ProvidersListContent(
     isLoading: Boolean,
     providersList: List<ProviderUi>,
     onProvidersSelected: (ProviderUi, Int) -> Unit,
-    onFilterButtonClicked: () -> Unit
+    onFilterButtonClicked: () -> Unit,
+    onClearButtonClicked: () -> Unit,
+    onCloseClicked: () -> Unit
 ) {
     if (isLoading) {
         val halfOfScreenHeight = LocalConfiguration.current.screenHeightDp.div(2).dp
         LoadingFullScreen(modifier = Modifier.height(halfOfScreenHeight))
     } else {
-        Box {
-            ProvidersChips(providersList, onProvidersSelected)
-            ApplyFilterButton(
-                Modifier.align(Alignment.BottomCenter),
-                onFilterButtonClicked
-            )
+        Column {
+            Toolbar(onCloseClicked,onClearButtonClicked)
+            Box {
+                ProvidersChips(providersList, onProvidersSelected)
+                ApplyFilterButton(
+                    stringResource(id = R.string.apply),
+                    Modifier.align(Alignment.BottomCenter)
+                ) {
+                    onFilterButtonClicked.invoke()
+                }
+            }
         }
+
     }
+}
+
+@Composable
+private fun Toolbar(
+    onCloseClicked: () -> Unit,
+    onClearClicked: () -> Unit
+) {
+    TopAppBar(
+        navigationIcon = {
+            TextButton(
+                onClick = {  onClearClicked.invoke()  },
+                modifier = Modifier
+                    .padding(start = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.clear)
+                )
+            }
+        },
+        title = {},
+        actions = {
+            IconButton(
+                onClick = {
+                    onCloseClicked.invoke()
+                }, modifier = Modifier
+                    .padding(end = 12.dp)
+                    .size(32.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_close_24),
+                    contentDescription = null
+                )
+            }
+        },
+        backgroundColor = MaterialTheme.colors.background
+    )
+
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -116,14 +177,14 @@ fun ProvidersChips(
 }
 
 @Composable
-fun ApplyFilterButton(modifier: Modifier = Modifier, onButtonClicked: () -> Unit) {
+fun ApplyFilterButton(text: String, modifier: Modifier = Modifier, onButtonClicked: () -> Unit) {
     Button(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         onClick = onButtonClicked
     ) {
-        Text(text = "Apply filter")
+        Text(text = text)
     }
 }
 

@@ -11,4 +11,6 @@
     <string name="favorite_icon">favorite_icon</string>
     <string name="home">Home</string>
     <string name="favorites">Favorites</string>
+    <string name="apply">Apply</string>
+    <string name="clear">Clear</string>
 </resources>

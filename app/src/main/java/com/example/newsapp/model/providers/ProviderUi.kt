@@ -14,6 +14,10 @@ data class ProviderUi(val id: String, val name: String, var isSelected: Boolean)
         false
     )
 
+    fun toggleSelection(){
+        isSelected = isSelected.not()
+    }
+
     fun toggleUpdatesSaved(){
         updatesSaved = updatesSaved.not()
     }

@@ -1,10 +1,8 @@
 package com.example.newsapp.ui.screens.providers
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.providers.ProviderUi
-import com.example.newsapp.ui.screens.articles.ArticlesActions
 import com.example.newsapp.use_cases.FetchProvidersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -40,7 +38,8 @@ class ProvidersViewModel @Inject constructor(
 
     fun processActions(providersActions: ProvidersActions) {
         when (providersActions) {
-            is ProvidersActions.ResetChanges -> resetChanges()
+            is ProvidersActions.ResetChanges -> resetUserChanges()
+            is ProvidersActions.ClearFilter -> clearFilter()
             is ProvidersActions.SubmitFilter -> applyFilter()
             is ProvidersActions.ToggleProviderSelection
             -> toggleProviderSelectionState(providersActions.providerUi, providersActions.index)
@@ -59,13 +58,17 @@ class ProvidersViewModel @Inject constructor(
 
     private fun applyFilter() {
         viewModelScope.launch(workerDispatcher) {
-            _uiState.value.providersList.onEach {
-                it.markAsSaved()
-            }
+            saveProvidersSelectionsStates()
             updateUiState(_uiState.value.copy(
                 selectedProvidersList = getSelectedProviders(),
                  shouldNavigateBack = true))
 
+        }
+    }
+
+    private fun saveProvidersSelectionsStates(){
+        _uiState.value.providersList.onEach {
+            it.markAsSaved()
         }
     }
 
@@ -81,18 +84,30 @@ class ProvidersViewModel @Inject constructor(
 
     //todo fix that when relaunch the bottom sheet after
     // resetting changes the bottom sheet will open on the old state then it willl be updated
-    private fun resetChanges() {
+    private fun resetUserChanges() {
         viewModelScope.launch(workerDispatcher) {
             getCurrentProvidersList().onEach {
                 if (!it.updatesSaved) {
-                    it.isSelected = it.isSelected.not()
+                    it.toggleSelection()
                     it.toggleUpdatesSaved()
                 }
             }
             updateUiState(_uiState.value.copy(
+                providersList = getCurrentProvidersList().toList(),
                 selectedProvidersList = getSelectedProviders(),
                 shouldNavigateBack = false))
         }
+    }
+
+    private fun clearFilter(){
+        getCurrentProvidersList().onEach {
+            it.isSelected = false
+            it.markAsSaved()
+        }
+        updateUiState(_uiState.value.copy(
+            providersList = getCurrentProvidersList().toList(),
+            selectedProvidersList = emptyList(),
+            shouldNavigateBack = true))
     }
 
 }
