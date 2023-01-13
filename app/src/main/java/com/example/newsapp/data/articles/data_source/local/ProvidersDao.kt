@@ -15,7 +15,7 @@ interface ProvidersDao  {
     suspend fun insertAll(sources: List<Provider>)
 
     @Query("SELECT * FROM provider")
-    fun getAllProvider() : Flow<List<Provider>>
+    suspend fun getAllProvider() : List<Provider>
 
 
     @Query("SELECT COUNT(*) FROM provider")

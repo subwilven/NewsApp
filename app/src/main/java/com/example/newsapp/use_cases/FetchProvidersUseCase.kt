@@ -3,6 +3,7 @@ package com.example.newsapp.use_cases
 import com.example.newsapp.data.articles.repository.ArticlesRepository
 import com.example.newsapp.model.providers.ProviderUi
 import com.example.newsapp.use_cases.base.FlowUseCase
+import com.example.newsapp.use_cases.base.ResultUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -14,15 +15,12 @@ import javax.inject.Inject
 class FetchProvidersUseCase @Inject constructor(
     private val repository: ArticlesRepository,
     dispatcher: CoroutineDispatcher
-) : FlowUseCase<List<ProviderUi>,Nothing?>(dispatcher) {
+) : ResultUseCase<List<ProviderUi>, Nothing?>(dispatcher) {
 
-    override fun doWork(params: Nothing?): Flow<List<ProviderUi>> {
-        return repository.getProviders().onStart {
-            delay(3000) //just dummy loading to show loading
-        }.map {
-            it.map { provider ->
-                ProviderUi(provider)
-            }
-        }
+    override suspend fun run(params: Nothing?): List<ProviderUi> {
+        delay(2000)
+        return repository.getProviders().map { provider ->
+               ProviderUi(provider)
+       }
     }
 }

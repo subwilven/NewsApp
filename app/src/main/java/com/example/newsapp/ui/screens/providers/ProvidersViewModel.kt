@@ -15,25 +15,41 @@ class ProvidersViewModel @Inject constructor(
     private val workerDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProviderUiState())
+    private val _uiState = MutableStateFlow(ProviderUiState(isLoading = true))
+
     //todo do we need to use it hot flow ?
     val uiState = _uiState.asStateFlow()
 
-    init {
-        getProvidersList()
-    }
+    private val providersListFlow = MutableSharedFlow<List<ProviderUi>>()
+    private val onProviderSelectedFlow = MutableSharedFlow<Pair<ProviderUi, Int>>()
+    private val onFilterSubmitted = MutableStateFlow(false)
 
-    private fun getProvidersList() {
-        fetchProvidersUseCase(null)
-        fetchProvidersUseCase.observe().onEach { providersList ->
-            updateUiState(
-                _uiState.value.copy(
-                    providersList = providersList,
-                    isLoading = false
-                )
-            )
+    init {
+
+        onProviderSelectedFlow.onEach { (provider, index) ->
+            toggleProviderSelectionState(provider, index)
         }.launchIn(viewModelScope)
 
+        combine(
+            providersListFlow.debounce(100),
+            onFilterSubmitted
+        ) { providersList, isFilterSubmitted ->
+            _uiState.value = ProviderUiState(
+                providersList = providersList,
+                onFiltrationProcessDone = isFilterSubmitted
+            )
+
+        }.launchIn(viewModelScope)
+
+        fetchProvidersList()
+    }
+
+
+    private fun fetchProvidersList() {
+        viewModelScope.launch {
+            val fetchedProvidersList = fetchProvidersUseCase(null)
+            providersListFlow.emit(fetchedProvidersList)
+        }
     }
 
     fun processActions(providersActions: ProvidersActions) {
@@ -42,44 +58,56 @@ class ProvidersViewModel @Inject constructor(
             is ProvidersActions.ClearFilter -> clearFilter()
             is ProvidersActions.SubmitFilter -> applyFilter()
             is ProvidersActions.ToggleProviderSelection
-            -> toggleProviderSelectionState(providersActions.providerUi, providersActions.index)
+            -> {
+                emitToggleSelectionFlow(providersActions)
+            }
         }
     }
 
     private fun getCurrentProvidersList() = _uiState.value.providersList
 
-    private fun toggleProviderSelectionState(providerUi: ProviderUi, index: Int) {
-        val newProviderList = getCurrentProvidersList().toMutableList()
-        newProviderList[index] = providerUi.copy(isSelected = providerUi.isSelected.not()).apply {
-            toggleUpdatesSaved()
+    private fun emitToggleSelectionFlow(action: ProvidersActions.ToggleProviderSelection) {
+        viewModelScope.launch {
+            onProviderSelectedFlow.emit(
+                Pair(
+                    action.providerUi,
+                    action.index
+                )
+            )
         }
-        updateProvidersList(newProviderList)
+    }
+
+    private fun toggleProviderSelectionState(providerUi: ProviderUi, index: Int) {
+        viewModelScope.launch(workerDispatcher) {
+            val newProvider = providerUi.copy().apply {
+                toggleSelection()
+                toggleUpdatesSaved()
+            }
+            getCurrentProvidersList().toMutableList().also { newList ->
+                newList[index] = newProvider
+                providersListFlow.emit(newList)
+            }
+        }
     }
 
     private fun applyFilter() {
         viewModelScope.launch(workerDispatcher) {
             saveProvidersSelectionsStates()
-            updateUiState(_uiState.value.copy(
-                selectedProvidersList = getSelectedProviders(),
-                 shouldNavigateBack = true))
-
+            onFilterSubmitted.emit(true)
         }
     }
 
-    private fun saveProvidersSelectionsStates(){
-        _uiState.value.providersList.onEach {
+    private fun saveProvidersSelectionsStates() {
+        getCurrentProvidersList().onEach {
             it.markAsSaved()
         }
     }
 
-    private fun getSelectedProviders() = getCurrentProvidersList().filter { it.isSelected }
-
-    private fun updateProvidersList(newProvidersList: List<ProviderUi>) {
-        updateUiState(_uiState.value.copy(providersList = newProvidersList))
-    }
-
-    private fun updateUiState(providerUiState: ProviderUiState) {
-        _uiState.tryEmit(providerUiState)
+    fun getSelectedProviders(): List<ProviderUi> {
+        //to prevent bottom shet from hiding when the user open the dialog again
+        //todo feels there is a room for improvment
+        onFilterSubmitted.update { false }
+        return getCurrentProvidersList().filter { it.isSelected }
     }
 
     //todo fix that when relaunch the bottom sheet after
@@ -92,22 +120,24 @@ class ProvidersViewModel @Inject constructor(
                     it.toggleUpdatesSaved()
                 }
             }
-            updateUiState(_uiState.value.copy(
-                providersList = getCurrentProvidersList().toList(),
-                selectedProvidersList = getSelectedProviders(),
-                shouldNavigateBack = false))
+            reEmitProvidersList()
         }
     }
 
-    private fun clearFilter(){
-        getCurrentProvidersList().onEach {
-            it.isSelected = false
-            it.markAsSaved()
+    private suspend fun reEmitProvidersList() {
+        providersListFlow.emit(getCurrentProvidersList().toList())
+    }
+
+    private fun clearFilter() {
+        viewModelScope.launch(workerDispatcher) {
+            getCurrentProvidersList().onEach {
+                it.isSelected = false
+                it.markAsSaved()
+            }
+            reEmitProvidersList()
+            onFilterSubmitted.emit(true)
         }
-        updateUiState(_uiState.value.copy(
-            providersList = getCurrentProvidersList().toList(),
-            selectedProvidersList = emptyList(),
-            shouldNavigateBack = true))
+
     }
 
 }

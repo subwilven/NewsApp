@@ -2,10 +2,7 @@ package com.example.newsapp.ui.screens.providers
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,9 +16,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newsapp.R
 import com.example.newsapp.model.providers.ProviderUi
-import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.ui.components.LoadingFullScreen
-import com.example.newsapp.util.getFavoriteIcon
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
 
@@ -43,10 +38,10 @@ fun ProvidersScreen(
         }
     }
 
-    LaunchedEffect(uiState.shouldNavigateBack) {
-        if (uiState.shouldNavigateBack) {
-            onProvidersSelected(uiState.selectedProvidersList)
+    LaunchedEffect(uiState.onFiltrationProcessDone) {
+        if (uiState.onFiltrationProcessDone) {
             modelBottomSheetState.hide()
+            onProvidersSelected(providersViewModel.getSelectedProviders())
         }
     }
 

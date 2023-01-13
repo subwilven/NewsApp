@@ -35,12 +35,12 @@ class ArticlesRepositoryImp @Inject constructor(
     override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean) =
         localDataSource.changeFavoriteState(articleId, isFavorite)
 
-    override  fun getProviders(): Flow<List<Provider>> {
-        return localDataSource.getProviders().onStart {
-            if (localDataSource.getProviderCounts() == 0) {
-                val fetchedSources = remoteDataSource.fetchProviders().providers
-                localDataSource.insertAllSources(fetchedSources)
-            }
+    override  suspend fun getProviders(): List<Provider> {
+        val providersList = localDataSource.getProviders()
+        return providersList.ifEmpty {
+            val fetchedSources = remoteDataSource.fetchProviders().providers
+            localDataSource.insertAllSources(fetchedSources)
+            localDataSource.getProviders()
         }
     }
 

@@ -13,7 +13,7 @@ interface ArticlesLocalDataSource {
    fun getArticleById(articleId :Int): Flow<Article>
    fun getFavoritesArticles() : Flow<List<Article>>
    suspend fun changeFavoriteState(articleId:Int,isFavorite :Boolean)
-   fun getProviders() : Flow<List<Provider>>
+   suspend fun getProviders() : List<Provider>
    suspend fun getProviderCounts() : Int
    suspend fun insertAllSources(sources : List<Provider>)
 }

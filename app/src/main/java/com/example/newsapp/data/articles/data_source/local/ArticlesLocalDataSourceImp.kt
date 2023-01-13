@@ -31,7 +31,7 @@ class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao,private va
         articlesDao.updateFavoriteState(articleId,isFavorite)
     }
 
-    override fun getProviders() =providersDao.getAllProvider()
+    override suspend fun getProviders() =providersDao.getAllProvider()
     override suspend fun getProviderCounts() =providersDao.getProviderCounts()
 
     override suspend fun insertAllSources(sources: List<Provider>) {
