@@ -5,6 +5,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
@@ -19,31 +22,32 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 
-var currentBottomSheetContent: @Composable  (ColumnScope.() -> Unit) = { Text("") }
+//var currentBottomSheetContent: @Composable  (ColumnScope.() -> Unit) = { Text("") }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreenView() {
     val navController = rememberNavController()
     val appNavigator = AppNavigatorImpl
-    val scaffoldState: ScaffoldState = rememberScaffoldState()
+//    val scaffoldState: ScaffoldState = rememberScaffoldState()
     val systemUiController = rememberSystemUiController()
-    val bottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
-    )
+//    val bottomSheetState = rememberModalBottomSheetState(
+//        initialValue = ModalBottomSheetValue.Hidden,
+//        skipHalfExpanded = true,
+//        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+//    )
     val coroutineScope = rememberCoroutineScope()
     val showToolbarAndBottomBar: MutableState<Boolean> = rememberSaveable { mutableStateOf(true) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     systemUiController.setSystemBarsColor(
         color = Color.Transparent,
         darkIcons = isSystemInDarkTheme().not()
     )
-    BackHandler(bottomSheetState.isVisible) {
-        coroutineScope.launch { bottomSheetState.hide() }
-    }
+//    BackHandler(bottomSheetState.isVisible) {
+//        coroutineScope.launch { bottomSheetState.hide() }
+//    }
 
     NavigationEffects(
         navigationChannel = appNavigator.navigationChannel,
@@ -51,19 +55,24 @@ fun MainScreenView() {
     )
 
     NewsAppTheme {
-        ModalBottomSheetLayout(
-            sheetState = bottomSheetState,
-            sheetContent = currentBottomSheetContent ){
-            Scaffold(scaffoldState = scaffoldState,
-                topBar = { MyTopAppBar(showToolbarAndBottomBar.value) },
-                snackbarHost = { state -> MySnackHost(state) },
-                bottomBar = { MyBottomNavigation(navController = navController,appNavigator,showToolbarAndBottomBar.value) }
-            ) {
-                NavigationGraph(navController = navController,appNavigator,bottomSheetState,showToolbarAndBottomBar){
-                    currentBottomSheetContent = it
-                    coroutineScope.launch { bottomSheetState.show() }
-                }
+
+        Scaffold(
+            topBar = { MyTopAppBar(showToolbarAndBottomBar.value) },
+            snackbarHost = { MySnackHost(snackbarHostState) },
+            bottomBar = {
+                MyBottomNavigation(
+                    navController = navController,
+                    appNavigator,
+                    showToolbarAndBottomBar.value
+                )
+            },
+            content = { _ ->
+                NavigationGraph(
+                    navController = navController,
+                    appNavigator,
+                    showToolbarAndBottomBar
+                )
             }
-        }
+        )
     }
 }

@@ -1,8 +1,6 @@
 package com.example.newsapp.ui.main
 
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavHostController
@@ -17,17 +15,15 @@ import com.example.newsapp.ui.components.composable
 import com.example.newsapp.ui.screens.favorite.MyFavoritesScreen
 import com.example.newsapp.util.ARG_ARTICLE_ID
 
-@OptIn(ExperimentalMaterialApi::class)
+
 @Composable
 fun NavigationGraph(navController: NavHostController,
                     appNavigator :AppNavigator,
-                    modelBottomSheetState : ModalBottomSheetState,
-                    showToolbarAndBottomBar: MutableState<Boolean>,
-                    showBottomSheet :(@Composable (ColumnScope.() -> Unit)) -> Unit) {
+                    showToolbarAndBottomBar: MutableState<Boolean>) {
     MyNavHost(navController, startDestination = Destination.ArticlesScreen) {
         composable(Destination.ArticlesScreen) {
             showToolbarAndBottomBar.value = true
-            ArticlesScreen(appNavigator,showBottomSheet,modelBottomSheetState)
+            ArticlesScreen(appNavigator)
         }
         composable(Destination.FavoritesScreen) {
             showToolbarAndBottomBar.value = true

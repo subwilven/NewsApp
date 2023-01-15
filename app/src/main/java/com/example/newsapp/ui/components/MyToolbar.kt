@@ -1,14 +1,12 @@
 package com.example.newsapp.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar(isVisible: Boolean) {
     AnimatedVisibility(
@@ -16,7 +14,7 @@ fun MyTopAppBar(isVisible: Boolean) {
         content = {
             TopAppBar(
                 title = { Text("News App") },
-                backgroundColor = MaterialTheme.colors.background,
+//                backgroundColor = MaterialTheme.colors.background,
             )
         }
     )

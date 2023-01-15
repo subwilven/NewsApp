@@ -75,7 +75,6 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation ("androidx.compose.runtime:runtime:1.4.0-alpha03")
-    implementation("androidx.compose.material:material:1.3.1")
     implementation("androidx.compose.ui:ui-tooling-preview:1.3.1")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha03")
@@ -86,6 +85,9 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
     implementation ("com.google.accompanist:accompanist-flowlayout:0.28.0")
+
+    implementation("androidx.compose.material3:material3:1.0.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.0.1")
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.44")

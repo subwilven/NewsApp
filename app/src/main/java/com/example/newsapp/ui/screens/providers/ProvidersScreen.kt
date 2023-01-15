@@ -2,7 +2,7 @@ package com.example.newsapp.ui.screens.providers
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,10 +20,9 @@ import com.example.newsapp.ui.components.LoadingFullScreen
 import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLifecycleComposeApi::class)
+@OptIn( ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ProvidersScreen(
-    modelBottomSheetState: ModalBottomSheetState,
     providersViewModel: ProvidersViewModel = hiltViewModel(),
     onProvidersSelected: (List<ProviderUi>) -> Unit
 ) {
@@ -32,18 +31,18 @@ fun ProvidersScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(modelBottomSheetState.isVisible) {
-        if (!modelBottomSheetState.isVisible) {
-            providersViewModel.processActions(ProvidersActions.ResetChanges)
-        }
-    }
-
-    LaunchedEffect(uiState.onFiltrationProcessDone) {
-        if (uiState.onFiltrationProcessDone) {
-            modelBottomSheetState.hide()
-            onProvidersSelected(providersViewModel.getSelectedProviders())
-        }
-    }
+//    LaunchedEffect(modelBottomSheetState.isVisible) {
+//        if (!modelBottomSheetState.isVisible) {
+//            providersViewModel.processActions(ProvidersActions.ResetChanges)
+//        }
+//    }
+//
+//    LaunchedEffect(uiState.onFiltrationProcessDone) {
+//        if (uiState.onFiltrationProcessDone) {
+//            modelBottomSheetState.hide()
+//            onProvidersSelected(providersViewModel.getSelectedProviders())
+//        }
+//    }
 
     ProvidersListContent(
         isLoading = uiState.isLoading,
@@ -64,7 +63,7 @@ fun ProvidersScreen(
         },
         onCloseClicked = {
             coroutineScope.launch {
-                modelBottomSheetState.hide()
+             //   modelBottomSheetState.hide()
             }
         }
     )
@@ -99,6 +98,7 @@ fun ProvidersListContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Toolbar(
     onCloseClicked: () -> Unit,
@@ -131,12 +131,12 @@ private fun Toolbar(
                 )
             }
         },
-        backgroundColor = MaterialTheme.colors.background
+//        backgroundColor = MaterialTheme.colors.background
     )
 
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProvidersChips(
     providersList: List<ProviderUi>,
@@ -151,21 +151,22 @@ fun ProvidersChips(
     ) {
         providersList.onEachIndexed { index, sourceUi ->
             FilterChip(
+                label =  {
+                    Text(sourceUi.name)
+                },
                 selected = sourceUi.isSelected,
                 onClick = {
                     onChipClicked(sourceUi, index)
                 },
-                border = BorderStroke(
-                    ChipDefaults.OutlinedBorderSize,
-                    Color.Red
-                ),
+//                border = SelectableChipBorder(
+//                    ChipDefaults.OutlinedBorderSize,
+//                    Color.Red
+//                ),
 //                colors = ChipDefaults.chipColors(
 //                    backgroundColor = Color.White,
 //                    contentColor = Color.Red
 //                ),
-            ) {
-                Text(sourceUi.name)
-            }
+            )
         }
 
     }

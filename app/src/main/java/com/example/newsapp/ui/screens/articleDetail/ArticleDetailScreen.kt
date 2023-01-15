@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,8 @@ import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.launchWebView
+import com.example.newsapp.ui.components.Favoritebutton
+import com.example.newsapp.ui.screens.articles.ArticlesActions
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.util.getFavoriteIcon
 
@@ -112,12 +115,12 @@ private fun Body(article: ArticleUi, scroll: ScrollState) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.Start),
-                style = MaterialTheme.typography.overline,
+                style = MaterialTheme.typography.labelMedium,
                 text = it
             )
         }
         Text(
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(vertical = 4.dp),
             text = article.title
         )
@@ -126,7 +129,7 @@ private fun Body(article: ArticleUi, scroll: ScrollState) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.Start),
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.labelSmall,
                 text = stringResource(R.string.published_by, it)
             )
         }
@@ -135,7 +138,7 @@ private fun Body(article: ArticleUi, scroll: ScrollState) {
         Spacer(Modifier.height(16.dp))
 
         Text(
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(vertical = 4.dp),
             text = article.content ?: ""
         )
@@ -152,6 +155,7 @@ private fun Body(article: ArticleUi, scroll: ScrollState) {
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Toolbar(
     scroll: ScrollState,
@@ -174,7 +178,8 @@ private fun Toolbar(
                 onClick = { appNavigator.tryNavigateBack() },
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .background(color = Color(0x59000000), shape = CircleShape)
+                    .background(color = Color(0x59000000),
+                        shape = CircleShape)
                     .size(32.dp)
             ) {
                 Icon(
@@ -186,23 +191,13 @@ private fun Toolbar(
         },
         title = {},
         actions = {
-            IconButton(
-                onClick = {
-                    onFavoriteButtonClicked.invoke()
-                }, modifier = Modifier
-                    .padding(end = 12.dp)
-                    .background(color = Color(0x59000000), shape = CircleShape)
-                    .size(32.dp)
-            ) {
-                Icon(
-                    painter = painterResource(getFavoriteIcon(isFavorite)),
-                    contentDescription = stringResource(id = R.string.favorite_icon)
-                )
+            Favoritebutton(Modifier .weight(0.1f),isFavorite){
+                onFavoriteButtonClicked.invoke()
             }
         },
-        backgroundColor = if (showToolbar) MaterialTheme.colors.background
-        else Color.Transparent,
-        elevation = 0.dp
+//        backgroundColor = if (showToolbar) MaterialTheme.colors.background
+//        else Color.Transparent,
+//        elevation = 0.dp
     )
 
 }

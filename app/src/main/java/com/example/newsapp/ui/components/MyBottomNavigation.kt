@@ -3,10 +3,8 @@ package com.example.newsapp.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -15,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.newsapp.model.BottomNavItem
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.ui.main.BottomNavigationItemView
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
 
 @Composable
 fun MyBottomNavigation(
@@ -32,8 +31,8 @@ fun MyBottomNavigation(
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
-            BottomNavigation(
-                backgroundColor = MaterialTheme.colors.background,
+            NavigationBar(
+//                backgroundColor = MaterialTheme.colors.background,
                 contentColor = Color.Black
             ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()

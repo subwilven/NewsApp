@@ -4,9 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +57,7 @@ private fun FavoriteArticleItem(article : ArticleUi,onArticleClicked : (ArticleU
     }){
         Column(modifier = Modifier.weight(0.7f)){
             Text(
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(vertical = 4.dp).padding(end = 8.dp),
                 text = article.title,
@@ -65,7 +65,7 @@ private fun FavoriteArticleItem(article : ArticleUi,onArticleClicked : (ArticleU
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.padding(vertical = 4.dp).padding(end = 8.dp),
                 text = article.description ?: "",
                 maxLines = 3,

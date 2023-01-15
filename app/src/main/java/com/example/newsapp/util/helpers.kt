@@ -1,6 +1,9 @@
 package com.example.newsapp.util
 
 import android.text.format.DateUtils
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.ui.res.painterResource
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
@@ -15,5 +18,5 @@ fun Date.convertToAgoTime():String{
 }
 
 //todo check how to handle this
-fun getFavoriteIcon(isFavorite: Boolean) = if (isFavorite) R.drawable.ic_favorite_24
-    else R.drawable.ic_favorite_border_24
+fun getFavoriteIcon(isFavorite: Boolean) = if (isFavorite) Icons.Filled.Favorite
+    else Icons.Filled.FavoriteBorder

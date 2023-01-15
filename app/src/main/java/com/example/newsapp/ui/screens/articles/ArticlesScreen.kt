@@ -1,6 +1,9 @@
 package com.example.newsapp.ui.screens.articles
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,7 +12,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterStart
@@ -17,11 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,7 +42,9 @@ import com.example.newsapp.model.providers.ProviderUi
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.Destination
 import com.example.newsapp.navigation.navigateToArticleDetails
+import com.example.newsapp.ui.components.Favoritebutton
 import com.example.newsapp.ui.components.LoadingFullScreen
+import com.example.newsapp.ui.components.MyDialog
 import com.example.newsapp.ui.screens.providers.ProvidersListContent
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
 import com.example.newsapp.util.getFavoriteIcon
@@ -49,19 +57,32 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ArticlesScreen(
     appNavigator: AppNavigator,
-    showBottomSheet: (@Composable (ColumnScope.() -> Unit)) -> Unit,
-    modelBottomSheetState: ModalBottomSheetState,
     articlesViewModel: ArticlesViewModel = hiltViewModel(),
-    scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
 
     val coroutineScope = rememberCoroutineScope()
     val uiState: ArticleUiState by articlesViewModel.uiState.collectAsStateWithLifecycle()
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
+
+    // Dialog state Manager
+    val dialogState: MutableState<Boolean> = remember {
+        mutableStateOf(false)
+    }
+
+    // Code to Show and Dismiss Dialog
+    if (dialogState.value) {
+        DialogProvidersSelection(dialogState){ selectedProviders->
+            articlesViewModel.actionsChannel.trySend(
+                ArticlesActions.FilterByProvidersAction(
+                    selectedProviders
+                )
+            )
+        }
+    }
 
 
     articlesList?.let {
@@ -73,18 +94,7 @@ fun ArticlesScreen(
             onArticleClicked = { article ->
                 navigateToArticleDetails(appNavigator, article)
             }, onFilterIconClicked = {
-                coroutineScope.launch {
-                    showBottomSheet.invoke {
-                        ProvidersScreen(modelBottomSheetState)
-                        { selectedProviders ->
-                            articlesViewModel.actionsChannel.trySend(
-                                ArticlesActions.FilterByProvidersAction(
-                                    selectedProviders
-                                )
-                            )
-                        }
-                    }
-                }
+                dialogState.value = true
             })
     }
 
@@ -103,6 +113,23 @@ fun ArticlesScreen(
 
 }
 
+@Composable
+private fun DialogProvidersSelection(
+    dialogState: MutableState<Boolean>,
+    onProvidersSelected: (List<ProviderUi>) -> Unit
+) {
+    MyDialog(
+        R.string.select_providers,
+        R.string.ok,
+        dialogState,
+    ) {
+        ProvidersScreen()
+        { selectedProviders ->
+            onProvidersSelected.invoke(selectedProviders)
+        }
+    }
+}
+
 private fun shouldShowEmptyList(articlesList: LazyPagingItems<ArticleUi>) =
     articlesList.loadState.refresh is LoadState.NotLoading &&
             articlesList.itemCount == 0
@@ -115,23 +142,23 @@ private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
     loadState.mediator?.refresh is LoadState.Loading
 
 
-fun showSnackBar(
-    scaffoldState: ScaffoldState,
-    coroutineScope: CoroutineScope, errorMessage: String
-) {
-    coroutineScope.launch {
-        scaffoldState.snackbarHostState.showSnackbar(
-            message = errorMessage,
-            duration = SnackbarDuration.Long
-        )
-    }
-}
+//fun showSnackBar(
+//    scaffoldState: ScaffoldState,
+//    coroutineScope: CoroutineScope, errorMessage: String
+//) {
+//    coroutineScope.launch {
+//        scaffoldState.snackbarHostState.showSnackbar(
+//            message = errorMessage,
+//            duration = SnackbarDuration.Long
+//        )
+//    }
+//}
 
 @Composable
 fun ArticlesContent(
     articles: LazyPagingItems<ArticleUi>,
     query: String,
-    showFilterRedBadge : Boolean,
+    showFilterRedBadge: Boolean,
     actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
     onFilterIconClicked: () -> Unit
@@ -159,8 +186,8 @@ fun ArticlesContent(
                             .clickable {
                                 onFilterIconClicked.invoke()
                             })
-                   if(showFilterRedBadge)
-                     BadgeRedCircle(Modifier.align(Alignment.TopEnd))
+                    if (showFilterRedBadge)
+                        BadgeRedCircle(Modifier.align(Alignment.TopEnd))
                 }
             }
         }
@@ -204,7 +231,8 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
             .fillMaxWidth()
             .wrapContentHeight()
             .clip(shape)
-            .padding( vertical = 8.dp).padding(start = 16.dp),
+            .padding(vertical = 8.dp)
+            .padding(start = 16.dp),
         singleLine = true,
         decorationBox = { innerTextField ->
             Row(
@@ -230,7 +258,7 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
                         Text(
                             text = "search",
                             color = Color.Gray,
-                            style = MaterialTheme.typography.caption,
+                            style = MaterialTheme.typography.labelMedium,
                         )
                 }
 
@@ -305,7 +333,7 @@ fun ArticleItem(
 
         article.author?.let {
             Text(
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(vertical = 8.dp),
                 text = it
             )
@@ -316,25 +344,20 @@ fun ArticleItem(
                 .height(IntrinsicSize.Max)
         ) {
             Text(
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(vertical = 4.dp)
                     .weight(0.9f),
                 text = article.title
             )
-            Image(painter = painterResource(getFavoriteIcon(article.isFavorite)),
-                contentDescription = stringResource(id = R.string.favorite_icon),
-                modifier = Modifier
-                    .padding(4.dp)
-                    .weight(0.1f)
-                    .clickable {
-                        actionFlow.trySend(ArticlesActions.AddToFavoriteAction(article))
-                    })
+            Favoritebutton(Modifier .weight(0.1f),article.isFavorite){
+                actionFlow.trySend(ArticlesActions.AddToFavoriteAction(article))
+            }
         }
 
         article.publishedAt?.let {
             Text(
-                style = MaterialTheme.typography.overline,
+                style = MaterialTheme.typography.labelSmall,
                 text = it
             )
         }
@@ -348,7 +371,7 @@ fun MainScreen() {
 
 @Preview
 @Composable
-@ExperimentalMaterialApi
+
 fun ComposablePreview() {
 //    ArticlesContent(flow<PagingData<ArticleUi>> {}.collectAsLazyPagingItems(),
 //        "", actionFlow(), {}, {})
