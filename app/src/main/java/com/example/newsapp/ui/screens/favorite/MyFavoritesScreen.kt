@@ -81,7 +81,7 @@ private fun FavoriteArticleItem(article : ArticleUi,onArticleClicked : (ArticleU
             contentDescription = article.description,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
+                .clip(MaterialTheme.shapes.small)
                 .height(75.dp)
                 .width(75.dp)
                 .align(Alignment.CenterVertically)

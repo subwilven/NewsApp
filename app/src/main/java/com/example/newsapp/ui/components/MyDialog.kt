@@ -53,7 +53,7 @@ fun DialogContent(
         modifier = Modifier
             .fillMaxHeight(0.9f)
             .fillMaxWidth(1f),
-        shape = RoundedCornerShape(8.dp)
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
             modifier = Modifier
@@ -107,7 +107,7 @@ private fun BottomButtons(successButtonText: String, dialogState: MutableState<B
             modifier = Modifier
                 .width(100.dp)
                 .padding(end = 5.dp),
-            shape = RoundedCornerShape(16.dp)
+            shape = MaterialTheme.shapes.medium
         ) {
             Text(text = "Cancel", fontSize = 20.sp)
         }
@@ -116,7 +116,7 @@ private fun BottomButtons(successButtonText: String, dialogState: MutableState<B
                 dialogState.value = false
             },
             modifier = Modifier.width(100.dp),
-            shape = RoundedCornerShape(16.dp)
+            shape = MaterialTheme.shapes.medium
         ) {
             Text(text = successButtonText, fontSize = 20.sp)
         }

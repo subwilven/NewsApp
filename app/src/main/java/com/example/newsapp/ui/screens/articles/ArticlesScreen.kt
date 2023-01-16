@@ -153,7 +153,7 @@ fun ArticlesContent(
     val lazyListState = rememberLazyListState()
 
     Column {
-        Surface {
+
             Row {
                 SearchInputField(Modifier.weight(0.85f), query, actionFlow)
                 Box(
@@ -175,7 +175,7 @@ fun ArticlesContent(
                         BadgeRedCircle(Modifier.align(Alignment.TopEnd))
                 }
             }
-        }
+
         if (shouldFullLoadingProgressBar) {
             LoadingFullScreen()
         } else
@@ -206,7 +206,7 @@ fun BadgeRedCircle(modifier: Modifier) {
 
 @Composable
 fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<ArticlesActions>) {
-    val shape = RoundedCornerShape(25.dp)
+    val shape = MaterialTheme.shapes.large
     BasicTextField(
         value = query,
         onValueChange = {
@@ -227,9 +227,9 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
                     .background(Color.LightGray, shape)
                     .padding(8.dp),
             ) {
-                Image(
+                Icon(
                     painterResource(R.drawable.ic_search_24),
-                    "content description",
+                    null,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
                 Box(
@@ -314,7 +314,7 @@ fun ArticleItem(
             contentDescription = article.description,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
+                .clip(MaterialTheme.shapes.small)
                 .fillMaxWidth()
                 .height(180.dp)
         )
