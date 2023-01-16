@@ -273,12 +273,11 @@ fun ArticlesList(
     actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
 ) {
-    LazyColumn(state = lazyListState) {
+    LazyColumn(state = lazyListState, modifier = Modifier.padding(top = 8.dp)) {
 
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
                 ArticleItem(it, actionFlow, onArticleClicked)
-                Divider(color = Color.LightGray, thickness = 1.dp)
             }
         }
         when (articles.loadState.append) {
@@ -298,12 +297,16 @@ fun ArticleItem(
     article: ArticleUi,
     actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
-) {
+) {Card(modifier = Modifier
+    .padding(horizontal = 8.dp, vertical = 4.dp).clickable {
+        onArticleClicked.invoke(article)
+    },
+    colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant)
+){
     Column(modifier = Modifier
-        .padding(16.dp)
-        .clickable {
-            onArticleClicked.invoke(article)
-        }) {
+        .padding(12.dp)
+        ) {
         AsyncImage(
             model = article.imageUrl,
             error = painterResource(R.drawable.no_image_placeholder),
@@ -318,6 +321,7 @@ fun ArticleItem(
 
         article.author?.let {
             Text(
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(vertical = 8.dp),
                 text = it
@@ -329,6 +333,7 @@ fun ArticleItem(
                 .height(IntrinsicSize.Max)
         ) {
             Text(
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .padding(vertical = 4.dp)
@@ -337,18 +342,19 @@ fun ArticleItem(
             )
             FavoriteButton(Modifier .weight(0.1f),
                 article.isFavorite,
-                MaterialTheme.colorScheme.onPrimaryContainer){
+                MaterialTheme.colorScheme.onSurfaceVariant){
                 actionFlow.trySend(ArticlesActions.AddToFavoriteAction(article))
             }
         }
 
         article.publishedAt?.let {
             Text(
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelSmall,
                 text = it
             )
         }
-    }
+    }}
 }
 
 @Composable
