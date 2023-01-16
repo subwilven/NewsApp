@@ -25,10 +25,6 @@ fun RowScope.BottomNavigationItemView(
     val title = stringResource(id = item.titleRes)
     NavigationBarItem(
         icon = bottomNavItemIcon(title,item.icon),
-        label = bottomNavItemTitle(title),
-//        selectedContentColor = Color.Black,
-//        unselectedContentColor = Color.Black.copy(0.4f),
-        alwaysShowLabel = true,
         selected = currentRoute == item.destination.fullRoute,
         onClick = {
             appNavigator.tryNavigateToBottomBarScreen(item.destination.fullRoute)
