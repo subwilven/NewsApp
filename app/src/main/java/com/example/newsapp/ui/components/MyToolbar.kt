@@ -14,7 +14,6 @@ fun MyTopAppBar(isVisible: Boolean) {
         content = {
             TopAppBar(
                 title = { Text("News App") },
-//                backgroundColor = MaterialTheme.colors.background,
             )
         }
     )

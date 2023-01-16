@@ -1,15 +1,11 @@
 package com.example.newsapp.ui.screens.articles
 
-import android.content.Context
-import android.util.Log
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
@@ -20,14 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,21 +31,15 @@ import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.model.providers.ProviderUi
 import com.example.newsapp.navigation.AppNavigator
-import com.example.newsapp.navigation.Destination
 import com.example.newsapp.navigation.navigateToArticleDetails
-import com.example.newsapp.ui.components.Favoritebutton
+import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.components.MyDialog
-import com.example.newsapp.ui.screens.providers.ProvidersListContent
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
-import com.example.newsapp.util.getFavoriteIcon
-import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -350,7 +335,9 @@ fun ArticleItem(
                     .weight(0.9f),
                 text = article.title
             )
-            Favoritebutton(Modifier .weight(0.1f),article.isFavorite){
+            FavoriteButton(Modifier .weight(0.1f),
+                article.isFavorite,
+                MaterialTheme.colorScheme.onPrimaryContainer){
                 actionFlow.trySend(ArticlesActions.AddToFavoriteAction(article))
             }
         }

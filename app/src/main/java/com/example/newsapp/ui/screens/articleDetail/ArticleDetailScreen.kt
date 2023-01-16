@@ -1,9 +1,5 @@
 package com.example.newsapp.ui.screens.articleDetail
 
-import android.content.Intent
-import android.net.Uri
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -23,8 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,10 +27,9 @@ import com.example.newsapp.R
 import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.launchWebView
-import com.example.newsapp.ui.components.Favoritebutton
-import com.example.newsapp.ui.screens.articles.ArticlesActions
+import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.theme.NewsAppTheme
-import com.example.newsapp.util.getFavoriteIcon
+import com.example.newsapp.ui.theme.shadow
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -137,16 +130,17 @@ private fun Body(article: ArticleUi, scroll: ScrollState) {
         Divider()
         Spacer(Modifier.height(16.dp))
 
+        repeat(5){
         Text(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(vertical = 4.dp),
             text = article.content ?: ""
         )
 
-
+        }
         val context = LocalContext.current
         OutlinedButton(onClick = {
-            launchWebView(context,article.articleUrl)
+            launchWebView(context, article.articleUrl)
         }) {
             Text(text = stringResource(R.string.visit_orignal_article))
         }
@@ -178,26 +172,35 @@ private fun Toolbar(
                 onClick = { appNavigator.tryNavigateBack() },
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .background(color = Color(0x59000000),
-                        shape = CircleShape)
+                    .background(
+                        color = shadow,
+                        shape = CircleShape
+                    )
                     .size(32.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "",
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         },
         title = {},
         actions = {
-            Favoritebutton(Modifier .weight(0.1f),isFavorite){
+            FavoriteButton(Modifier
+                //todo
+                .background(
+                color = shadow,
+                shape = CircleShape).padding(4.dp),
+                isFavorite,
+                MaterialTheme.colorScheme.onBackground) {
                 onFavoriteButtonClicked.invoke()
             }
         },
-//        backgroundColor = if (showToolbar) MaterialTheme.colors.background
-//        else Color.Transparent,
-//        elevation = 0.dp
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = if (showToolbar) MaterialTheme.colorScheme.surface
+            else Color.Transparent,
+        ),
     )
 
 }
