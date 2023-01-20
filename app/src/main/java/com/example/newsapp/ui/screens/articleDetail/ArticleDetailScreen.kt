@@ -198,7 +198,7 @@ private fun Toolbar(
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = if (showToolbar) MaterialTheme.colorScheme.surface
+            containerColor = if (showToolbar) MaterialTheme.colorScheme.inverseOnSurface
             else Color.Transparent,
         ),
     )

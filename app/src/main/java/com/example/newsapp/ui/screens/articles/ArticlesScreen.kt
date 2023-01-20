@@ -6,8 +6,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,8 +21,10 @@ import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +48,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import java.util.*
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -49,7 +58,6 @@ fun ArticlesScreen(
     articlesViewModel: ArticlesViewModel = hiltViewModel(),
 ) {
 
-    val coroutineScope = rememberCoroutineScope()
     val uiState: ArticleUiState by articlesViewModel.uiState.collectAsStateWithLifecycle()
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
 
@@ -60,7 +68,7 @@ fun ArticlesScreen(
 
     // Code to Show and Dismiss Dialog
     if (dialogState.value) {
-        DialogProvidersSelection(dialogState){ selectedProviders->
+        DialogProvidersSelection(dialogState) { selectedProviders ->
             articlesViewModel.actionsChannel.trySend(
                 ArticlesActions.FilterByProvidersAction(
                     selectedProviders
@@ -152,35 +160,40 @@ fun ArticlesContent(
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
     val lazyListState = rememberLazyListState()
 
-    Column {
-
-            Row {
-                SearchInputField(Modifier.weight(0.85f), query, actionFlow)
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .padding(end = 8.dp)
-                        .weight(0.1f)
-                        .align(Alignment.CenterVertically)
-                ) {
-                    Icon(painterResource(R.drawable.ic_filter_24),
+    Column() {
+        Row(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                .height(IntrinsicSize.Min)
+        ) {
+            SearchInputField(Modifier.weight(0.85f), query, actionFlow)
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .padding(end = 8.dp)
+                    .weight(0.1f)
+                    .align(Alignment.CenterVertically)
+            ) {
+                IconButton(modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(24.dp),
+                    onClick = { onFilterIconClicked.invoke() }) {
+                    Icon(
+                        painterResource(R.drawable.ic_filter_24),
                         null,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.Center)
-                            .clickable {
-                                onFilterIconClicked.invoke()
-                            })
-                    if (showFilterRedBadge)
-                        BadgeRedCircle(Modifier.align(Alignment.TopEnd))
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }
+                if (showFilterRedBadge)
+                    BadgeRedCircle(Modifier.align(Alignment.TopEnd))
             }
+        }
 
         if (shouldFullLoadingProgressBar) {
             LoadingFullScreen()
         } else
             SwipeRefresh(
-                state = rememberSwipeRefreshState(shouldShowEmptyList),
+                state = rememberSwipeRefreshState(false),
                 onRefresh = { articles.refresh() },
             ) {
                 if (shouldShowEmptyList) {
@@ -209,6 +222,7 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
     val shape = MaterialTheme.shapes.large
     BasicTextField(
         value = query,
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
         onValueChange = {
             actionFlow.trySend(ArticlesActions.SearchArticlesAction(it))
         },
@@ -219,17 +233,19 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
             .padding(vertical = 8.dp)
             .padding(start = 16.dp),
         singleLine = true,
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
         decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Max)
-                    .background(Color.LightGray, shape)
+                    .background(MaterialTheme.colorScheme.surface, shape)
                     .padding(8.dp),
             ) {
                 Icon(
-                    painterResource(R.drawable.ic_search_24),
+                    imageVector = Icons.Default.Search,
                     null,
+                    tint = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
                 Box(
@@ -242,23 +258,30 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
                     if (query.isEmpty())
                         Text(
                             text = "search",
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.outline,
                             style = MaterialTheme.typography.labelMedium,
                         )
                 }
 
                 if (query.isNotEmpty()) {
-                    Image(painterResource(R.drawable.ic_cancel_24),
-                        "content description",
+                    IconButton(
+                        onClick = {
+                            actionFlow.trySend(
+                                ArticlesActions.SearchArticlesAction(
+                                    null
+                                )
+                            )
+                        },
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
-                            .clickable {
-                                actionFlow.trySend(
-                                    ArticlesActions.SearchArticlesAction(
-                                        null
-                                    )
-                                )
-                            })
+                            .size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.outline
+                        )
+                    }
                 }
             }
         }
@@ -273,7 +296,7 @@ fun ArticlesList(
     actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
 ) {
-    LazyColumn(state = lazyListState, modifier = Modifier.padding(top = 8.dp)) {
+    LazyColumn(state = lazyListState) {
 
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
@@ -297,64 +320,72 @@ fun ArticleItem(
     article: ArticleUi,
     actionFlow: Channel<ArticlesActions>,
     onArticleClicked: (ArticleUi) -> Unit,
-) {Card(modifier = Modifier
-    .padding(horizontal = 8.dp, vertical = 4.dp).clickable {
-        onArticleClicked.invoke(article)
-    },
-    colors = CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant)
-){
-    Column(modifier = Modifier
-        .padding(12.dp)
-        ) {
-        AsyncImage(
-            model = article.imageUrl,
-            error = painterResource(R.drawable.no_image_placeholder),
-            placeholder = painterResource(R.drawable.placeholder),
-            contentDescription = article.description,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.small)
-                .fillMaxWidth()
-                .height(180.dp)
+) {
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .clickable {
+                onArticleClicked.invoke(article)
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
-
-        article.author?.let {
-            Text(
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = it
-            )
-        }
-        Row(
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max)
+                .padding(12.dp)
         ) {
-            Text(
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
+            AsyncImage(
+                model = article.imageUrl,
+                error = painterResource(R.drawable.no_image_placeholder),
+                placeholder = painterResource(R.drawable.placeholder),
+                contentDescription = article.description,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .weight(0.9f),
-                text = article.title
+                    .clip(MaterialTheme.shapes.small)
+                    .fillMaxWidth()
+                    .height(180.dp)
             )
-            FavoriteButton(Modifier .weight(0.1f),
-                article.isFavorite,
-                MaterialTheme.colorScheme.onSurfaceVariant){
-                actionFlow.trySend(ArticlesActions.AddToFavoriteAction(article))
+
+            article.author?.let {
+                Text(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    text = it
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max)
+            ) {
+                Text(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .weight(0.9f),
+                    text = article.title
+                )
+                FavoriteButton(
+                    Modifier.weight(0.1f),
+                    article.isFavorite,
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                ) {
+                    actionFlow.trySend(ArticlesActions.AddToFavoriteAction(article))
+                }
+            }
+
+            article.publishedAt?.let {
+                Text(
+                    color = MaterialTheme.colorScheme.outline,
+                    style = MaterialTheme.typography.labelSmall,
+                    text = it
+                )
             }
         }
-
-        article.publishedAt?.let {
-            Text(
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelSmall,
-                text = it
-            )
-        }
-    }}
+    }
 }
 
 @Composable
