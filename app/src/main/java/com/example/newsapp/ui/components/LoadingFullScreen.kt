@@ -12,9 +12,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun LoadingFullScreen(modifier: Modifier = Modifier) {
     Box(
-        modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background)
+        modifier.fillMaxSize()
     ) {
         CircularProgressIndicator(Modifier.align(Alignment.Center))
     }

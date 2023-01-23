@@ -91,7 +91,7 @@ class ProvidersViewModel @Inject constructor(
     }
 
     private fun applyFilter() {
-        viewModelScope.launch(workerDispatcher) {
+        viewModelScope.launch (workerDispatcher){
             saveProvidersSelectionsStates()
             onFilterSubmitted.emit(true)
         }
@@ -104,14 +104,10 @@ class ProvidersViewModel @Inject constructor(
     }
 
     fun getSelectedProviders(): List<ProviderUi> {
-        //to prevent bottom shet from hiding when the user open the dialog again
-        //todo feels there is a room for improvment
         onFilterSubmitted.update { false }
         return getCurrentProvidersList().filter { it.isSelected }
     }
 
-    //todo fix that when relaunch the bottom sheet after
-    // resetting changes the bottom sheet will open on the old state then it willl be updated
     private fun resetUserChanges() {
         viewModelScope.launch(workerDispatcher) {
             getCurrentProvidersList().onEach {

@@ -2,7 +2,6 @@ package com.example.newsapp.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -21,8 +20,11 @@ import com.example.newsapp.R
 @Composable
 fun MyDialog(
     @StringRes title: Int,
-    @StringRes successButtonText: Int = R.string.ok,
+    @StringRes positiveButtonText: Int = R.string.ok,
+    @StringRes negativeButtonText: Int = R.string.cancel,
     dialogState: MutableState<Boolean>,
+    onPositiveClicked : () -> Unit,
+    onNegativeClicked : () -> Unit,
     content: @Composable () -> Unit
 ) {
     Dialog(
@@ -30,13 +32,16 @@ fun MyDialog(
         content = {
             DialogContent(
                 stringResource(id = title),
+                stringResource(id = positiveButtonText),
+                stringResource(id = negativeButtonText),
                 dialogState,
-                stringResource(id = successButtonText),
+                onPositiveClicked,
+                onNegativeClicked,
                 content
             )
         },
         properties = DialogProperties(
-            dismissOnBackPress = false,
+            dismissOnBackPress = true,
             dismissOnClickOutside = false
         )
     )
@@ -45,8 +50,11 @@ fun MyDialog(
 @Composable
 fun DialogContent(
     title: String,
+    positiveButtonText: String,
+    negativeButtonText: String,
     dialogState: MutableState<Boolean>,
-    successButtonText: String,
+    onPositiveClicked : () -> Unit,
+    onNegativeClicked : () -> Unit,
     content: @Composable () -> Unit
 ) {
     Card(
@@ -61,74 +69,72 @@ fun DialogContent(
                 .fillMaxHeight(1f),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            TitleAndButton(title, dialogState)
-            AddBody(content)
-            BottomButtons(successButtonText, dialogState = dialogState)
+            TitleAndButton(Modifier,title, dialogState)
+            AddBody(Modifier.weight(1f,true),content)
+            BottomButtons(Modifier.align(Alignment.End),
+                positiveButtonText,negativeButtonText, dialogState = dialogState,onPositiveClicked,onNegativeClicked)
         }
     }
 }
 
 @Composable
-private fun TitleAndButton(title: String, dialogState: MutableState<Boolean>) {
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(1f)
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = title, fontSize = 24.sp)
-            IconButton(modifier = Modifier.then(Modifier.size(24.dp)),
-                onClick = {
-                    dialogState.value = false
-                }) {
-                Icon(
-                    Icons.Filled.Close,
-                    "contentDescription"
-                )
-            }
-        }
-        Divider(color = Color.DarkGray, thickness = 1.dp)
-    }
-}
-
-@Composable
-private fun BottomButtons(successButtonText: String, dialogState: MutableState<Boolean>) {
+private fun TitleAndButton(modifier: Modifier,title: String, dialogState: MutableState<Boolean>,) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(1f)
-            .fillMaxWidth(1f)
-            .padding(20.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = title, fontSize = 24.sp)
+        IconButton(modifier = Modifier.then(Modifier.size(24.dp)),
+            onClick = {
+                dialogState.value = false
+            }) {
+            Icon(
+                Icons.Filled.Close,
+                "contentDescription"
+            )
+        }
+    }
+    Divider(color = Color.DarkGray, thickness = 1.dp)
+}
+
+@Composable
+private fun BottomButtons(modifier: Modifier,postiveButtonText: String,     negativeButtonText: String,dialogState: MutableState<Boolean>,
+                          onPositiveClicked : () -> Unit,  onNegativeClicked : () -> Unit,) {
+    Row(
+        modifier = modifier
+            .padding(horizontal = 8.dp, vertical = 2.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        Button(
-            onClick = { /*TODO*/ },
+        TextButton(
+            onClick = {
+                onNegativeClicked.invoke()
+
+            },
             modifier = Modifier
-                .width(100.dp)
                 .padding(end = 5.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(text = "Cancel", fontSize = 20.sp)
+            Text(text = negativeButtonText)
         }
-        Button(
+        TextButton(
             onClick = {
-                dialogState.value = false
+                onPositiveClicked.invoke()
             },
-            modifier = Modifier.width(100.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(text = successButtonText, fontSize = 20.sp)
+            Text(text = postiveButtonText)
         }
 
     }
 }
 
 @Composable
-private fun AddBody(content: @Composable () -> Unit) {
+private fun AddBody(modifier: Modifier,content: @Composable () -> Unit) {
     Box(
-        modifier = Modifier
-            .padding(20.dp)
+        modifier = modifier.padding(horizontal = 16.dp)
     ) {
         content()
     }

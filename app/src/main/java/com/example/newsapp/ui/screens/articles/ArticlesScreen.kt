@@ -43,7 +43,9 @@ import com.example.newsapp.navigation.navigateToArticleDetails
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.components.MyDialog
+import com.example.newsapp.ui.screens.providers.ProvidersActions
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
+import com.example.newsapp.ui.screens.providers.ProvidersViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.channels.Channel
@@ -68,7 +70,7 @@ fun ArticlesScreen(
 
     // Code to Show and Dismiss Dialog
     if (dialogState.value) {
-        DialogProvidersSelection(dialogState) { selectedProviders ->
+        DialogProvidersSelection(dialogState =dialogState) { selectedProviders ->
             articlesViewModel.actionsChannel.trySend(
                 ArticlesActions.FilterByProvidersAction(
                     selectedProviders
@@ -108,17 +110,25 @@ fun ArticlesScreen(
 
 @Composable
 private fun DialogProvidersSelection(
+    providersViewModel: ProvidersViewModel = hiltViewModel(),
     dialogState: MutableState<Boolean>,
     onProvidersSelected: (List<ProviderUi>) -> Unit
 ) {
     MyDialog(
         R.string.select_providers,
-        R.string.ok,
+        R.string.apply_filter,
+        R.string.clear_filter,
         dialogState,
+        onPositiveClicked = {
+            providersViewModel.processActions(ProvidersActions.SubmitFilter)
+        },
+        onNegativeClicked = {
+            providersViewModel.processActions(ProvidersActions.ClearFilter)
+        }
     ) {
-        ProvidersScreen()
-        { selectedProviders ->
-            onProvidersSelected.invoke(selectedProviders)
+        ProvidersScreen(providersViewModel){
+            dialogState.value = false
+            onProvidersSelected.invoke(providersViewModel.getSelectedProviders())
         }
     }
 }
