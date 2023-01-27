@@ -25,17 +25,17 @@ import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.Destination
 import com.example.newsapp.navigation.navigateToArticleDetails
+import com.example.newsapp.ui.main.LocalAppNavigator
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun MyFavoritesScreen(
-    appNavigator: AppNavigator,
     myFavoritesViewModel: MyFavoritesViewModel = hiltViewModel(),
 ) {
     val uiState = myFavoritesViewModel
         .uiState
         .collectAsStateWithLifecycle()
-
+    val appNavigator = LocalAppNavigator.current
     LazyColumn {
         items(uiState.value.favoriteArticles.count()) { index ->
             uiState.value.favoriteArticles[index].let {

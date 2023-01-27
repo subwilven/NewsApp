@@ -19,16 +19,15 @@ import com.example.newsapp.util.ARG_ARTICLE_ID
 @Composable
 fun NavigationGraph(modifier :Modifier = Modifier,
                     navController: NavHostController,
-                    appNavigator :AppNavigator,
                     showToolbarAndBottomBar: MutableState<Boolean>) {
     MyNavHost(navController, startDestination = Destination.ArticlesScreen,modifier) {
         composable(Destination.ArticlesScreen) {
             showToolbarAndBottomBar.value = true
-            ArticlesScreen(appNavigator)
+            ArticlesScreen()
         }
         composable(Destination.FavoritesScreen) {
             showToolbarAndBottomBar.value = true
-            MyFavoritesScreen(appNavigator)
+            MyFavoritesScreen()
 
         }
         composable(
@@ -38,7 +37,7 @@ fun NavigationGraph(modifier :Modifier = Modifier,
             })
         ) {
             showToolbarAndBottomBar.value = false
-            ArticleDetailScreen(appNavigator)
+            ArticleDetailScreen()
 
         }
     }

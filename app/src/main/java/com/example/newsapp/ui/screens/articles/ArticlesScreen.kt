@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
@@ -43,9 +44,12 @@ import com.example.newsapp.navigation.navigateToArticleDetails
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.components.MyDialog
+import com.example.newsapp.ui.main.LocalAppNavigator
+import com.example.newsapp.ui.main.LocalSnackbarDelegate
 import com.example.newsapp.ui.screens.providers.ProvidersActions
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
 import com.example.newsapp.ui.screens.providers.ProvidersViewModel
+import com.example.newsapp.util.SnackbarDelegate
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.channels.Channel
@@ -56,7 +60,6 @@ import java.util.*
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ArticlesScreen(
-    appNavigator: AppNavigator,
     articlesViewModel: ArticlesViewModel = hiltViewModel(),
 ) {
 
@@ -78,10 +81,11 @@ fun ArticlesScreen(
             )
         }
     }
-
+    LocalSnackbarDelegate.current?.showSnackbar("sdfdsfd")
 
     articlesList?.let {
         val shouldShowRedBadage = uiState.filterData.selectedProviders.isNotEmpty()
+        val appNavigator = LocalAppNavigator.current
         //todo should we create remember for this callbacks ?
         ArticlesContent(articlesList, uiState.filterData.searchInput ?: "",
             shouldShowRedBadage,
@@ -92,7 +96,6 @@ fun ArticlesScreen(
                 dialogState.value = true
             })
     }
-
     //todo use sdie effects to show snackbar see https://developer.android.com/jetpack/compose/side-effects
 //    showSnackBar(LocalScaffoldState.current,
 //        coroutineScope,

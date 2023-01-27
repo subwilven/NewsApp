@@ -95,16 +95,5 @@ private fun ProvidersChips(
     }
 }
 
-@Composable
-private fun ApplyFilterButton(text: String, modifier: Modifier = Modifier, onButtonClicked: () -> Unit) {
-    Button(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        onClick = onButtonClicked
-    ) {
-        Text(text = text)
-    }
-}
 
 

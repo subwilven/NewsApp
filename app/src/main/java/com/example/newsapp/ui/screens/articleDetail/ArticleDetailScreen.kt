@@ -28,6 +28,7 @@ import com.example.newsapp.model.articles.ArticleUi
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.launchWebView
 import com.example.newsapp.ui.components.FavoriteButton
+import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.ui.theme.shadow
 
@@ -35,13 +36,12 @@ import com.example.newsapp.ui.theme.shadow
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ArticleDetailScreen(
-    appNavigator: AppNavigator,
     articlesViewModel: ArticleDetailsViewModel = hiltViewModel(),
 ) {
 
     val uiState = articlesViewModel.articleDetails.collectAsStateWithLifecycle()
     uiState.value?.let { article ->
-        CollapsingToolbar(article, appNavigator) {
+        CollapsingToolbar(article) {
             articlesViewModel.changeArticleFavoriteState(article)
         }
     }
@@ -53,7 +53,6 @@ private val headerHeight = 250.dp
 @Composable
 fun CollapsingToolbar(
     article: ArticleUi,
-    appNavigator: AppNavigator,
     onFavoriteButtonClicked: () -> Unit
 ) {
     val scroll: ScrollState = rememberScrollState(0)
@@ -67,7 +66,7 @@ fun CollapsingToolbar(
         Header(article.imageUrl, scroll, headerHeightPx)
         Body(article, scroll)
         Toolbar(
-            scroll, headerHeightPx, toolbarHeightPx, article.isFavorite, appNavigator,
+            scroll, headerHeightPx, toolbarHeightPx, article.isFavorite,
             onFavoriteButtonClicked
         )
     }
@@ -156,7 +155,6 @@ private fun Toolbar(
     headerHeightPx: Float,
     toolbarHeightPx: Float,
     isFavorite: Boolean,
-    appNavigator: AppNavigator,
     onFavoriteButtonClicked: () -> Unit
 ) {
     val toolbarBottom = headerHeightPx - toolbarHeightPx
@@ -165,7 +163,7 @@ private fun Toolbar(
             scroll.value >= toolbarBottom
         }
     }
-
+    val appNavigator = LocalAppNavigator.current
     TopAppBar(
         navigationIcon = {
             IconButton(

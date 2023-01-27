@@ -30,7 +30,6 @@ class ArticlesViewModel @Inject constructor(
     //todo 5) add general network state handling
     //todo pares dates via retfofit
     //todo gradle catalog
-    //todo add dark theme
     //todo check hilt extention
 
     //todo handle showing snackbar on error look at Jetnews
