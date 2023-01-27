@@ -6,9 +6,8 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
 import com.example.newsapp.model.FilterData
-import com.example.newsapp.model.articles.Article
+import com.example.newsapp.model.articles.ArticleEntity
 import com.example.newsapp.util.PAGE_SIZE
-import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.roundToInt
@@ -19,7 +18,7 @@ class ArticlesRemoteMediator(
     private val filterData: FilterData,
     private val remoteDatabase: ArticlesRemoteDataSource,
     private val localDatabase: ArticlesLocalDataSource,
-) : RemoteMediator<Int, Article>() {
+) : RemoteMediator<Int, ArticleEntity>() {
 
     var pageNumber = 1
 
@@ -29,7 +28,7 @@ class ArticlesRemoteMediator(
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, Article>
+        state: PagingState<Int, ArticleEntity>
     ): MediatorResult {
         return try {
             val loadKey = when (loadType) {

@@ -6,17 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
@@ -37,9 +32,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.newsapp.R
-import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.model.providers.ProviderUi
-import com.example.newsapp.navigation.AppNavigator
+import com.example.newsapp.model.articles.Article
+import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.navigation.navigateToArticleDetails
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingFullScreen
@@ -49,7 +43,6 @@ import com.example.newsapp.ui.main.LocalSnackbarDelegate
 import com.example.newsapp.ui.screens.providers.ProvidersActions
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
 import com.example.newsapp.ui.screens.providers.ProvidersViewModel
-import com.example.newsapp.util.SnackbarDelegate
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.channels.Channel
@@ -115,7 +108,7 @@ fun ArticlesScreen(
 private fun DialogProvidersSelection(
     providersViewModel: ProvidersViewModel = hiltViewModel(),
     dialogState: MutableState<Boolean>,
-    onProvidersSelected: (List<ProviderUi>) -> Unit
+    onProvidersSelected: (List<Provider>) -> Unit
 ) {
     MyDialog(
         R.string.select_providers,
@@ -136,7 +129,7 @@ private fun DialogProvidersSelection(
     }
 }
 
-private fun shouldShowEmptyList(articlesList: LazyPagingItems<ArticleUi>) =
+private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
     articlesList.loadState.refresh is LoadState.NotLoading &&
             articlesList.itemCount == 0
 
@@ -162,11 +155,11 @@ private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
 
 @Composable
 fun ArticlesContent(
-    articles: LazyPagingItems<ArticleUi>,
+    articles: LazyPagingItems<Article>,
     query: String,
     showFilterRedBadge: Boolean,
     actionFlow: Channel<ArticlesActions>,
-    onArticleClicked: (ArticleUi) -> Unit,
+    onArticleClicked: (Article) -> Unit,
     onFilterIconClicked: () -> Unit
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
@@ -304,10 +297,10 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
 
 @Composable
 fun ArticlesList(
-    articles: LazyPagingItems<ArticleUi>,
+    articles: LazyPagingItems<Article>,
     lazyListState: LazyListState,
     actionFlow: Channel<ArticlesActions>,
-    onArticleClicked: (ArticleUi) -> Unit,
+    onArticleClicked: (Article) -> Unit,
 ) {
     LazyColumn(state = lazyListState) {
 
@@ -330,9 +323,9 @@ fun ArticlesList(
 
 @Composable
 fun ArticleItem(
-    article: ArticleUi,
+    article: Article,
     actionFlow: Channel<ArticlesActions>,
-    onArticleClicked: (ArticleUi) -> Unit,
+    onArticleClicked: (Article) -> Unit,
 ) {
     Card(
         modifier = Modifier

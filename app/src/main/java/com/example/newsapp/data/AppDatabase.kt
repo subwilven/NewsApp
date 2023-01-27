@@ -7,12 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.newsapp.data.articles.data_source.local.ArticlesDao
 import com.example.newsapp.data.articles.data_source.local.ProvidersDao
-import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.providers.Provider
+import com.example.newsapp.model.articles.ArticleEntity
+import com.example.newsapp.model.providers.ProviderEntity
 import com.example.newsapp.util.DateConverterRoom
 
 @Database(
-    entities = [Article::class, Provider::class],
+    entities = [ArticleEntity::class, ProviderEntity::class],
     version = 1,
     exportSchema = false
 )

@@ -2,7 +2,7 @@ package com.example.newsapp.ui.screens.providers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapp.model.providers.ProviderUi
+import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.use_cases.FetchProvidersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -20,8 +20,8 @@ class ProvidersViewModel @Inject constructor(
     //todo do we need to use it hot flow ?
     val uiState = _uiState.asStateFlow()
 
-    private val providersListFlow = MutableSharedFlow<List<ProviderUi>>()
-    private val onProviderSelectedFlow = MutableSharedFlow<Pair<ProviderUi, Int>>()
+    private val providersListFlow = MutableSharedFlow<List<Provider>>()
+    private val onProviderSelectedFlow = MutableSharedFlow<Pair<Provider, Int>>()
     private val onFilterSubmitted = MutableStateFlow(false)
 
     init {
@@ -32,7 +32,7 @@ class ProvidersViewModel @Inject constructor(
 
         combine(
             providersListFlow.debounce(100),
-            onFilterSubmitted
+            onFilterSubmitted,
         ) { providersList, isFilterSubmitted ->
             _uiState.value = ProviderUiState(
                 providersList = providersList,
@@ -70,16 +70,16 @@ class ProvidersViewModel @Inject constructor(
         viewModelScope.launch {
             onProviderSelectedFlow.emit(
                 Pair(
-                    action.providerUi,
+                    action.provider,
                     action.index
                 )
             )
         }
     }
 
-    private fun toggleProviderSelectionState(providerUi: ProviderUi, index: Int) {
+    private fun toggleProviderSelectionState(provider: Provider, index: Int) {
         viewModelScope.launch(workerDispatcher) {
-            val newProvider = providerUi.copy().apply {
+            val newProvider = provider.copy().apply {
                 toggleSelection()
                 toggleUpdatesSaved()
             }
@@ -103,7 +103,7 @@ class ProvidersViewModel @Inject constructor(
         }
     }
 
-    fun getSelectedProviders(): List<ProviderUi> {
+    fun getSelectedProviders(): List<Provider> {
         onFilterSubmitted.update { false }
         return getCurrentProvidersList().filter { it.isSelected }
     }

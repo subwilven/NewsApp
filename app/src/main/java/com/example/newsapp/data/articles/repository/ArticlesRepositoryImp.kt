@@ -5,11 +5,10 @@ import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSour
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteMediator
 import com.example.newsapp.model.FilterData
-import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.providers.Provider
+import com.example.newsapp.model.articles.ArticleEntity
+import com.example.newsapp.model.providers.ProviderEntity
 import com.example.newsapp.util.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -19,7 +18,7 @@ class ArticlesRepositoryImp @Inject constructor(
 ) : ArticlesRepository {
 
 
-    override fun getArticlesStream(filterData: FilterData): Flow<PagingData<Article>> {
+    override fun getArticlesStream(filterData: FilterData): Flow<PagingData<ArticleEntity>> {
         return Pager(
             config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
             remoteMediator = ArticlesRemoteMediator(filterData, remoteDataSource, localDataSource),
@@ -35,7 +34,7 @@ class ArticlesRepositoryImp @Inject constructor(
     override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean) =
         localDataSource.changeFavoriteState(articleId, isFavorite)
 
-    override  suspend fun getProviders(): List<Provider> {
+    override  suspend fun getProviders(): List<ProviderEntity> {
         val providersList = localDataSource.getProviders()
         return providersList.ifEmpty {
             val fetchedSources = remoteDataSource.fetchProviders().providers

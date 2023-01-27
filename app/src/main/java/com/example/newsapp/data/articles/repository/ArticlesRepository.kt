@@ -2,14 +2,14 @@ package com.example.newsapp.data.articles.repository
 
 import androidx.paging.PagingData
 import com.example.newsapp.model.FilterData
-import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.providers.Provider
+import com.example.newsapp.model.articles.ArticleEntity
+import com.example.newsapp.model.providers.ProviderEntity
 import kotlinx.coroutines.flow.Flow
 
 interface ArticlesRepository {
-    fun getArticlesStream(filterData: FilterData): Flow<PagingData<Article>>
-    fun getArticleById(articleId: Int): Flow<Article>
-    fun getFavoritesArticles(): Flow<List<Article>>
+    fun getArticlesStream(filterData: FilterData): Flow<PagingData<ArticleEntity>>
+    fun getArticleById(articleId: Int): Flow<ArticleEntity>
+    fun getFavoritesArticles(): Flow<List<ArticleEntity>>
     suspend fun changeFavoriteState(articleId:Int,isFavorite :Boolean)
-    suspend fun  getProviders() : List<Provider>
+    suspend fun  getProviders() : List<ProviderEntity>
 }

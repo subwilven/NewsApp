@@ -1,19 +1,19 @@
 package com.example.newsapp.data.articles.data_source.local
 
 import androidx.paging.PagingSource
-import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.providers.Provider
+import com.example.newsapp.model.articles.ArticleEntity
+import com.example.newsapp.model.providers.ProviderEntity
 import kotlinx.coroutines.flow.Flow
 
 interface ArticlesLocalDataSource {
-   fun fetchArticles(searchInput :String?) : PagingSource<Int,Article>
-   suspend fun insertAllArticles(articles : List<Article>)
-   suspend fun insertAllArticlesAndDeleteOld(articles : List<Article>)
+   fun fetchArticles(searchInput :String?) : PagingSource<Int,ArticleEntity>
+   suspend fun insertAllArticles(articles : List<ArticleEntity>)
+   suspend fun insertAllArticlesAndDeleteOld(articles : List<ArticleEntity>)
    suspend fun deleteAllArticles()
-   fun getArticleById(articleId :Int): Flow<Article>
-   fun getFavoritesArticles() : Flow<List<Article>>
+   fun getArticleById(articleId :Int): Flow<ArticleEntity>
+   fun getFavoritesArticles() : Flow<List<ArticleEntity>>
    suspend fun changeFavoriteState(articleId:Int,isFavorite :Boolean)
-   suspend fun getProviders() : List<Provider>
+   suspend fun getProviders() : List<ProviderEntity>
    suspend fun getProviderCounts() : Int
-   suspend fun insertAllSources(sources : List<Provider>)
+   suspend fun insertAllSources(sources : List<ProviderEntity>)
 }

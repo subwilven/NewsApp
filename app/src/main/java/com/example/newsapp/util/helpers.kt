@@ -4,10 +4,6 @@ import android.text.format.DateUtils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.ui.res.painterResource
-import com.example.newsapp.R
-import com.example.newsapp.model.articles.ArticleUi
-import java.text.SimpleDateFormat
 import java.util.*
 
 fun Date.convertToAgoTime():String{

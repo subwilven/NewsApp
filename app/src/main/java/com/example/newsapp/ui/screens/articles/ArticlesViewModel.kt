@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.newsapp.model.FilterData
-import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.model.providers.ProviderUi
+import com.example.newsapp.model.articles.Article
+import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,7 +41,7 @@ class ArticlesViewModel @Inject constructor(
 
     private val searchFlow = MutableStateFlow<String?>(null)
 
-    private val selectedProvidersFlow = MutableStateFlow<List<ProviderUi>>(emptyList())
+    private val selectedProvidersFlow = MutableStateFlow<List<Provider>>(emptyList())
 
     init {
 
@@ -70,7 +70,7 @@ class ArticlesViewModel @Inject constructor(
 
     private fun updateUiStateOnFilterChanges(
         filterDataFlow: Flow<FilterData>,
-        articlesDataFlow: Flow<PagingData<ArticleUi>>
+        articlesDataFlow: Flow<PagingData<Article>>
     ) {
         filterDataFlow.onEach { filterData ->
             _uiState.value = ArticleUiState(
@@ -96,11 +96,11 @@ class ArticlesViewModel @Inject constructor(
         searchFlow.tryEmit(searchInput)
     }
 
-    private fun onProvidersSelected(selectedProviders: List<ProviderUi>) {
+    private fun onProvidersSelected(selectedProviders: List<Provider>) {
         selectedProvidersFlow.tryEmit(selectedProviders)
     }
 
-    private fun changeArticleFavoriteState(articleUi: ArticleUi) {
+    private fun changeArticleFavoriteState(articleUi: Article) {
         viewModelScope.launch {
             toggleFavoriteStateUseCase(articleUi)
         }

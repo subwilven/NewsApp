@@ -4,30 +4,22 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.newsapp.R
-import com.example.newsapp.model.providers.ProviderUi
+import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.components.MyFilterChip
 import com.google.accompanist.flowlayout.FlowRow
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ProvidersScreen(
     providersViewModel: ProvidersViewModel = hiltViewModel(),
-    onProvidersSelected: (List<ProviderUi>) -> Unit
+    onProvidersSelected: (List<Provider>) -> Unit
 ) {
 
     val uiState: ProviderUiState by providersViewModel.uiState.collectAsStateWithLifecycle()
@@ -61,8 +53,8 @@ fun ProvidersScreen(
 @Composable
 private fun ProvidersListContent(
     isLoading: Boolean,
-    providersList: List<ProviderUi>,
-    onProvidersSelected: (ProviderUi, Int) -> Unit,
+    providersList: List<Provider>,
+    onProvidersSelected: (Provider, Int) -> Unit,
 ) {
     if (isLoading) {
         LoadingFullScreen(modifier = Modifier)
@@ -73,7 +65,7 @@ private fun ProvidersListContent(
 
 @Composable
 private fun ProvidersChips(
-    providersList: List<ProviderUi>, onChipClicked: (ProviderUi, Int) -> Unit
+    providersList: List<Provider>, onChipClicked: (Provider, Int) -> Unit
 ) {
     val scrollState = rememberScrollState()
     FlowRow(

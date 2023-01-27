@@ -24,8 +24,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.newsapp.R
-import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.navigation.AppNavigator
+import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.launchWebView
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.main.LocalAppNavigator
@@ -52,7 +51,7 @@ private val headerHeight = 250.dp
 
 @Composable
 fun CollapsingToolbar(
-    article: ArticleUi,
+    article: Article,
     onFavoriteButtonClicked: () -> Unit
 ) {
     val scroll: ScrollState = rememberScrollState(0)
@@ -94,7 +93,7 @@ private fun Header(imageUrl: String?, scroll: ScrollState, headerHeightPx: Float
 }
 
 @Composable
-private fun Body(article: ArticleUi, scroll: ScrollState) {
+private fun Body(article: Article, scroll: ScrollState) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier

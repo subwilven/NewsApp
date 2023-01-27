@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.ContextCompat
-import com.example.newsapp.model.articles.ArticleUi
+import com.example.newsapp.model.articles.Article
 import com.example.newsapp.util.ARG_ARTICLE_ID
 
 sealed class Destination(protected val route: String, vararg params: String) {
@@ -42,7 +42,7 @@ internal fun String.appendParams(vararg params: Pair<String, Any?>): String {
     return builder.toString()
 }
 
-fun navigateToArticleDetails(appNavigator: AppNavigator,article: ArticleUi){
+fun navigateToArticleDetails(appNavigator: AppNavigator,article: Article){
     appNavigator.tryNavigateTo(Destination.ArticleDetailsScreen(article.id))
 }
 

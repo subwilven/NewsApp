@@ -3,7 +3,7 @@ package com.example.newsapp.ui.screens.articleDetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapp.model.articles.ArticleUi
+import com.example.newsapp.model.articles.Article
 import com.example.newsapp.use_cases.GetArticleByIdUseCase
 import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.util.ARG_ARTICLE_ID
@@ -22,7 +22,7 @@ class ArticleDetailsViewModel @Inject constructor(
     private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
-    private val _articleDetails = MutableStateFlow<ArticleUi?>(null)
+    private val _articleDetails = MutableStateFlow<Article?>(null)
     val articleDetails = _articleDetails.asStateFlow()
 
     init {
@@ -40,7 +40,7 @@ class ArticleDetailsViewModel @Inject constructor(
 
     private fun getArticleId() =  savedStateHandle.get<Int>(ARG_ARTICLE_ID)
 
-    fun changeArticleFavoriteState(articleUi: ArticleUi) {
+    fun changeArticleFavoriteState(articleUi: Article) {
         viewModelScope.launch {
             toggleFavoriteStateUseCase(articleUi)
         }

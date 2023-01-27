@@ -1,9 +1,8 @@
 package com.example.newsapp.ui.screens.favorite
 
-import com.example.newsapp.model.articles.ArticleUi
-import com.example.newsapp.model.providers.ProviderUi
+import com.example.newsapp.model.articles.Article
 
 data class FavoriteUiState(
     var isLoading: Boolean = true,
-    var favoriteArticles: List<ArticleUi> = emptyList(),
+    var favoriteArticles: List<Article> = emptyList(),
 )
