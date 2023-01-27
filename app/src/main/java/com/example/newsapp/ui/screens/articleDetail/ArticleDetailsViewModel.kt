@@ -40,9 +40,9 @@ class ArticleDetailsViewModel @Inject constructor(
 
     private fun getArticleId() =  savedStateHandle.get<Int>(ARG_ARTICLE_ID)
 
-    fun changeArticleFavoriteState(articleUi: Article) {
+    fun changeArticleFavoriteState() {
         viewModelScope.launch {
-            toggleFavoriteStateUseCase(articleUi)
+            _articleDetails.value?.let { toggleFavoriteStateUseCase(it) }
         }
     }
 

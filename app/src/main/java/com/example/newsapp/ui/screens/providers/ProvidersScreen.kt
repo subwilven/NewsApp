@@ -35,19 +35,14 @@ fun ProvidersScreen(
 
     DisposableEffect(lifeCycleOwner) {
         onDispose {
-            providersViewModel.processActions(ProvidersActions.ResetChanges)
+            providersViewModel.resetUserChanges()
         }
     }
 
     ProvidersListContent(isLoading = uiState.isLoading,
         providersList = uiState.providersList,
-        onProvidersSelected = { providerUi, index ->
-            providersViewModel.processActions(
-                ProvidersActions.ToggleProviderSelection(
-                    providerUi, index
-                )
-            )
-        },)
+        onProvidersSelected = providersViewModel::emitToggleSelectionFlow
+    )
 }
 
 @Composable

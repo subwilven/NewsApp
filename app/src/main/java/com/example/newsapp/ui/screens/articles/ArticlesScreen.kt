@@ -40,12 +40,10 @@ import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.components.MyDialog
 import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.main.LocalSnackbarDelegate
-import com.example.newsapp.ui.screens.providers.ProvidersActions
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
 import com.example.newsapp.ui.screens.providers.ProvidersViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import java.util.*
 
@@ -66,13 +64,10 @@ fun ArticlesScreen(
 
     // Code to Show and Dismiss Dialog
     if (dialogState.value) {
-        DialogProvidersSelection(dialogState =dialogState) { selectedProviders ->
-            articlesViewModel.actionsChannel.trySend(
-                ArticlesActions.FilterByProvidersAction(
-                    selectedProviders
-                )
-            )
-        }
+        DialogProvidersSelection(
+            dialogState = dialogState,
+            onProvidersSelected = articlesViewModel::onProvidersSelected
+        )
     }
     LocalSnackbarDelegate.current?.showSnackbar("sdfdsfd")
 
@@ -80,14 +75,18 @@ fun ArticlesScreen(
         val shouldShowRedBadage = uiState.filterData.selectedProviders.isNotEmpty()
         val appNavigator = LocalAppNavigator.current
         //todo should we create remember for this callbacks ?
-        ArticlesContent(articlesList, uiState.filterData.searchInput ?: "",
+        ArticlesContent(articlesList,
+            uiState.filterData.searchInput ?: "",
             shouldShowRedBadage,
-            articlesViewModel.actionsChannel,
+            articlesViewModel::searchByQuery,
+            articlesViewModel::clearSearch,
+            articlesViewModel::changeArticleFavoriteState,
             onArticleClicked = { article ->
                 navigateToArticleDetails(appNavigator, article)
             }, onFilterIconClicked = {
                 dialogState.value = true
-            })
+            },
+        )
     }
     //todo use sdie effects to show snackbar see https://developer.android.com/jetpack/compose/side-effects
 //    showSnackBar(LocalScaffoldState.current,
@@ -115,14 +114,10 @@ private fun DialogProvidersSelection(
         R.string.apply_filter,
         R.string.clear_filter,
         dialogState,
-        onPositiveClicked = {
-            providersViewModel.processActions(ProvidersActions.SubmitFilter)
-        },
-        onNegativeClicked = {
-            providersViewModel.processActions(ProvidersActions.ClearFilter)
-        }
+        onPositiveClicked = providersViewModel::applyFilter,
+        onNegativeClicked = providersViewModel::clearFilter
     ) {
-        ProvidersScreen(providersViewModel){
+        ProvidersScreen(providersViewModel) {
             dialogState.value = false
             onProvidersSelected.invoke(providersViewModel.getSelectedProviders())
         }
@@ -158,9 +153,12 @@ fun ArticlesContent(
     articles: LazyPagingItems<Article>,
     query: String,
     showFilterRedBadge: Boolean,
-    actionFlow: Channel<ArticlesActions>,
+    onQueryChanged : (String) -> Unit,
+    onClearIconClicked : () -> Unit,
+    onFavoriteButtonClicked : (Article) -> Unit,
     onArticleClicked: (Article) -> Unit,
-    onFilterIconClicked: () -> Unit
+    onFilterIconClicked: () -> Unit,
+
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
@@ -172,7 +170,7 @@ fun ArticlesContent(
                 .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                 .height(IntrinsicSize.Min)
         ) {
-            SearchInputField(Modifier.weight(0.85f), query, actionFlow)
+            SearchInputField(Modifier.weight(0.85f), query, onQueryChanged,onClearIconClicked)
             Box(
                 modifier = Modifier
                     .padding(horizontal = 4.dp)
@@ -205,7 +203,7 @@ fun ArticlesContent(
                 if (shouldShowEmptyList) {
                     //todo
                 } else {
-                    ArticlesList(articles, lazyListState, actionFlow, onArticleClicked)
+                    ArticlesList(articles, lazyListState, onFavoriteButtonClicked, onArticleClicked)
                 }
             }
 
@@ -224,14 +222,13 @@ fun BadgeRedCircle(modifier: Modifier) {
 }
 
 @Composable
-fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<ArticlesActions>) {
+fun SearchInputField(modifier: Modifier, query: String, onQueryChanged : (String) -> Unit
+                     ,onClearIconClicked : () -> Unit) {
     val shape = MaterialTheme.shapes.large
     BasicTextField(
         value = query,
         textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
-        onValueChange = {
-            actionFlow.trySend(ArticlesActions.SearchArticlesAction(it))
-        },
+        onValueChange = onQueryChanged,
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -271,13 +268,7 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
 
                 if (query.isNotEmpty()) {
                     IconButton(
-                        onClick = {
-                            actionFlow.trySend(
-                                ArticlesActions.SearchArticlesAction(
-                                    null
-                                )
-                            )
-                        },
+                        onClick = onClearIconClicked,
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
                             .size(24.dp)
@@ -299,14 +290,14 @@ fun SearchInputField(modifier: Modifier, query: String, actionFlow: Channel<Arti
 fun ArticlesList(
     articles: LazyPagingItems<Article>,
     lazyListState: LazyListState,
-    actionFlow: Channel<ArticlesActions>,
+    onFavoriteButtonClicked : (Article) -> Unit,
     onArticleClicked: (Article) -> Unit,
 ) {
     LazyColumn(state = lazyListState) {
 
         items(articles.itemCount) { index ->
             articles.get(index)?.let {
-                ArticleItem(it, actionFlow, onArticleClicked)
+                ArticleItem(it, onFavoriteButtonClicked, onArticleClicked)
             }
         }
         when (articles.loadState.append) {
@@ -324,7 +315,7 @@ fun ArticlesList(
 @Composable
 fun ArticleItem(
     article: Article,
-    actionFlow: Channel<ArticlesActions>,
+    onFavoriteButtonClicked : (Article) -> Unit,
     onArticleClicked: (Article) -> Unit,
 ) {
     Card(
@@ -377,10 +368,10 @@ fun ArticleItem(
                 FavoriteButton(
                     Modifier.weight(0.1f),
                     article.isFavorite,
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+
                 ) {
-                    actionFlow.trySend(ArticlesActions.AddToFavoriteAction(article))
-                }
+                    onFavoriteButtonClicked.invoke(article)                }
             }
 
             article.publishedAt?.let {

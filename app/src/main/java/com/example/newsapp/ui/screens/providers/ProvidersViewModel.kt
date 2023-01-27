@@ -52,26 +52,14 @@ class ProvidersViewModel @Inject constructor(
         }
     }
 
-    fun processActions(providersActions: ProvidersActions) {
-        when (providersActions) {
-            is ProvidersActions.ResetChanges -> resetUserChanges()
-            is ProvidersActions.ClearFilter -> clearFilter()
-            is ProvidersActions.SubmitFilter -> applyFilter()
-            is ProvidersActions.ToggleProviderSelection
-            -> {
-                emitToggleSelectionFlow(providersActions)
-            }
-        }
-    }
-
     private fun getCurrentProvidersList() = _uiState.value.providersList
 
-    private fun emitToggleSelectionFlow(action: ProvidersActions.ToggleProviderSelection) {
+    fun emitToggleSelectionFlow(provider: Provider,index: Int ) {
         viewModelScope.launch {
             onProviderSelectedFlow.emit(
                 Pair(
-                    action.provider,
-                    action.index
+                    provider,
+                    index
                 )
             )
         }
@@ -90,7 +78,7 @@ class ProvidersViewModel @Inject constructor(
         }
     }
 
-    private fun applyFilter() {
+    fun applyFilter() {
         viewModelScope.launch (workerDispatcher){
             saveProvidersSelectionsStates()
             onFilterSubmitted.emit(true)
@@ -108,7 +96,7 @@ class ProvidersViewModel @Inject constructor(
         return getCurrentProvidersList().filter { it.isSelected }
     }
 
-    private fun resetUserChanges() {
+    fun resetUserChanges() {
         viewModelScope.launch(workerDispatcher) {
             getCurrentProvidersList().onEach {
                 if (!it.updatesSaved) {
@@ -124,7 +112,7 @@ class ProvidersViewModel @Inject constructor(
         providersListFlow.emit(getCurrentProvidersList().toList())
     }
 
-    private fun clearFilter() {
+    fun clearFilter() {
         viewModelScope.launch(workerDispatcher) {
             getCurrentProvidersList().onEach {
                 it.isSelected = false

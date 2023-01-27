@@ -12,7 +12,6 @@ import com.example.newsapp.use_cases.FetchArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,8 +36,6 @@ class ArticlesViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ArticleUiState())
     val uiState = _uiState.asStateFlow()
 
-    val actionsChannel = Channel<ArticlesActions>()
-
     private val searchFlow = MutableStateFlow<String?>(null)
 
     private val selectedProvidersFlow = MutableStateFlow<List<Provider>>(emptyList())
@@ -48,8 +45,6 @@ class ArticlesViewModel @Inject constructor(
         val filterDataFlow = combineFilterFlows()
         val articlesPagingDataFlow = createPagingListFlow(filterDataFlow)
         updateUiStateOnFilterChanges(filterDataFlow, articlesPagingDataFlow)
-
-        actionsChannel.receiveAsFlow().onEach { processActions(it) }.launchIn(viewModelScope)
     }
 
     private fun combineFilterFlows() =
@@ -81,29 +76,19 @@ class ArticlesViewModel @Inject constructor(
 
     }
 
-    private fun processActions(articlesActions: ArticlesActions) {
-        when (articlesActions) {
-            is ArticlesActions.SearchArticlesAction
-            -> onSearchArticles(articlesActions.searchInput)
-            is ArticlesActions.AddToFavoriteAction
-            -> changeArticleFavoriteState(articlesActions.article)
-            is ArticlesActions.FilterByProvidersAction
-            -> onProvidersSelected(articlesActions.selectedProviders)
-        }
-    }
-
-    private fun onSearchArticles(searchInput: String?) {
+    fun searchByQuery(searchInput: String?) {
         searchFlow.tryEmit(searchInput)
     }
 
-    private fun onProvidersSelected(selectedProviders: List<Provider>) {
+     fun onProvidersSelected(selectedProviders: List<Provider>) {
         selectedProvidersFlow.tryEmit(selectedProviders)
     }
 
-    private fun changeArticleFavoriteState(articleUi: Article) {
+    fun changeArticleFavoriteState(article: Article) {
         viewModelScope.launch {
-            toggleFavoriteStateUseCase(articleUi)
+            toggleFavoriteStateUseCase(article)
         }
     }
 
+    fun clearSearch() = searchByQuery(null)
 }

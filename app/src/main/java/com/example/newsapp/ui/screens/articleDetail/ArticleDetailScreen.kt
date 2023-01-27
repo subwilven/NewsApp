@@ -40,9 +40,9 @@ fun ArticleDetailScreen(
 
     val uiState = articlesViewModel.articleDetails.collectAsStateWithLifecycle()
     uiState.value?.let { article ->
-        CollapsingToolbar(article) {
-            articlesViewModel.changeArticleFavoriteState(article)
-        }
+        CollapsingToolbar(article,
+            onFavoriteButtonClicked = articlesViewModel::changeArticleFavoriteState
+        )
     }
 
 }
