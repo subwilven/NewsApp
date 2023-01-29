@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +22,8 @@ import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.navigateToArticleDetails
+import com.example.newsapp.ui.components.EmptyScreen
+import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.main.LocalAppNavigator
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -32,37 +35,51 @@ fun MyFavoritesScreen(
         .uiState
         .collectAsStateWithLifecycle()
     val appNavigator = LocalAppNavigator.current
-    LazyColumn {
-        items(uiState.value.favoriteArticles.count()) { index ->
-            uiState.value.favoriteArticles[index].let {
-                FavoriteArticleItem(it){ article ->
-                    navigateToArticleDetails(appNavigator,article)
-                }
+    if(uiState.value.isLoading){
+        LoadingFullScreen()
+    }
+    else if(uiState.value.favoriteArticles.isEmpty()){
+        EmptyScreen(stringResource(id = R.string.no_favorites))
+    }else{
+        LazyColumn {
+            items(uiState.value.favoriteArticles.count()) { index ->
+                uiState.value.favoriteArticles[index].let {
+                    FavoriteArticleItem(it){ article ->
+                        navigateToArticleDetails(appNavigator,article)
+                    }
 
+                }
             }
         }
     }
+
 }
 
 
 @Composable
 private fun FavoriteArticleItem(article : Article, onArticleClicked : (Article) -> Unit ){
 
-    Row(Modifier.padding(vertical = 8.dp, horizontal = 16.dp).clickable {
-        onArticleClicked.invoke(article)
-    }){
+    Row(
+        Modifier
+            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .clickable {
+                onArticleClicked.invoke(article)
+            }){
         Column(modifier = Modifier.weight(0.7f)){
             Text(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
-                    .padding(vertical = 4.dp).padding(end = 8.dp),
+                    .padding(vertical = 4.dp)
+                    .padding(end = 8.dp),
                 text = article.title,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(vertical = 4.dp).padding(end = 8.dp),
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .padding(end = 8.dp),
                 text = article.description ?: "",
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis

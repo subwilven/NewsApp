@@ -36,6 +36,7 @@ import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.navigation.navigateToArticleDetails
+import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.components.MyDialog
@@ -88,22 +89,9 @@ fun ArticlesScreen(
             onFilterIconClicked = {
                 dialogState.value = true
             },
-            onRetryClicked = {articlesList.refresh()}
+            onRetryClicked = { articlesList.refresh() }
         )
     }
-    //todo use sdie effects to show snackbar see https://developer.android.com/jetpack/compose/side-effects
-//    showSnackBar(LocalScaffoldState.current,
-//        coroutineScope,
-//        "uytufssft")
-
-//    else if(uiState.errorMessage?.isNotEmpty()== true){
-//        showSnackBar(scaffoldState,coroutineScope,uiState.errorMessage?:"")
-//    }
-//    else
-//
-//        }
-
-
 }
 
 @Composable
@@ -153,17 +141,6 @@ private fun getErrorState(loadState: CombinedLoadStates): LoadState.Error? {
         ?: loadState.append as? LoadState.Error
         ?: loadState.refresh as? LoadState.Error
 }
-//fun showSnackBar(
-//    scaffoldState: ScaffoldState,
-//    coroutineScope: CoroutineScope, errorMessage: String
-//) {
-//    coroutineScope.launch {
-//        scaffoldState.snackbarHostState.showSnackbar(
-//            message = errorMessage,
-//            duration = SnackbarDuration.Long
-//        )
-//    }
-//}
 
 @Composable
 fun ArticlesContent(
@@ -176,7 +153,7 @@ fun ArticlesContent(
     onArticleClicked: (Article) -> Unit,
     onFilterIconClicked: () -> Unit,
     onRetryClicked: () -> Unit,
-    ) {
+) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
     val lazyListState = rememberLazyListState()
@@ -221,31 +198,23 @@ fun ArticlesContent(
 
         if (shouldFullLoadingProgressBar) {
             LoadingFullScreen()
-        } else if (fullScreenError!= null) {
-            FullScreenError(fullScreenError.error.message?:"",onRetryClicked)
-        } else
+        } else if (fullScreenError != null) {
+            FullScreenError(fullScreenError.error.message ?: "", onRetryClicked)
+        } else if (shouldShowEmptyList)
+            EmptyScreen(stringResource(id = R.string.no_data_avaiable))
+        else
             SwipeRefresh(
                 state = rememberSwipeRefreshState(false),
                 onRefresh = { articles.refresh() },
             ) {
-                if (shouldShowEmptyList) {
-                    EmptyScreen()
-                } else {
-                    ArticlesList(articles, lazyListState, onFavoriteButtonClicked, onArticleClicked)
-                }
+                ArticlesList(articles, lazyListState, onFavoriteButtonClicked, onArticleClicked)
+
             }
 
     }
 }
-@Composable
-fun EmptyScreen(){
-    Box(
-        Modifier.fillMaxSize()
-    ) {
-        Text(modifier = Modifier.align(Alignment.Center) ,
-            text = stringResource(id = R.string.no_data_avaiable))
-    }
-}
+
+
 
 @Composable
 fun FullScreenError(message: String, onRetryClicked: () -> Unit) {
@@ -255,7 +224,10 @@ fun FullScreenError(message: String, onRetryClicked: () -> Unit) {
         Column(modifier = Modifier.align(Alignment.Center)) {
             Text(text = message)
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = onRetryClicked,modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Button(
+                onClick = onRetryClicked,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
                 Text(text = stringResource(id = R.string.retry))
             }
         }
