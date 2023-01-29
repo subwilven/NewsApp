@@ -18,4 +18,6 @@
     <string name="clear_filter">Clear Filter</string>
     <string name="cancel">Cancel</string>
     <string name="select_providers">Select Providers</string>
+    <string name="no_data_avaiable">No results found</string>
+    <string name="retry">Retry</string>
 </resources>

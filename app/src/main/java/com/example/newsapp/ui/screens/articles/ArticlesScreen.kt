@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,13 +70,13 @@ fun ArticlesScreen(
             onProvidersSelected = articlesViewModel::onProvidersSelected
         )
     }
-    LocalSnackbarDelegate.current?.showSnackbar("sdfdsfd")
 
     articlesList?.let {
         val shouldShowRedBadage = uiState.filterData.selectedProviders.isNotEmpty()
         val appNavigator = LocalAppNavigator.current
         //todo should we create remember for this callbacks ?
-        ArticlesContent(articlesList,
+        ArticlesContent(
+            articlesList,
             uiState.filterData.searchInput ?: "",
             shouldShowRedBadage,
             articlesViewModel::searchByQuery,
@@ -83,9 +84,11 @@ fun ArticlesScreen(
             articlesViewModel::changeArticleFavoriteState,
             onArticleClicked = { article ->
                 navigateToArticleDetails(appNavigator, article)
-            }, onFilterIconClicked = {
+            },
+            onFilterIconClicked = {
                 dialogState.value = true
             },
+            onRetryClicked = {articlesList.refresh()}
         )
     }
     //todo use sdie effects to show snackbar see https://developer.android.com/jetpack/compose/side-effects
@@ -135,7 +138,21 @@ private fun shouldShowArticlesList(loadState: CombinedLoadStates) =
 private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
     loadState.mediator?.refresh is LoadState.Loading
 
+private fun fullScreenError(
+    loadState: CombinedLoadStates,
+    itemsCount: Int
+): LoadState.Error? {
+    return if (loadState.mediator?.refresh is LoadState.Error && itemsCount == 0)
+        loadState.mediator?.refresh as LoadState.Error
+    else
+        null
+}
 
+private fun getErrorState(loadState: CombinedLoadStates): LoadState.Error? {
+    return loadState.source.append as? LoadState.Error
+        ?: loadState.append as? LoadState.Error
+        ?: loadState.refresh as? LoadState.Error
+}
 //fun showSnackBar(
 //    scaffoldState: ScaffoldState,
 //    coroutineScope: CoroutineScope, errorMessage: String
@@ -153,24 +170,33 @@ fun ArticlesContent(
     articles: LazyPagingItems<Article>,
     query: String,
     showFilterRedBadge: Boolean,
-    onQueryChanged : (String) -> Unit,
-    onClearIconClicked : () -> Unit,
-    onFavoriteButtonClicked : (Article) -> Unit,
+    onQueryChanged: (String) -> Unit,
+    onClearIconClicked: () -> Unit,
+    onFavoriteButtonClicked: (Article) -> Unit,
     onArticleClicked: (Article) -> Unit,
     onFilterIconClicked: () -> Unit,
-
-) {
+    onRetryClicked: () -> Unit,
+    ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
     val lazyListState = rememberLazyListState()
+    val fullScreenError = fullScreenError(articles.loadState, articles.itemCount)
+    if (fullScreenError == null) {
+        val erorrMessage = getErrorState(articles.loadState)
+        erorrMessage?.let {
+            LocalSnackbarDelegate.current?.showSnackbar(erorrMessage.error.message ?: "")
+        }
+    }
 
-    Column() {
+
+
+    Column {
         Row(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                 .height(IntrinsicSize.Min)
         ) {
-            SearchInputField(Modifier.weight(0.85f), query, onQueryChanged,onClearIconClicked)
+            SearchInputField(Modifier.weight(0.85f), query, onQueryChanged, onClearIconClicked)
             Box(
                 modifier = Modifier
                     .padding(horizontal = 4.dp)
@@ -195,17 +221,44 @@ fun ArticlesContent(
 
         if (shouldFullLoadingProgressBar) {
             LoadingFullScreen()
+        } else if (fullScreenError!= null) {
+            FullScreenError(fullScreenError.error.message?:"",onRetryClicked)
         } else
             SwipeRefresh(
                 state = rememberSwipeRefreshState(false),
                 onRefresh = { articles.refresh() },
             ) {
                 if (shouldShowEmptyList) {
-                    //todo
+                    EmptyScreen()
                 } else {
                     ArticlesList(articles, lazyListState, onFavoriteButtonClicked, onArticleClicked)
                 }
             }
+
+    }
+}
+@Composable
+fun EmptyScreen(){
+    Box(
+        Modifier.fillMaxSize()
+    ) {
+        Text(modifier = Modifier.align(Alignment.Center) ,
+            text = stringResource(id = R.string.no_data_avaiable))
+    }
+}
+
+@Composable
+fun FullScreenError(message: String, onRetryClicked: () -> Unit) {
+    Box(
+        Modifier.fillMaxSize()
+    ) {
+        Column(modifier = Modifier.align(Alignment.Center)) {
+            Text(text = message)
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onRetryClicked,modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Text(text = stringResource(id = R.string.retry))
+            }
+        }
 
     }
 }
@@ -222,8 +275,12 @@ fun BadgeRedCircle(modifier: Modifier) {
 }
 
 @Composable
-fun SearchInputField(modifier: Modifier, query: String, onQueryChanged : (String) -> Unit
-                     ,onClearIconClicked : () -> Unit) {
+fun SearchInputField(
+    modifier: Modifier,
+    query: String,
+    onQueryChanged: (String) -> Unit,
+    onClearIconClicked: () -> Unit
+) {
     val shape = MaterialTheme.shapes.large
     BasicTextField(
         value = query,
@@ -290,7 +347,7 @@ fun SearchInputField(modifier: Modifier, query: String, onQueryChanged : (String
 fun ArticlesList(
     articles: LazyPagingItems<Article>,
     lazyListState: LazyListState,
-    onFavoriteButtonClicked : (Article) -> Unit,
+    onFavoriteButtonClicked: (Article) -> Unit,
     onArticleClicked: (Article) -> Unit,
 ) {
     LazyColumn(state = lazyListState) {
@@ -315,7 +372,7 @@ fun ArticlesList(
 @Composable
 fun ArticleItem(
     article: Article,
-    onFavoriteButtonClicked : (Article) -> Unit,
+    onFavoriteButtonClicked: (Article) -> Unit,
     onArticleClicked: (Article) -> Unit,
 ) {
     Card(
@@ -370,8 +427,9 @@ fun ArticleItem(
                     article.isFavorite,
                     MaterialTheme.colorScheme.onSurfaceVariant,
 
-                ) {
-                    onFavoriteButtonClicked.invoke(article)                }
+                    ) {
+                    onFavoriteButtonClicked.invoke(article)
+                }
             }
 
             article.publishedAt?.let {

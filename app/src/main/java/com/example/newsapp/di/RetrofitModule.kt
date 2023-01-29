@@ -1,14 +1,17 @@
 package com.example.newsapp.di
 
+import android.content.Context
 import com.example.newsapp.BuildConfig
 import com.example.newsapp.data.articles.data_source.remote.ArticlesServices
 import com.example.newsapp.util.BASE_URL
 import com.example.newsapp.util.DATE_FORMAT_SERVER
+import com.example.newsapp.util.NetworkConnectionInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -36,10 +39,12 @@ object RetrofitModule {
     @Singleton
     fun provideOkHttpClient(
         logging: HttpLoggingInterceptor,
+        connectivityInterceptor: Interceptor,
     ): OkHttpClient {
         val okHttpClient = OkHttpClient.Builder()
             .readTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
             .connectTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
+            .addInterceptor(connectivityInterceptor)
 
         if (BuildConfig.DEBUG) {
             okHttpClient.addNetworkInterceptor(logging)
@@ -56,6 +61,14 @@ object RetrofitModule {
             .setLenient()
             .create()
     }
+
+
+    @Provides
+    @Singleton
+    fun provideConnectivityInterceptor(@ApplicationContext context : Context): Interceptor {
+        return NetworkConnectionInterceptor(context)
+    }
+
 
     @Provides
     @Singleton

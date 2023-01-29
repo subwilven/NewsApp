@@ -7,7 +7,8 @@ import androidx.paging.RemoteMediator
 import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticleEntity
-import com.example.newsapp.util.PAGE_SIZE
+import com.example.newsapp.util.DEFAULT_PAGE_SIZE
+import com.example.newsapp.util.DEFAULT_START_PAGE_NUMBER
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.roundToInt
@@ -20,7 +21,7 @@ class ArticlesRemoteMediator(
     private val localDatabase: ArticlesLocalDataSource,
 ) : RemoteMediator<Int, ArticleEntity>() {
 
-    var pageNumber = 1
+    var pageNumber = DEFAULT_START_PAGE_NUMBER
 
     override suspend fun initialize(): InitializeAction {
         return InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -34,7 +35,7 @@ class ArticlesRemoteMediator(
             val loadKey = when (loadType) {
                 // pass null to load the first page.
                 LoadType.REFRESH -> {
-                    pageNumber = 1
+                    pageNumber = DEFAULT_START_PAGE_NUMBER
                     pageNumber
                 }
                 LoadType.PREPEND ->
@@ -52,7 +53,7 @@ class ArticlesRemoteMediator(
                 localDatabase.insertAllArticles(response.articles)
             }
 
-            val hasMoreData = response.totalResultCount.toDouble().div(PAGE_SIZE).roundToInt() > pageNumber
+            val hasMoreData = response.totalResultCount.toDouble().div(DEFAULT_PAGE_SIZE).roundToInt() > pageNumber
             MediatorResult.Success(
                 endOfPaginationReached = !hasMoreData
             )
