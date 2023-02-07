@@ -1,21 +1,30 @@
 package com.example.newsapp.use_cases
 
-import com.example.newsapp.data.articles.repository.ArticlesRepository
+import com.example.newsapp.Result
+import com.example.newsapp.asResult
+import com.example.newsapp.data.providers.repository.ProvidersRepository
 import com.example.newsapp.model.providers.Provider
-import com.example.newsapp.model.providers.ProviderEntity
 import com.example.newsapp.model.providers.asUiModel
-import com.example.newsapp.use_cases.base.ResultUseCase
+import com.example.newsapp.use_cases.base.FlowUseCase
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 class FetchProvidersUseCase @Inject constructor(
-    private val repository: ArticlesRepository,
+    private val repository: ProvidersRepository,
     dispatcher: CoroutineDispatcher
-) : ResultUseCase<List<Provider>, Nothing?>(dispatcher) {
+) : FlowUseCase<Result<List<Provider>>, Nothing?>(dispatcher) {
 
-    override suspend fun run(params: Nothing?): List<Provider> {
-        delay(2000)
-        return repository.getProviders().map(ProviderEntity::asUiModel)
+    override fun doWork(params: Nothing?): Flow<Result<List<Provider>>> {
+        return combine(
+            repository.getProviders(),
+            repository.getSelectedProvidersIds()
+        ) { providerEntities, selectedProvidersIds ->
+            providerEntities.map {
+                val isSelected = selectedProvidersIds.contains(it.id)
+                it.asUiModel(isSelected)
+            }
+        }.asResult()
     }
 }

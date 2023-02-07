@@ -6,6 +6,5 @@ import com.example.newsapp.model.providers.ProviderResponse
 
 interface ArticlesRemoteDataSource {
    suspend fun fetchArticles(filterData : FilterData, pageNumber :Int) : ArticlesResponse
-   suspend fun fetchProviders() : ProviderResponse
 
 }

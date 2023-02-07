@@ -1,12 +1,13 @@
 package com.example.newsapp.ui.screens.articles
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.newsapp.data.providers.repository.ProvidersRepository
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,25 +21,19 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ArticlesViewModel @Inject constructor(
+    private val providersRepository: ProvidersRepository,
     private val fetchArticlesUseCase: FetchArticlesUseCase,
     private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
-    //todo 1)handle erorr in paging
-    // handle ui states 4) add search feature 5)
-    //todo 5) add general network state handling
     //todo pares dates via retfofit
     //todo gradle catalog
     //todo check hilt extention
-
-    //todo handle showing snackbar on error look at Jetnews
 
     private val _uiState = MutableStateFlow(ArticleUiState())
     val uiState = _uiState.asStateFlow()
 
     private val searchFlow = MutableStateFlow<String?>(null)
-
-    private val selectedProvidersFlow = MutableStateFlow<List<Provider>>(emptyList())
 
     init {
 
@@ -48,10 +43,13 @@ class ArticlesViewModel @Inject constructor(
     }
 
     private fun combineFilterFlows() =
-        combine(searchFlow, selectedProvidersFlow) { inputSearch, selectedProviders ->
+        combine(
+            searchFlow,
+            providersRepository.getSelectedProvidersIds()
+        ) { inputSearch, selectedProviders ->
             FilterData(
                 searchInput = inputSearch,
-                selectedProviders = selectedProviders
+                selectedProvidersIds = selectedProviders
             )
         }
 
@@ -78,10 +76,6 @@ class ArticlesViewModel @Inject constructor(
 
     fun searchByQuery(searchInput: String?) {
         searchFlow.tryEmit(searchInput)
-    }
-
-     fun onProvidersSelected(selectedProviders: List<Provider>) {
-        selectedProvidersFlow.tryEmit(selectedProviders)
     }
 
     fun changeArticleFavoriteState(article: Article) {

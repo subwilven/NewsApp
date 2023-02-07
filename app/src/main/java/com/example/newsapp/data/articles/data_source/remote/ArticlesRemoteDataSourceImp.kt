@@ -7,11 +7,11 @@ import com.example.newsapp.util.DEFAULT_PAGE_SIZE
 import javax.inject.Inject
 
 class ArticlesRemoteDataSourceImp @Inject constructor(
-    private val articlesServices: ArticlesServices) :
+    private val newsApiServices: NewsApiServices) :
     ArticlesRemoteDataSource {
 
     override suspend fun fetchArticles(filterData: FilterData, pageNumber: Int): ArticlesResponse {
-        return articlesServices.getArticles(
+        return newsApiServices.getArticles(
             DEFAULT_PAGE_SIZE,
             pageNumber,
             filterData.getCountry(),
@@ -21,5 +21,5 @@ class ArticlesRemoteDataSourceImp @Inject constructor(
         )
     }
 
-    override suspend fun fetchProviders() =articlesServices.getProviders(BuildConfig.API_KEY)
+
 }

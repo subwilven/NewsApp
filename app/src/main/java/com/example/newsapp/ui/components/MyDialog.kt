@@ -111,7 +111,7 @@ private fun BottomButtons(modifier: Modifier,postiveButtonText: String,     nega
         TextButton(
             onClick = {
                 onNegativeClicked.invoke()
-
+                dialogState.value = false
             },
             modifier = Modifier
                 .padding(end = 5.dp),
@@ -122,6 +122,7 @@ private fun BottomButtons(modifier: Modifier,postiveButtonText: String,     nega
         TextButton(
             onClick = {
                 onPositiveClicked.invoke()
+                dialogState.value = false
             },
             shape = MaterialTheme.shapes.medium
         ) {

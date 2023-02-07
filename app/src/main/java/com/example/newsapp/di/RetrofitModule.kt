@@ -2,7 +2,7 @@ package com.example.newsapp.di
 
 import android.content.Context
 import com.example.newsapp.BuildConfig
-import com.example.newsapp.data.articles.data_source.remote.ArticlesServices
+import com.example.newsapp.data.articles.data_source.remote.NewsApiServices
 import com.example.newsapp.util.BASE_URL
 import com.example.newsapp.util.DATE_FORMAT_SERVER
 import com.example.newsapp.util.NetworkConnectionInterceptor
@@ -80,8 +80,8 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideArticlesServices(retrofit: Retrofit): ArticlesServices {
-        return retrofit.create(ArticlesServices::class.java)
+    fun provideArticlesServices(retrofit: Retrofit): NewsApiServices {
+        return retrofit.create(NewsApiServices::class.java)
     }
 
 }

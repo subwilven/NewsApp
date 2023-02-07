@@ -5,7 +5,7 @@ import com.example.newsapp.model.providers.ProviderResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface ArticlesServices {
+interface NewsApiServices {
 
     @GET("top-headlines")
    suspend fun getArticles(

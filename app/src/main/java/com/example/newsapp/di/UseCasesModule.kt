@@ -1,6 +1,7 @@
 package com.example.newsapp.di
 
 import com.example.newsapp.data.articles.repository.ArticlesRepository
+import com.example.newsapp.data.providers.repository.ProvidersRepository
 import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
 import com.example.newsapp.use_cases.GetArticleByIdUseCase
@@ -19,7 +20,8 @@ class UseCasesModule {
 
     @Singleton
     @Provides
-    fun provideFetchArticlesUseCase(articlesRepository: ArticlesRepository,dispatcher: CoroutineDispatcher): FetchArticlesUseCase {
+    fun provideFetchArticlesUseCase(articlesRepository: ArticlesRepository,
+                                    dispatcher: CoroutineDispatcher): FetchArticlesUseCase {
         return FetchArticlesUseCase(articlesRepository,dispatcher)
     }
 

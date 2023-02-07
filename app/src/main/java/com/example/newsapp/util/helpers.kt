@@ -17,11 +17,6 @@ fun Date.convertToAgoTime():String{
     ).toString()
 }
 
-//todo check how to handle this
-fun getFavoriteIcon(isFavorite: Boolean) = if (isFavorite) Icons.Filled.Favorite
-    else Icons.Filled.FavoriteBorder
-
-
 @Suppress("DEPRECATION")
 fun isCurrentlyConnected(context: Context) :Boolean=  with(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager) {
     when (this) {

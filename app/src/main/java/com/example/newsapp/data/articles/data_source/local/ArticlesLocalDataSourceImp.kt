@@ -2,9 +2,8 @@ package com.example.newsapp.data.articles.data_source.local
 
 import androidx.paging.PagingSource
 import com.example.newsapp.model.articles.ArticleEntity
-import com.example.newsapp.model.providers.ProviderEntity
 
-class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao,private val providersDao: ProvidersDao) :
+class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao) :
     ArticlesLocalDataSource {
 
     override fun fetchArticles(searchInput: String?): PagingSource<Int,ArticleEntity> {
@@ -31,10 +30,4 @@ class ArticlesLocalDataSourceImp(private val articlesDao :ArticlesDao,private va
         articlesDao.updateFavoriteState(articleId,isFavorite)
     }
 
-    override suspend fun getProviders() =providersDao.getAllProvider()
-    override suspend fun getProviderCounts() =providersDao.getProviderCounts()
-
-    override suspend fun insertAllSources(sources: List<ProviderEntity>) {
-        providersDao.insertAll(sources)
-    }
 }

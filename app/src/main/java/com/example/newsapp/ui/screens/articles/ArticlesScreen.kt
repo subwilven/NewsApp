@@ -34,16 +34,13 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.navigation.navigateToArticleDetails
 import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingFullScreen
-import com.example.newsapp.ui.components.MyDialog
 import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.main.LocalSnackbarDelegate
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
-import com.example.newsapp.ui.screens.providers.ProvidersViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.*
@@ -66,14 +63,10 @@ fun ArticlesScreen(
 
     // Code to Show and Dismiss Dialog
     if (dialogState.value) {
-        DialogProvidersSelection(
-            dialogState = dialogState,
-            onProvidersSelected = articlesViewModel::onProvidersSelected
-        )
+        ProvidersScreen(dialogState = dialogState)
     }
-
     articlesList?.let {
-        val shouldShowRedBadage = uiState.filterData.selectedProviders.isNotEmpty()
+        val shouldShowRedBadage = uiState.filterData.selectedProvidersIds.isNotEmpty()
         val appNavigator = LocalAppNavigator.current
         //todo should we create remember for this callbacks ?
         ArticlesContent(
@@ -91,27 +84,6 @@ fun ArticlesScreen(
             },
             onRetryClicked = { articlesList.refresh() }
         )
-    }
-}
-
-@Composable
-private fun DialogProvidersSelection(
-    providersViewModel: ProvidersViewModel = hiltViewModel(),
-    dialogState: MutableState<Boolean>,
-    onProvidersSelected: (List<Provider>) -> Unit
-) {
-    MyDialog(
-        R.string.select_providers,
-        R.string.apply_filter,
-        R.string.clear_filter,
-        dialogState,
-        onPositiveClicked = providersViewModel::applyFilter,
-        onNegativeClicked = providersViewModel::clearFilter
-    ) {
-        ProvidersScreen(providersViewModel) {
-            dialogState.value = false
-            onProvidersSelected.invoke(providersViewModel.getSelectedProviders())
-        }
     }
 }
 
@@ -201,7 +173,7 @@ fun ArticlesContent(
         } else if (fullScreenError != null) {
             FullScreenError(fullScreenError.error.message ?: "", onRetryClicked)
         } else if (shouldShowEmptyList)
-            EmptyScreen(stringResource(id = R.string.no_data_avaiable))
+            EmptyScreen(stringResource(id = R.string.no_results_found))
         else
             SwipeRefresh(
                 state = rememberSwipeRefreshState(false),

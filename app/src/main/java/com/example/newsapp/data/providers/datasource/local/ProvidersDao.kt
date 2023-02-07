@@ -1,10 +1,11 @@
-package com.example.newsapp.data.articles.data_source.local
+package com.example.newsapp.data.providers.datasource.local
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.newsapp.model.providers.ProviderEntity
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -14,9 +15,9 @@ interface ProvidersDao  {
     suspend fun insertAll(sources: List<ProviderEntity>)
 
     @Query("SELECT * FROM provider")
-    suspend fun getAllProvider() : List<ProviderEntity>
+    fun getAllProvider() : Flow<List<ProviderEntity>>
 
 
     @Query("SELECT COUNT(*) FROM provider")
-    suspend fun getProviderCounts(): Int
+    fun getProviderCounts(): Flow<Int>
 }

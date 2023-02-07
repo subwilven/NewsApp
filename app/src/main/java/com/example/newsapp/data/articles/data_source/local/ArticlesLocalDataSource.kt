@@ -13,7 +13,5 @@ interface ArticlesLocalDataSource {
    fun getArticleById(articleId :Int): Flow<ArticleEntity>
    fun getFavoritesArticles() : Flow<List<ArticleEntity>>
    suspend fun changeFavoriteState(articleId:Int,isFavorite :Boolean)
-   suspend fun getProviders() : List<ProviderEntity>
-   suspend fun getProviderCounts() : Int
-   suspend fun insertAllSources(sources : List<ProviderEntity>)
+
 }

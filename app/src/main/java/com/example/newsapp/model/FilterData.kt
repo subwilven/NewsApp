@@ -6,10 +6,10 @@ import com.example.newsapp.util.DEFAULT_COUNTRY
 
 data class FilterData(
     val searchInput: String?,
-    val selectedProviders: List<Provider>
+    val selectedProvidersIds: HashSet<String>,
 ){
 
-    fun convertProvidersToString(): String = TextUtils.join(",", selectedProviders)
+    fun convertProvidersToString(): String = TextUtils.join(",", selectedProvidersIds)
 
-    fun getCountry() = if(selectedProviders.isEmpty()) DEFAULT_COUNTRY else null
+    fun getCountry() = if(selectedProvidersIds.isEmpty()) DEFAULT_COUNTRY else null
 }

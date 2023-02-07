@@ -6,6 +6,6 @@ import com.example.newsapp.model.articles.Article
 import kotlinx.coroutines.flow.Flow
 
 data class ArticleUiState(
-    var filterData : FilterData = FilterData(null , listOf()),
+    var filterData : FilterData = FilterData(null , hashSetOf(), ),
     val articlesDataFlow: Flow<PagingData<Article>>? = null,
 )

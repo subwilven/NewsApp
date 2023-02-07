@@ -10,8 +10,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.newsapp.R
 import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.ui.components.LoadingFullScreen
+import com.example.newsapp.ui.components.MyDialog
 import com.example.newsapp.ui.components.MyFilterChip
 import com.google.accompanist.flowlayout.FlowRow
 
@@ -19,30 +21,31 @@ import com.google.accompanist.flowlayout.FlowRow
 @Composable
 fun ProvidersScreen(
     providersViewModel: ProvidersViewModel = hiltViewModel(),
-    onProvidersSelected: (List<Provider>) -> Unit
-) {
+    dialogState: MutableState<Boolean>, ) {
 
-    val uiState: ProviderUiState by providersViewModel.uiState.collectAsStateWithLifecycle()
+    MyDialog(
+        R.string.select_providers,
+        R.string.apply_filter,
+        R.string.reset,
+        dialogState,
+        onPositiveClicked = providersViewModel::applyFilter,
+        onNegativeClicked = providersViewModel::resetFilter
+    ) {
+        val uiState: ProviderUiState by providersViewModel.uiState.collectAsStateWithLifecycle()
+        val lifeCycleOwner =LocalLifecycleOwner.current
 
-    val lifeCycleOwner =LocalLifecycleOwner.current
-
-
-    LaunchedEffect(uiState.onFiltrationProcessDone) {
-        if (uiState.onFiltrationProcessDone) {
-            onProvidersSelected(providersViewModel.getSelectedProviders())
+        DisposableEffect(lifeCycleOwner) {
+            onDispose {
+                providersViewModel.resetUserChanges()
+            }
         }
-    }
 
-    DisposableEffect(lifeCycleOwner) {
-        onDispose {
-            providersViewModel.resetUserChanges()
-        }
+        ProvidersListContent(
+            isLoading = uiState.isLoading,
+            providersList = uiState.providersList,
+            onProvidersSelected = providersViewModel::toggleProviderSelectionState
+        )
     }
-
-    ProvidersListContent(isLoading = uiState.isLoading,
-        providersList = uiState.providersList,
-        onProvidersSelected = providersViewModel::emitToggleSelectionFlow
-    )
 }
 
 @Composable

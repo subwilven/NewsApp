@@ -6,7 +6,6 @@ import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSo
 import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteMediator
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticleEntity
-import com.example.newsapp.model.providers.ProviderEntity
 import com.example.newsapp.util.DEFAULT_PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -33,14 +32,5 @@ class ArticlesRepositoryImp @Inject constructor(
 
     override suspend fun changeFavoriteState(articleId: Int, isFavorite: Boolean) =
         localDataSource.changeFavoriteState(articleId, isFavorite)
-
-    override  suspend fun getProviders(): List<ProviderEntity> {
-        val providersList = localDataSource.getProviders()
-        return providersList.ifEmpty {
-            val fetchedSources = remoteDataSource.fetchProviders().providers
-            localDataSource.insertAllSources(fetchedSources)
-            localDataSource.getProviders()
-        }
-    }
 
 }

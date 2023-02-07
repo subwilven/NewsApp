@@ -14,12 +14,13 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FetchArticlesUseCase @Inject constructor(
-    private val repository: ArticlesRepository,
+    private val articlesRepository: ArticlesRepository,
     dispatcher: CoroutineDispatcher
 ) :FlowUseCase<PagingData<Article>,FilterData>(dispatcher){
 
     override fun doWork(params: FilterData): Flow<PagingData<Article>> {
-        return repository.getArticlesStream(params)
+        return articlesRepository.getArticlesStream(params)
             .map { pagingData -> pagingData.map(ArticleEntity::asUiModel) }
+
     }
 }
