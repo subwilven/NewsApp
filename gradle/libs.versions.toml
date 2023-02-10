@@ -1,0 +1,80 @@
+[versions]
+# Define the dependency versions
+kotlin = "1.8.10"
+gradleplugin = "7.2.2"
+daggerhiltplugin = "2.44"
+daggerhiltCompose = "1.0.0"
+coil = "2.2.2"
+retrofit = "2.9.0"
+gson = "2.8.9"
+core_ktx = "1.9.0"
+appcompat = "1.5.1"
+activity-compose = "1.6.1"
+squareupinterceptor = "4.9.0"
+room = "2.4.3"
+navigation = "2.5.3"
+paging_runtime = "3.1.1"
+paging_compose = "1.0.0-alpha17"
+lifecycle_compose = "2.6.0-alpha04"
+compose_ui = "1.3.3"
+compose_runtime = "1.4.0-alpha04"
+compose_accompanist = "0.28.0"
+compose_material = "1.0.1"
+compose_compiler = "1.4.2"
+compose_test = "1.3.3"
+espresso = "3.5.1"
+junit_ext = "1.1.5"
+junit = "4.13.2"
+[libraries]
+# Define the libraries
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "core_ktx" }
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+compose_ui = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose_ui" }
+compose_runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose_runtime" }
+compose_swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "compose_accompanist" }
+compose_systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "compose_accompanist" }
+compose_flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "compose_accompanist" }
+compose_material3 = { module = "androidx.compose.material3:material3", version.ref = "compose_material" }
+compose_material3_window = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose_material" }
+dagger_hilt = { module = "com.google.dagger:hilt-android", version.ref = "daggerhiltplugin" }
+dagger_compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "daggerhiltplugin" }
+dagger_hilt_compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "daggerhiltCompose" }
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle_compose" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle_compose" }
+squareup_retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+squareup_converter = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+google_gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+squareup_interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "squareupinterceptor" }
+room_runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room_kts = { module = "androidx.room:room-ktx", version.ref = "room" }
+room_compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room_paging = { module = "androidx.room:room-paging", version.ref = "room" }
+navigation_compose = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+paging_runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging_runtime" }
+paging_compose = { module = "androidx.paging:paging-compose", version.ref = "paging_compose" }
+espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+junit = { module = "junit:junit", version.ref = "junit" }
+compose_test = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose_test" }
+junit_ext = { module = "androidx.test.ext:junit", version.ref = "junit_ext" }
+[bundles]
+# Define bundles/groups of libraries
+retrofit = ["squareup.retrofit", "squareup.converter", "google.gson", "squareup.interceptor"]
+hilt = ["dagger_hilt", "dagger_hilt_compose"]
+core = ["core-ktx", "appcompat"]
+navigation = ["navigation_compose", "navigation"]
+room = ["room.runtime", "room.kts", "room.paging"]
+paging = ["paging.runtime", "paging.compose"]
+lifecycle = ["lifecycle-runtime-compose", "lifecycle-viewmodel-compose"]
+compose_accompanist = ["compose.swiperefresh", "compose.systemuicontroller", "compose.flowlayout"]
+compose_material = ["compose.material3", "compose.material3.window"]
+
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "gradleplugin" }
+android-library = { id = "com.android.library", version.ref = "gradleplugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerhiltplugin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }

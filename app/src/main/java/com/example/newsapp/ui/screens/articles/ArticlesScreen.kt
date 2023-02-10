@@ -1,7 +1,8 @@
 package com.example.newsapp.ui.screens.articles
 
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -25,7 +26,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
@@ -43,11 +43,8 @@ import com.example.newsapp.ui.main.LocalSnackbarDelegate
 import com.example.newsapp.ui.screens.providers.ProvidersScreen
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.flow.*
-import java.util.*
 
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ArticlesScreen(
     articlesViewModel: ArticlesViewModel = hiltViewModel(),

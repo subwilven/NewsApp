@@ -1,14 +1,16 @@
 package com.example.newsapp.ui.screens.providers
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newsapp.R
 import com.example.newsapp.model.providers.Provider
@@ -17,7 +19,6 @@ import com.example.newsapp.ui.components.MyDialog
 import com.example.newsapp.ui.components.MyFilterChip
 import com.google.accompanist.flowlayout.FlowRow
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ProvidersScreen(
     providersViewModel: ProvidersViewModel = hiltViewModel(),

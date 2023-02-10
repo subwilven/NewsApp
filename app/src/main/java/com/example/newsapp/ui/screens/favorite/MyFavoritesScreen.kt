@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.newsapp.R
@@ -26,7 +25,6 @@ import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.main.LocalAppNavigator
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun MyFavoritesScreen(
     myFavoritesViewModel: MyFavoritesViewModel = hiltViewModel(),
