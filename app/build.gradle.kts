@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
 }
 
-val apiKey: String = gradleLocalProperties(rootDir).getProperty("api.base.url")
+val apiKey: String = gradleLocalProperties(rootDir).getProperty("api.key")
 @Suppress("UnstableApiUsage")
 android {
     compileSdk  = 33
