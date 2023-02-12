@@ -28,6 +28,7 @@ import com.example.newsapp.navigation.launchWebView
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.theme.NewsAppTheme
+import com.example.newsapp.ui.theme.darkOnBackground
 import com.example.newsapp.ui.theme.shadow
 
 
@@ -161,6 +162,8 @@ private fun Toolbar(
         }
     }
     val appNavigator = LocalAppNavigator.current
+    //do not follow dark/light theme because we have a dark background
+    val iconTint = darkOnBackground
     TopAppBar(
         navigationIcon = {
             IconButton(
@@ -176,19 +179,23 @@ private fun Toolbar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = iconTint
                 )
             }
         },
         title = {},
         actions = {
-            FavoriteButton(Modifier
-                //todo
-                .background(
-                color = shadow,
-                shape = CircleShape).padding(4.dp),
+            FavoriteButton(
+                Modifier
+                    //todo
+                    .background(
+                        color = shadow,
+                        shape = CircleShape
+                    )
+                    .padding(4.dp),
                 isFavorite,
-                MaterialTheme.colorScheme.onBackground) {
+                iconTint
+            ) {
                 onFavoriteButtonClicked.invoke()
             }
         },
