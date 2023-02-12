@@ -25,8 +25,8 @@ fun ProvidersScreen(
     dialogState: MutableState<Boolean>, ) {
 
     MyDialog(
-        R.string.select_providers,
-        R.string.apply_filter,
+        R.string.providers_filter,
+        R.string.apply,
         R.string.reset,
         dialogState,
         onPositiveClicked = providersViewModel::applyFilter,

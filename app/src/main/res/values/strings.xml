@@ -14,10 +14,9 @@
     <string name="apply">Apply</string>
     <string name="clear">Clear</string>
     <string name="ok">OK</string>
-    <string name="apply_filter">Apply Filter</string>
     <string name="reset">Reset</string>
     <string name="cancel">Cancel</string>
-    <string name="select_providers">Select Providers</string>
+    <string name="providers_filter">Providers Filter</string>
     <string name="no_results_found">No results found</string>
     <string name="no_favorites">No favorites added yet</string>
     <string name="retry">Retry</string>
