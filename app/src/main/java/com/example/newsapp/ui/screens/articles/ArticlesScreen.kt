@@ -85,15 +85,13 @@ fun ArticlesScreen(
 }
 
 private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
-    articlesList.loadState.refresh is LoadState.NotLoading &&
+    !shouldShowFullScreenLoading(articlesList.loadState) &&
             articlesList.itemCount == 0
-
-private fun shouldShowArticlesList(loadState: CombinedLoadStates) =
-    loadState.source.refresh is LoadState.NotLoading ||
-            loadState.mediator?.refresh is LoadState.NotLoading
 
 private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
     loadState.mediator?.refresh is LoadState.Loading
+            || loadState.refresh is LoadState.Loading
+            || loadState.source.refresh is LoadState.Loading
 
 private fun fullScreenError(
     loadState: CombinedLoadStates,

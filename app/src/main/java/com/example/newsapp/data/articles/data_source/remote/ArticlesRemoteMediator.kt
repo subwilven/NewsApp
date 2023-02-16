@@ -9,6 +9,7 @@ import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticleEntity
 import com.example.newsapp.util.DEFAULT_PAGE_SIZE
 import com.example.newsapp.util.DEFAULT_START_PAGE_NUMBER
+import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.roundToInt
@@ -32,28 +33,32 @@ class ArticlesRemoteMediator(
         state: PagingState<Int, ArticleEntity>
     ): MediatorResult {
         return try {
-            val loadKey = when (loadType) {
-                // pass null to load the first page.
+            when (loadType) {
                 LoadType.REFRESH -> {
                     pageNumber = DEFAULT_START_PAGE_NUMBER
-                    pageNumber
                 }
-                LoadType.PREPEND ->
-                    return MediatorResult.Success(endOfPaginationReached = true)
-                LoadType.APPEND -> {
-                    ++pageNumber
-                }
+                else -> {}
             }
 
 
-            val response = remoteDatabase.fetchArticles(filterData,loadKey)
+            val pageSize = if (pageNumber == DEFAULT_START_PAGE_NUMBER)
+                state.config.initialLoadSize
+            else state.config.pageSize
+            val response = remoteDatabase.fetchArticles(filterData, pageSize, pageNumber)
+            if (pageSize == state.config.initialLoadSize) pageNumber += 2 else pageNumber++
             if (loadType == LoadType.REFRESH) {
                 localDatabase.insertAllArticlesAndDeleteOld(response.articles)
-            }else{
+            } else {
                 localDatabase.insertAllArticles(response.articles)
             }
 
-            val hasMoreData = response.totalResultCount.toDouble().div(DEFAULT_PAGE_SIZE).roundToInt() > pageNumber
+            val hasMoreData = response.totalResultCount.toDouble().div(DEFAULT_PAGE_SIZE)
+                .roundToInt() > pageNumber
+            // we have found that load state that Paging3 provide make loading hide and show multiple times
+            //and this not good experience for the user
+            //why this happen? because the loading state of mediator go false then loading state of source go true
+            //between theses two states the loading hides for millisconds so as a temp solution we did this small delay
+            delay(150)
             MediatorResult.Success(
                 endOfPaginationReached = !hasMoreData
             )
