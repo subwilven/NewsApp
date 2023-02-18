@@ -1,5 +1,6 @@
 package com.example.newsapp.ui.screens.articles
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -91,7 +92,6 @@ private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
 private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
     loadState.mediator?.refresh is LoadState.Loading
             || loadState.refresh is LoadState.Loading
-            || loadState.source.refresh is LoadState.Loading
 
 private fun fullScreenError(
     loadState: CombinedLoadStates,
@@ -123,6 +123,8 @@ fun ArticlesContent(
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
+    Log.e("LOADINg", " shouldShowEmptyList${shouldShowEmptyList}")
+    Log.e("LOADINg", " shouldFullLoadingProgressBar${shouldFullLoadingProgressBar}")
     val lazyListState = rememberLazyListState()
     val fullScreenError = fullScreenError(articles.loadState, articles.itemCount)
     if (fullScreenError == null) {
