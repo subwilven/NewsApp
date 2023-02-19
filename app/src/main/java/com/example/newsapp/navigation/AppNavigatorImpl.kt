@@ -2,7 +2,6 @@ package com.example.newsapp.navigation
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
-import javax.inject.Inject
 
 object AppNavigatorImpl  : AppNavigator {
     override val navigationChannel = Channel<NavigationIntent>(

@@ -1,6 +1,5 @@
 package com.example.newsapp.ui.screens.articles
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -8,8 +7,8 @@ import androidx.paging.cachedIn
 import com.example.newsapp.data.providers.repository.ProvidersRepository
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
+import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

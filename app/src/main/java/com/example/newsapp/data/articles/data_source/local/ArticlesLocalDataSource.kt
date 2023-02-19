@@ -2,7 +2,6 @@ package com.example.newsapp.data.articles.data_source.local
 
 import androidx.paging.PagingSource
 import com.example.newsapp.model.articles.ArticleEntity
-import com.example.newsapp.model.providers.ProviderEntity
 import kotlinx.coroutines.flow.Flow
 
 interface ArticlesLocalDataSource {

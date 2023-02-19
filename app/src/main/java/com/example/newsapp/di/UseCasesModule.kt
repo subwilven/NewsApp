@@ -1,11 +1,10 @@
 package com.example.newsapp.di
 
 import com.example.newsapp.data.articles.repository.ArticlesRepository
-import com.example.newsapp.data.providers.repository.ProvidersRepository
-import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import com.example.newsapp.use_cases.FetchArticlesUseCase
 import com.example.newsapp.use_cases.GetArticleByIdUseCase
 import com.example.newsapp.use_cases.GetFavoritesArticlesUseCase
+import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

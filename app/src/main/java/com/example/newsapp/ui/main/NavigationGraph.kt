@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.Destination
 import com.example.newsapp.ui.components.MyNavHost
 import com.example.newsapp.ui.components.composable

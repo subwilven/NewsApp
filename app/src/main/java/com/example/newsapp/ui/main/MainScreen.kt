@@ -15,9 +15,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.newsapp.navigation.AppNavigator
 import com.example.newsapp.navigation.AppNavigatorImpl
 import com.example.newsapp.navigation.NavigationEffects
+import com.example.newsapp.ui.components.MyBottomNavigation
 import com.example.newsapp.ui.components.MySnackHost
 import com.example.newsapp.ui.components.MyTopAppBar
-import com.example.newsapp.ui.components.MyBottomNavigation
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.util.SnackbarDelegate
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
