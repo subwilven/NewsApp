@@ -2,7 +2,7 @@ package com.example.newsapp.ui.screens.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapp.use_cases.GetFavoritesArticlesUseCase
+import com.example.newsapp.usecases.GetFavoritesArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,10 +1,10 @@
-package com.example.newsapp.use_cases
+package com.example.newsapp.usecases
 
 import com.example.newsapp.data.articles.repository.ArticlesRepository
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.model.articles.ArticleEntity
 import com.example.newsapp.model.articles.asUiModel
-import com.example.newsapp.use_cases.base.FlowUseCase
+import com.example.newsapp.usecases.base.FlowUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

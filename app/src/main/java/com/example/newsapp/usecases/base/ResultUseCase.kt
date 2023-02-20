@@ -1,4 +1,4 @@
-package com.example.newsapp.use_cases.base
+package com.example.newsapp.usecases.base
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

@@ -1,4 +1,4 @@
-package com.example.newsapp.use_cases
+package com.example.newsapp.usecases
 
 import androidx.paging.PagingData
 import androidx.paging.map
@@ -7,7 +7,7 @@ import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.model.articles.ArticleEntity
 import com.example.newsapp.model.articles.asUiModel
-import com.example.newsapp.use_cases.base.FlowUseCase
+import com.example.newsapp.usecases.base.FlowUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

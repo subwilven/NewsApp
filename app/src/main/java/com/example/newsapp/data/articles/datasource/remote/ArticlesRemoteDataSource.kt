@@ -1,4 +1,4 @@
-package com.example.newsapp.data.articles.data_source.remote
+package com.example.newsapp.data.articles.datasource.remote
 
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticlesResponse

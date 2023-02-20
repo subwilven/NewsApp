@@ -1,4 +1,4 @@
-package com.example.newsapp.data.articles.data_source.local
+package com.example.newsapp.data.articles.datasource.local
 
 import androidx.paging.PagingSource
 import com.example.newsapp.model.articles.ArticleEntity

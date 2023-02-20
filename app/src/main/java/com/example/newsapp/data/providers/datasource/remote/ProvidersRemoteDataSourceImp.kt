@@ -1,7 +1,7 @@
 package com.example.newsapp.data.providers.datasource.remote
 
 import com.example.newsapp.BuildConfig
-import com.example.newsapp.data.articles.data_source.remote.NewsApiServices
+import com.example.newsapp.data.articles.datasource.remote.NewsApiServices
 
 class ProvidersRemoteDataSourceImp(private val newsApiServices: NewsApiServices) :
     ProvidersRemoteDataSource {

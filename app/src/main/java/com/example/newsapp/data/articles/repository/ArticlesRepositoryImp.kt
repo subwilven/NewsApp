@@ -4,9 +4,9 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
-import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
-import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteMediator
+import com.example.newsapp.data.articles.datasource.local.ArticlesLocalDataSource
+import com.example.newsapp.data.articles.datasource.remote.ArticlesRemoteDataSource
+import com.example.newsapp.data.articles.datasource.remote.ArticlesRemoteMediator
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticleEntity
 import com.example.newsapp.util.DEFAULT_INITIAL_PAGE_MULTIPLIER

@@ -1,8 +1,8 @@
-package com.example.newsapp.use_cases
+package com.example.newsapp.usecases
 
 import com.example.newsapp.data.articles.repository.ArticlesRepository
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.use_cases.base.NoResultUseCase
+import com.example.newsapp.usecases.base.NoResultUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 

@@ -1,11 +1,11 @@
-package com.example.newsapp.use_cases
+package com.example.newsapp.usecases
 
 import com.example.newsapp.Result
 import com.example.newsapp.asResult
 import com.example.newsapp.data.providers.repository.ProvidersRepository
 import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.model.providers.asUiModel
-import com.example.newsapp.use_cases.base.FlowUseCase
+import com.example.newsapp.usecases.base.FlowUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

@@ -1,10 +1,10 @@
-package com.example.newsapp.data.articles.data_source.remote
+package com.example.newsapp.data.articles.datasource.remote
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
+import com.example.newsapp.data.articles.datasource.local.ArticlesLocalDataSource
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticleEntity
 import com.example.newsapp.util.DEFAULT_PAGE_SIZE
