@@ -9,6 +9,7 @@ import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.usecases.FetchArticlesUseCase
 import com.example.newsapp.usecases.ToggleFavoriteStateUseCase
+import com.example.newsapp.util.DEBOUNCE_SEARCH_INPUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -61,7 +62,7 @@ class ArticlesViewModel @Inject constructor(
         }
 
     private fun createPagingListFlow(filterDataFlow: Flow<FilterData>) = filterDataFlow
-        .debounce(400)
+        .debounce(DEBOUNCE_SEARCH_INPUT)
         .distinctUntilChanged()
         .flatMapLatest { filterData ->
             fetchArticlesUseCase.produce(filterData)

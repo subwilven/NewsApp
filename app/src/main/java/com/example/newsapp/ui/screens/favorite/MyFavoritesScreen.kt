@@ -15,16 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.navigateToArticleDetails
+import com.example.newsapp.ui.components.ArticleImage
 import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.main.LocalAppNavigator
@@ -37,17 +36,16 @@ fun MyFavoritesScreen(
         .uiState
         .collectAsStateWithLifecycle()
     val appNavigator = LocalAppNavigator.current
-    if(uiState.value.isLoading){
+    if (uiState.value.isLoading) {
         LoadingFullScreen()
-    }
-    else if(uiState.value.favoriteArticles.isEmpty()){
+    } else if (uiState.value.favoriteArticles.isEmpty()) {
         EmptyScreen(stringResource(id = R.string.no_favorites))
-    }else{
+    } else {
         LazyColumn {
             items(uiState.value.favoriteArticles.count()) { index ->
                 uiState.value.favoriteArticles[index].let {
-                    FavoriteArticleItem(it){ article ->
-                        navigateToArticleDetails(appNavigator,article)
+                    FavoriteArticleItem(it) { article ->
+                        navigateToArticleDetails(appNavigator, article)
                     }
 
                 }
@@ -59,15 +57,15 @@ fun MyFavoritesScreen(
 
 
 @Composable
-private fun FavoriteArticleItem(article : Article, onArticleClicked : (Article) -> Unit ){
+private fun FavoriteArticleItem(article: Article, onArticleClicked: (Article) -> Unit) {
 
     Row(
         Modifier
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .clickable {
                 onArticleClicked.invoke(article)
-            }){
-        Column(modifier = Modifier.weight(0.7f)){
+            }) {
+        Column(modifier = Modifier.weight(0.7f)) {
             Text(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
@@ -88,20 +86,15 @@ private fun FavoriteArticleItem(article : Article, onArticleClicked : (Article) 
             )
 
         }
-
-        AsyncImage(
-            model = article.imageUrl,
-            error = painterResource(R.drawable.no_image_placeholder),
-            placeholder = painterResource(R.drawable.placeholder),
-            contentDescription = article.description,
-            contentScale = ContentScale.Crop,
+        ArticleImage(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.small)
                 .height(75.dp)
                 .width(75.dp)
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
+            contentScale = ContentScale.Crop,
+            imageUrl = article.imageUrl
         )
-
     }
     Divider()
 }
