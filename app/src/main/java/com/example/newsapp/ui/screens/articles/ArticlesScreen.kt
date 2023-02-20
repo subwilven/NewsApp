@@ -406,14 +406,9 @@ fun ArticleItem(
     }
 }
 
-@Composable
-fun MainScreen() {
-
-}
 
 @Preview
 @Composable
-
 fun ComposablePreview() {
 //    ArticlesContent(flow<PagingData<ArticleUi>> {}.collectAsLazyPagingItems(),
 //        "", actionFlow(), {}, {})
