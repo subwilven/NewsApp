@@ -19,30 +19,41 @@ class UseCasesModule {
 
     @Singleton
     @Provides
-    fun provideFetchArticlesUseCase(articlesRepository: ArticlesRepository,
-                                    dispatcher: CoroutineDispatcher): FetchArticlesUseCase {
-        return FetchArticlesUseCase(articlesRepository,dispatcher)
+    fun provideFetchArticlesUseCase(
+        articlesRepository: ArticlesRepository,
+        dispatcher: CoroutineDispatcher
+    ): FetchArticlesUseCase {
+        return FetchArticlesUseCase(articlesRepository, dispatcher)
     }
 
     @Singleton
     @Provides
-    fun provideAddToFavoriteUseCase(articlesRepository: ArticlesRepository,dispatcher: CoroutineDispatcher): ToggleFavoriteStateUseCase {
-        return ToggleFavoriteStateUseCase(articlesRepository,dispatcher)
+    fun provideAddToFavoriteUseCase(
+        articlesRepository: ArticlesRepository,
+        dispatcher: CoroutineDispatcher
+    ): ToggleFavoriteStateUseCase {
+        return ToggleFavoriteStateUseCase(articlesRepository, dispatcher)
     }
 
 
     @Singleton
     @Provides
-    fun provideGetArticleByIdUseCase(articlesRepository: ArticlesRepository,dispatcher: CoroutineDispatcher)
-       : GetArticleByIdUseCase {
-        return GetArticleByIdUseCase(articlesRepository,dispatcher)
+    fun provideGetArticleByIdUseCase(
+        articlesRepository: ArticlesRepository,
+        dispatcher: CoroutineDispatcher
+    )
+            : GetArticleByIdUseCase {
+        return GetArticleByIdUseCase(articlesRepository, dispatcher)
     }
 
     @Singleton
     @Provides
-    fun provideGetFavoritesArticlesUseCase(articlesRepository: ArticlesRepository,dispatcher: CoroutineDispatcher)
-      : GetFavoritesArticlesUseCase {
-        return GetFavoritesArticlesUseCase(articlesRepository,dispatcher)
+    fun provideGetFavoritesArticlesUseCase(
+        articlesRepository: ArticlesRepository,
+        dispatcher: CoroutineDispatcher
+    )
+            : GetFavoritesArticlesUseCase {
+        return GetFavoritesArticlesUseCase(articlesRepository, dispatcher)
     }
 
 

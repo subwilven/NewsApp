@@ -114,8 +114,13 @@ private fun TitleAndButton(modifier: Modifier,title: String, dialogState: Mutabl
 }
 
 @Composable
-private fun BottomButtons(modifier: Modifier,postiveButtonText: String,     negativeButtonText: String,dialogState: MutableState<Boolean>,
-                          onPositiveClicked : () -> Unit,  onNegativeClicked : () -> Unit,) {
+private fun BottomButtons(
+    modifier: Modifier, positiveButtonText: String,
+    negativeButtonText: String,
+    dialogState: MutableState<Boolean>,
+    onPositiveClicked: () -> Unit,
+    onNegativeClicked: () -> Unit,
+) {
     Row(
         modifier = modifier
             .padding(horizontal = 8.dp, vertical = 2.dp),
@@ -139,7 +144,7 @@ private fun BottomButtons(modifier: Modifier,postiveButtonText: String,     nega
             },
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(text = postiveButtonText)
+            Text(text = positiveButtonText)
         }
 
     }
