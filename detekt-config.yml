@@ -1,6 +1,6 @@
 complexity:
   TooManyFunctions:
-    thresholdInFiles: 20
+    thresholdInFiles: 15
   LongParameterList:
     functionThreshold: 15
     ignoreDefaultParameters: true
@@ -8,6 +8,9 @@ complexity:
 
 naming:
   FunctionNaming:
-    active: true
-    functionPattern: '^([a-zA-Z][a-zA-Z$0-9]*)|(`.*`)$'
     ignoreAnnotated: [ 'Composable' ]
+
+style:
+  MagicNumber:
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true

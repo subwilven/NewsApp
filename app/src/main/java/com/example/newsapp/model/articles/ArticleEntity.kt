@@ -1,6 +1,10 @@
 package com.example.newsapp.model.articles
 
-import androidx.room.*
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import com.example.newsapp.util.convertToAgoTime
 import com.google.gson.annotations.SerializedName
 import java.util.*

@@ -1,7 +1,12 @@
 package com.example.newsapp.data.articles.data_source.local
 
 import androidx.paging.PagingSource
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+
 import com.example.newsapp.model.articles.ArticleEntity
 import kotlinx.coroutines.flow.Flow
 

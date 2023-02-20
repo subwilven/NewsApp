@@ -15,14 +15,15 @@ fun Date.convertToAgoTime():String{
 }
 
 @Suppress("DEPRECATION")
-fun isCurrentlyConnected(context: Context) :Boolean=  with(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager) {
-    when (this) {
-        null -> false
-        else -> when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> activeNetwork?.let(::getNetworkCapabilities)
-                ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                ?: false
-            else -> activeNetworkInfo?.isConnected ?: false
+fun isCurrentlyConnected(context: Context): Boolean =
+    with(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager) {
+        when (this) {
+            null -> false
+            else -> when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> activeNetwork?.let(::getNetworkCapabilities)
+                    ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    ?: false
+                else -> activeNetworkInfo?.isConnected ?: false
+            }
         }
     }
-}

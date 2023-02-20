@@ -1,6 +1,5 @@
 package com.example.newsapp
 
-import kotlinx.coroutines.flow.flow
 import org.junit.Test
 
 /**
@@ -11,13 +10,5 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        val flow1 = flow<Int> {
-
-
-        }
-        val flow2 = flow<Int> {
-
-
-        }
     }
 }
