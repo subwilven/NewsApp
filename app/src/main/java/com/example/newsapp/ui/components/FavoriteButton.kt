@@ -1,5 +1,6 @@
 package com.example.newsapp.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+@SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 fun FavoriteButton(modifier: Modifier, isChecked :Boolean,
                    color : Color,

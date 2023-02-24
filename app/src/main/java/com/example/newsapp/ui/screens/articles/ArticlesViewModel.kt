@@ -34,9 +34,8 @@ class ArticlesViewModel @Inject constructor(
     private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
-    //todo pares dates via retfofit
-    //todo gradle catalog
-    //todo check hilt extention
+    //todo pares dates via retrofit
+    //todo check hilt extension
 
     private val _uiState = MutableStateFlow(ArticleUiState())
     val uiState = _uiState.asStateFlow()

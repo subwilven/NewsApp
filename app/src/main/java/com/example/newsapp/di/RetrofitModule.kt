@@ -25,7 +25,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
 
-    const val REQUEST_TIME_OUT: Long = 60
+    private const val REQUEST_TIME_OUT: Long = 60
 
     @Provides
     @Singleton

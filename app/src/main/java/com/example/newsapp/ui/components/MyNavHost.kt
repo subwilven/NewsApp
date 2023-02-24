@@ -32,5 +32,5 @@ fun NavGraphBuilder.composable(
     arguments: List<NamedNavArgument> = emptyList(),
     content: @Composable (NavBackStackEntry) -> Unit
 ) {
-    composable(destination.fullRoute,content = content,arguments = arguments,)
+    composable(destination.fullRoute, content = content, arguments = arguments)
 }

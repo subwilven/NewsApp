@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "provider")
 data  class ProviderEntity(
-    @PrimaryKey()
+    @PrimaryKey
     @ColumnInfo(name = "id")
     val id:String,
     @ColumnInfo(name = "name")

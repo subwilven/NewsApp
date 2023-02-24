@@ -157,7 +157,7 @@ private fun Body(article: Article, scroll: ScrollState) {
         OutlinedButton(onClick = {
             launchWebView(context, article.articleUrl)
         }) {
-            Text(text = stringResource(R.string.visit_orignal_article))
+            Text(text = stringResource(R.string.visit_original_article))
         }
     }
 
@@ -205,7 +205,6 @@ private fun Toolbar(
         actions = {
             FavoriteButton(
                 Modifier
-                    //todo
                     .background(
                         color = shadow,
                         shape = CircleShape

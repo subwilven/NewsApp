@@ -1,6 +1,5 @@
 package com.example.newsapp.ui.screens.articles
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -86,13 +85,13 @@ fun ArticlesScreen(
         ProvidersScreen(dialogState = dialogState)
     }
     articlesList?.let {
-        val shouldShowRedBadage = uiState.filterData.selectedProvidersIds.isNotEmpty()
+        val shouldShowRedBadge = uiState.filterData.selectedProvidersIds.isNotEmpty()
         val appNavigator = LocalAppNavigator.current
         //todo should we create remember for this callbacks ?
         ArticlesContent(
             articlesList,
             uiState.filterData.searchInput ?: "",
-            shouldShowRedBadage,
+            shouldShowRedBadge,
             articlesViewModel::searchByQuery,
             articlesViewModel::clearSearch,
             articlesViewModel::changeArticleFavoriteState,
@@ -111,6 +110,7 @@ private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
     !shouldShowFullScreenLoading(articlesList.loadState) &&
             articlesList.itemCount == 0
 
+@Suppress("BooleanMethodIsAlwaysInverted")
 private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
     loadState.mediator?.refresh is LoadState.Loading
             || loadState.refresh is LoadState.Loading
@@ -145,14 +145,12 @@ fun ArticlesContent(
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
-    Log.e("LOADINg", " shouldShowEmptyList${shouldShowEmptyList}")
-    Log.e("LOADINg", " shouldFullLoadingProgressBar${shouldFullLoadingProgressBar}")
     val lazyListState = rememberLazyListState()
     val fullScreenError = fullScreenError(articles.loadState, articles.itemCount)
     if (fullScreenError == null) {
-        val erorrMessage = getErrorState(articles.loadState)
-        erorrMessage?.let {
-            LocalSnackbarDelegate.current?.showSnackbar(erorrMessage.error.message ?: "")
+        val errorMessage = getErrorState(articles.loadState)
+        errorMessage?.let {
+            LocalSnackbarDelegate.current?.showSnackbar(errorMessage.error.message ?: "")
         }
     }
 
@@ -325,7 +323,7 @@ private fun ArticlesList(
     LazyColumn(state = lazyListState) {
 
         items(articles.itemCount) { index ->
-            articles.get(index)?.let {
+            articles[index]?.let {
                 ArticleItem(it, onFavoriteButtonClicked, onArticleClicked)
             }
         }

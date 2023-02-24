@@ -22,7 +22,7 @@ class ArticlesRemoteMediator(
     private val localDatabase: ArticlesLocalDataSource,
 ) : RemoteMediator<Int, ArticleEntity>() {
 
-    var pageNumber = DEFAULT_START_PAGE_NUMBER
+    private var pageNumber = DEFAULT_START_PAGE_NUMBER
 
     override suspend fun initialize(): InitializeAction {
         return InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -57,7 +57,7 @@ class ArticlesRemoteMediator(
             // we have found that load state that Paging3 provide make loading hide and show multiple times
             //and this not good experience for the user
             //why this happen? because the loading state of mediator go false then loading state of source go true
-            //between theses two states the loading hides for millisconds so as a temp solution we did this small delay
+            //between theses two states the loading hides for milliseconds so as a temp solution we did this small delay
             delay(150)
             MediatorResult.Success(
                 endOfPaginationReached = !hasMoreData

@@ -43,11 +43,8 @@ fun MyFavoritesScreen(
     } else {
         LazyColumn {
             items(uiState.value.favoriteArticles.count()) { index ->
-                uiState.value.favoriteArticles[index].let {
-                    FavoriteArticleItem(it) { article ->
-                        navigateToArticleDetails(appNavigator, article)
-                    }
-
+                FavoriteArticleItem(uiState.value.favoriteArticles[index]) { article ->
+                    navigateToArticleDetails(appNavigator, article)
                 }
             }
         }

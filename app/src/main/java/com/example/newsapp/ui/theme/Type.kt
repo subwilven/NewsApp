@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // Set of Material typography styles to start with
-val tpography = Typography(
+val typography = Typography(
     headlineLarge = TextStyle(
         fontWeight = FontWeight.SemiBold,
         fontSize = 32.sp,

@@ -99,7 +99,7 @@ fun NewsAppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = tpography,
+        typography = typography,
         shapes = shapes,
         content = content
     )

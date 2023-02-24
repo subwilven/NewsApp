@@ -91,7 +91,7 @@ fun DialogContent(
 }
 
 @Composable
-private fun TitleAndButton(modifier: Modifier,title: String, dialogState: MutableState<Boolean>,) {
+private fun TitleAndButton(modifier: Modifier, title: String, dialogState: MutableState<Boolean>) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -100,7 +100,8 @@ private fun TitleAndButton(modifier: Modifier,title: String, dialogState: Mutabl
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = title, fontSize = 24.sp)
-        IconButton(modifier = Modifier.then(Modifier.size(24.dp)),
+        IconButton(
+            modifier = Modifier.then(Modifier.size(24.dp)),
             onClick = {
                 dialogState.value = false
             }) {
