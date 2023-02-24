@@ -70,7 +70,7 @@ additions for future iterations:
 
 - [ ] Implement Unit tests.
 - [ ] Implement UI tests.
-- [ ] Apply [ktlint](https://pinterest.github.io/ktlint/) for checking code style.
+- [X] Apply [Detekt](https://detekt.dev/) for checking code style.
 - [ ] Use [Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks).
 - [ ] Use [GitHub Actions](https://github.com/features/actions) as CI/CD.
 - [ ] 
