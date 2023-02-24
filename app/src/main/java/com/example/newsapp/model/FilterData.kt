@@ -1,7 +1,6 @@
 package com.example.newsapp.model
 
 import android.text.TextUtils
-import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.util.DEFAULT_COUNTRY
 
 data class FilterData(

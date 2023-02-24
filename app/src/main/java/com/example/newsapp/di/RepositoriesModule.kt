@@ -1,7 +1,7 @@
 package com.example.newsapp.di
 
-import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
-import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
+import com.example.newsapp.data.articles.datasource.local.ArticlesLocalDataSource
+import com.example.newsapp.data.articles.datasource.remote.ArticlesRemoteDataSource
 import com.example.newsapp.data.articles.repository.ArticlesRepository
 import com.example.newsapp.data.articles.repository.ArticlesRepositoryImp
 import com.example.newsapp.data.providers.datasource.local.ProvidersLocalDataSource

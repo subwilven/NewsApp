@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.use_cases.GetArticleByIdUseCase
-import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
+import com.example.newsapp.usecases.GetArticleByIdUseCase
+import com.example.newsapp.usecases.ToggleFavoriteStateUseCase
 import com.example.newsapp.util.ARG_ARTICLE_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

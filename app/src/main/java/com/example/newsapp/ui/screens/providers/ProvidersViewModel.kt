@@ -4,11 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.Result
 import com.example.newsapp.model.providers.Provider
-import com.example.newsapp.use_cases.FetchProvidersUseCase
-import com.example.newsapp.use_cases.UpdateProvidersSelectionUseCase
+import com.example.newsapp.usecases.FetchProvidersUseCase
+import com.example.newsapp.usecases.UpdateProvidersSelectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

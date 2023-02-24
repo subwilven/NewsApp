@@ -16,14 +16,16 @@ Android applications that can meet the demands of even the most complex business
 ## Screenshots
 
 ### 🌚 Dark Mode
-Home | Details | Filter
---- | --- | --- |
-<img src="https://user-images.githubusercontent.com/17847634/218328393-13f53293-8f92-4ced-9968-bfe0a322403e.png" width="250" style="display: inline-block;" />|   <img src="https://user-images.githubusercontent.com/17847634/218328396-73b89584-9a51-4e10-81ad-b1256127561d.png" width="250" style="display: inline-block;" /> |  <img src="https://user-images.githubusercontent.com/17847634/218328399-68d31f6c-1d4c-4dfb-838f-92ccffdbe658.png" width="250" style="display: inline-block;" />
+
+| Home                                                                                                                                                           | Details                                                                                                                                                        | Filter                                                                                                                                                         |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img src="https://user-images.githubusercontent.com/17847634/218328393-13f53293-8f92-4ced-9968-bfe0a322403e.png" width="250" style="display: inline-block;" /> | <img src="https://user-images.githubusercontent.com/17847634/218328396-73b89584-9a51-4e10-81ad-b1256127561d.png" width="250" style="display: inline-block;" /> | <img src="https://user-images.githubusercontent.com/17847634/218328399-68d31f6c-1d4c-4dfb-838f-92ccffdbe658.png" width="250" style="display: inline-block;" /> |
 
 ### 🌞 Light Mode
-Home | Details | Filter
---- | --- | --- |
-<img src="https://user-images.githubusercontent.com/17847634/218328384-777692ee-f6d3-4c4f-90d4-00b47cf078fe.png" width="250" style="display: inline-block;" />|   <img src="https://user-images.githubusercontent.com/17847634/218328388-29323f9f-e32d-4f11-9841-2b7e9fee5489.png" width="250" style="display: inline-block;" /> |  <img src="https://user-images.githubusercontent.com/17847634/218328390-4432fbf8-6a6c-4f5d-b243-d3663d7a614b.png" width="250" style="display: inline-block;" />
+
+| Home                                                                                                                                                           | Details                                                                                                                                                        | Filter                                                                                                                                                         |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img src="https://user-images.githubusercontent.com/17847634/218328384-777692ee-f6d3-4c4f-90d4-00b47cf078fe.png" width="250" style="display: inline-block;" /> | <img src="https://user-images.githubusercontent.com/17847634/218328388-29323f9f-e32d-4f11-9841-2b7e9fee5489.png" width="250" style="display: inline-block;" /> | <img src="https://user-images.githubusercontent.com/17847634/218328390-4432fbf8-6a6c-4f5d-b243-d3663d7a614b.png" width="250" style="display: inline-block;" /> |
 
 # UI
 

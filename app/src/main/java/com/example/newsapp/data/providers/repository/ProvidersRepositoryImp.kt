@@ -1,13 +1,13 @@
 package com.example.newsapp.data.providers.repository
 
-import android.util.Log
 import com.example.newsapp.data.providers.datasource.local.ProvidersLocalDataSource
 import com.example.newsapp.data.providers.datasource.remote.ProvidersRemoteDataSource
-import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.model.providers.ProviderEntity
-import com.example.newsapp.model.providers.asUiModel
+import com.example.newsapp.util.DELAY_DUMMY_LOADING
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 
 class ProvidersRepositoryImp(
     private val localDataSource: ProvidersLocalDataSource,
@@ -19,11 +19,11 @@ class ProvidersRepositoryImp(
     override fun getProviders(): Flow<List<ProviderEntity>> {
        return  flow {
                 localDataSource.getProviders().collect {
-                    delay(2500)//to show loading
-                    if(it.isEmpty()) {
+                    delay(DELAY_DUMMY_LOADING)//to show loading
+                    if (it.isEmpty()) {
                         val fetchedSources = remoteDataSource.fetchProviders().providers
                         localDataSource.insertAllProviders(fetchedSources)
-                    }else emit(it)
+                    } else emit(it)
                 }
         }
     }

@@ -1,13 +1,34 @@
 package com.example.newsapp.ui.screens.articleDetail
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,16 +36,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.launchWebView
+import com.example.newsapp.ui.components.ArticleImage
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.theme.NewsAppTheme
@@ -39,7 +59,8 @@ fun ArticleDetailScreen(
 
     val uiState = articlesViewModel.articleDetails.collectAsStateWithLifecycle()
     uiState.value?.let { article ->
-        CollapsingToolbar(article,
+        CollapsingToolbar(
+            article,
             onFavoriteButtonClicked = articlesViewModel::changeArticleFavoriteState
         )
     }
@@ -80,11 +101,8 @@ private fun Header(imageUrl: String?, scroll: ScrollState, headerHeightPx: Float
             alpha = (-1f / headerHeightPx) * scroll.value + 1
         }
     ) {
-        AsyncImage(
-            model = imageUrl,
-            error = painterResource(R.drawable.no_image_placeholder),
-            placeholder = painterResource(R.drawable.placeholder),
-            contentDescription = "article image",
+        ArticleImage(
+            imageUrl = imageUrl,
             contentScale = ContentScale.FillHeight,
             modifier = Modifier.fillMaxSize()
         )
@@ -127,19 +145,19 @@ private fun Body(article: Article, scroll: ScrollState) {
         Divider()
         Spacer(Modifier.height(16.dp))
 
-        repeat(5){
-        Text(
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(vertical = 4.dp),
-            text = article.content ?: ""
-        )
+        repeat(5) {
+            Text(
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(vertical = 4.dp),
+                text = article.content ?: ""
+            )
 
         }
         val context = LocalContext.current
         OutlinedButton(onClick = {
             launchWebView(context, article.articleUrl)
         }) {
-            Text(text = stringResource(R.string.visit_orignal_article))
+            Text(text = stringResource(R.string.visit_original_article))
         }
     }
 
@@ -187,7 +205,6 @@ private fun Toolbar(
         actions = {
             FavoriteButton(
                 Modifier
-                    //todo
                     .background(
                         color = shadow,
                         shape = CircleShape

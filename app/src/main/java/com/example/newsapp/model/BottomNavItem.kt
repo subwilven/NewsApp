@@ -1,7 +1,6 @@
 package com.example.newsapp.model
 
 import androidx.annotation.StringRes
-import androidx.compose.ui.res.stringResource
 import com.example.newsapp.R
 import com.example.newsapp.navigation.Destination
 

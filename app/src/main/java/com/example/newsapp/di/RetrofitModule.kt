@@ -2,7 +2,7 @@ package com.example.newsapp.di
 
 import android.content.Context
 import com.example.newsapp.BuildConfig
-import com.example.newsapp.data.articles.data_source.remote.NewsApiServices
+import com.example.newsapp.data.articles.datasource.remote.NewsApiServices
 import com.example.newsapp.util.BASE_URL
 import com.example.newsapp.util.DATE_FORMAT_SERVER
 import com.example.newsapp.util.NetworkConnectionInterceptor
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
 
-    const val REQUEST_TIME_OUT: Long = 60
+    private const val REQUEST_TIME_OUT: Long = 60
 
     @Provides
     @Singleton

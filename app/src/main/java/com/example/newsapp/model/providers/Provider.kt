@@ -20,7 +20,7 @@ data class Provider(val id: String, val name: String, var isSelected: Boolean) {
         updatesSaved = true
     }
 
-    /** we ovrride toString method to get list of strings of the providers list
+    /** we override toString method to get list of strings of the providers list
      * @see[FilterData.convertProvidersToString]
      */
 

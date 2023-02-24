@@ -1,6 +1,5 @@
 package com.example.newsapp.ui.screens.articles
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -8,12 +7,21 @@ import androidx.paging.cachedIn
 import com.example.newsapp.data.providers.repository.ProvidersRepository
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.use_cases.ToggleFavoriteStateUseCase
-import com.example.newsapp.use_cases.FetchArticlesUseCase
+import com.example.newsapp.usecases.FetchArticlesUseCase
+import com.example.newsapp.usecases.ToggleFavoriteStateUseCase
+import com.example.newsapp.util.DEBOUNCE_SEARCH_INPUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,9 +34,8 @@ class ArticlesViewModel @Inject constructor(
     private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
-    //todo pares dates via retfofit
-    //todo gradle catalog
-    //todo check hilt extention
+    //todo pares dates via retrofit
+    //todo check hilt extension
 
     private val _uiState = MutableStateFlow(ArticleUiState())
     val uiState = _uiState.asStateFlow()
@@ -54,7 +61,7 @@ class ArticlesViewModel @Inject constructor(
         }
 
     private fun createPagingListFlow(filterDataFlow: Flow<FilterData>) = filterDataFlow
-        .debounce(400)
+        .debounce(DEBOUNCE_SEARCH_INPUT)
         .distinctUntilChanged()
         .flatMapLatest { filterData ->
             fetchArticlesUseCase.produce(filterData)

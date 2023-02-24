@@ -6,10 +6,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class SnackbarDelegate(
-    var snackbarHostState: SnackbarHostState,
-    var coroutineScope: CoroutineScope
+    private var snackbarHostState: SnackbarHostState,
+    private var coroutineScope: CoroutineScope
 ) {
-
 
     fun showSnackbar(
         message: String,

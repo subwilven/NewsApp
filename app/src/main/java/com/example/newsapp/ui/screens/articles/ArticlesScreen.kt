@@ -1,10 +1,20 @@
 package com.example.newsapp.ui.screens.articles
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,8 +22,19 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
@@ -32,10 +53,10 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.navigateToArticleDetails
+import com.example.newsapp.ui.components.ArticleImage
 import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingFullScreen
@@ -64,13 +85,13 @@ fun ArticlesScreen(
         ProvidersScreen(dialogState = dialogState)
     }
     articlesList?.let {
-        val shouldShowRedBadage = uiState.filterData.selectedProvidersIds.isNotEmpty()
+        val shouldShowRedBadge = uiState.filterData.selectedProvidersIds.isNotEmpty()
         val appNavigator = LocalAppNavigator.current
         //todo should we create remember for this callbacks ?
         ArticlesContent(
             articlesList,
             uiState.filterData.searchInput ?: "",
-            shouldShowRedBadage,
+            shouldShowRedBadge,
             articlesViewModel::searchByQuery,
             articlesViewModel::clearSearch,
             articlesViewModel::changeArticleFavoriteState,
@@ -89,6 +110,7 @@ private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
     !shouldShowFullScreenLoading(articlesList.loadState) &&
             articlesList.itemCount == 0
 
+@Suppress("BooleanMethodIsAlwaysInverted")
 private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
     loadState.mediator?.refresh is LoadState.Loading
             || loadState.refresh is LoadState.Loading
@@ -123,14 +145,12 @@ fun ArticlesContent(
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
-    Log.e("LOADINg", " shouldShowEmptyList${shouldShowEmptyList}")
-    Log.e("LOADINg", " shouldFullLoadingProgressBar${shouldFullLoadingProgressBar}")
     val lazyListState = rememberLazyListState()
     val fullScreenError = fullScreenError(articles.loadState, articles.itemCount)
     if (fullScreenError == null) {
-        val erorrMessage = getErrorState(articles.loadState)
-        erorrMessage?.let {
-            LocalSnackbarDelegate.current?.showSnackbar(erorrMessage.error.message ?: "")
+        val errorMessage = getErrorState(articles.loadState)
+        errorMessage?.let {
+            LocalSnackbarDelegate.current?.showSnackbar(errorMessage.error.message ?: "")
         }
     }
 
@@ -182,7 +202,6 @@ fun ArticlesContent(
 
     }
 }
-
 
 
 @Composable
@@ -243,12 +262,7 @@ fun SearchInputField(
                     .background(MaterialTheme.colorScheme.surface, shape)
                     .padding(8.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    null,
-                    tint = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
+                SearchIcon()
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -265,18 +279,7 @@ fun SearchInputField(
                 }
 
                 if (query.isNotEmpty()) {
-                    IconButton(
-                        onClick = onClearIconClicked,
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .size(24.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.outline
-                        )
-                    }
+                    ClearIcon(onClearIconClicked)
                 }
             }
         }
@@ -285,7 +288,33 @@ fun SearchInputField(
 }
 
 @Composable
-fun ArticlesList(
+private fun SearchIcon() {
+    Icon(
+        imageVector = Icons.Default.Search,
+        null,
+        tint = MaterialTheme.colorScheme.outline,
+        modifier = Modifier.padding(horizontal = 4.dp)
+    )
+}
+
+@Composable
+private fun ClearIcon(onClearIconClicked: () -> Unit) {
+    IconButton(
+        onClick = onClearIconClicked,
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+            .size(24.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.outline
+        )
+    }
+}
+
+@Composable
+private fun ArticlesList(
     articles: LazyPagingItems<Article>,
     lazyListState: LazyListState,
     onFavoriteButtonClicked: (Article) -> Unit,
@@ -294,7 +323,7 @@ fun ArticlesList(
     LazyColumn(state = lazyListState) {
 
         items(articles.itemCount) { index ->
-            articles.get(index)?.let {
+            articles[index]?.let {
                 ArticleItem(it, onFavoriteButtonClicked, onArticleClicked)
             }
         }
@@ -311,7 +340,7 @@ fun ArticlesList(
 }
 
 @Composable
-fun ArticleItem(
+private fun ArticleItem(
     article: Article,
     onFavoriteButtonClicked: (Article) -> Unit,
     onArticleClicked: (Article) -> Unit,
@@ -330,68 +359,70 @@ fun ArticleItem(
             modifier = Modifier
                 .padding(12.dp)
         ) {
-            AsyncImage(
-                model = article.imageUrl,
-                error = painterResource(R.drawable.no_image_placeholder),
-                placeholder = painterResource(R.drawable.placeholder),
-                contentDescription = article.description,
+            ArticleImage(
+                imageUrl = article.imageUrl,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(MaterialTheme.shapes.small)
                     .fillMaxWidth()
-                    .height(180.dp)
+                    .height(180.dp),
             )
-
-            article.author?.let {
-                Text(
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    text = it
-                )
-            }
+            ArticleAuthor(article.author)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Max)
             ) {
-                Text(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                        .weight(0.9f),
-                    text = article.title
-                )
+                ArticleTitle(Modifier.weight(0.9f), title = article.title)
                 FavoriteButton(
                     Modifier.weight(0.1f),
                     article.isFavorite,
                     MaterialTheme.colorScheme.onSurfaceVariant,
-
-                    ) {
+                ) {
                     onFavoriteButtonClicked.invoke(article)
                 }
             }
-
-            article.publishedAt?.let {
-                Text(
-                    color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.labelSmall,
-                    text = it
-                )
-            }
+            ArticlePublishedDate(article.publishedAt)
         }
     }
 }
 
 @Composable
-fun MainScreen() {
+private fun ArticlePublishedDate(date: String?) {
+    date?.let {
+        Text(
+            color = MaterialTheme.colorScheme.outline,
+            style = MaterialTheme.typography.labelSmall,
+            text = it
+        )
+    }
+}
 
+@Composable
+private fun ArticleAuthor(author: String?) {
+    author?.let {
+        Text(
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(vertical = 8.dp),
+            text = it
+        )
+    }
+}
+
+@Composable
+private fun ArticleTitle(modifier: Modifier = Modifier, title: String) {
+    Text(
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = modifier
+            .padding(vertical = 4.dp),
+        text = title
+    )
 }
 
 @Preview
 @Composable
-
 fun ComposablePreview() {
 //    ArticlesContent(flow<PagingData<ArticleUi>> {}.collectAsLazyPagingItems(),
 //        "", actionFlow(), {}, {})

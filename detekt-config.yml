@@ -1,0 +1,17 @@
+complexity:
+  TooManyFunctions:
+    thresholdInFiles: 20
+  LongParameterList:
+    functionThreshold: 15
+    ignoreDefaultParameters: true
+
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: [ 'Composable' ]
+
+style:
+  MagicNumber:
+    active: false #becaue of compose magic number
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true

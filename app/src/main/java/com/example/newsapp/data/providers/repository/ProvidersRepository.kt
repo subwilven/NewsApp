@@ -1,6 +1,5 @@
 package com.example.newsapp.data.providers.repository
 
-import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.model.providers.ProviderEntity
 import kotlinx.coroutines.flow.Flow
 

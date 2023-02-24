@@ -2,7 +2,10 @@ package com.example.newsapp.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.*
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.newsapp.navigation.Destination
@@ -29,5 +32,5 @@ fun NavGraphBuilder.composable(
     arguments: List<NamedNavArgument> = emptyList(),
     content: @Composable (NavBackStackEntry) -> Unit
 ) {
-    composable(destination.fullRoute,content = content,arguments = arguments,)
+    composable(destination.fullRoute, content = content, arguments = arguments)
 }

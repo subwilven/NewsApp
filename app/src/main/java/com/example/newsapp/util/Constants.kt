@@ -7,3 +7,5 @@ const val DEFAULT_START_PAGE_NUMBER = 1
 const val DATE_FORMAT_SERVER = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 const val ARG_ARTICLE_ID = "articleId"
 const val DEFAULT_COUNTRY = "us"
+const val DEBOUNCE_SEARCH_INPUT = 400L
+const val DELAY_DUMMY_LOADING = 2500L

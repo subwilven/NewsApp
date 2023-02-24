@@ -47,8 +47,6 @@ fun navigateToArticleDetails(appNavigator: AppNavigator,article: Article){
 }
 
 fun launchWebView(context: Context,url :String?){
-    val webIntent: Intent = Uri.parse(url).let { webpage ->
-        Intent(Intent.ACTION_VIEW, webpage)
-    }
+    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
     ContextCompat.startActivity(context, webIntent, null)
 }

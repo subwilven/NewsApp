@@ -1,12 +1,12 @@
 package com.example.newsapp.di
 
-import com.example.newsapp.data.articles.data_source.local.ArticlesDao
-import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSource
-import com.example.newsapp.data.articles.data_source.local.ArticlesLocalDataSourceImp
+import com.example.newsapp.data.articles.datasource.local.ArticlesDao
+import com.example.newsapp.data.articles.datasource.local.ArticlesLocalDataSource
+import com.example.newsapp.data.articles.datasource.local.ArticlesLocalDataSourceImp
+import com.example.newsapp.data.articles.datasource.remote.ArticlesRemoteDataSource
+import com.example.newsapp.data.articles.datasource.remote.ArticlesRemoteDataSourceImp
+import com.example.newsapp.data.articles.datasource.remote.NewsApiServices
 import com.example.newsapp.data.providers.datasource.local.ProvidersDao
-import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSource
-import com.example.newsapp.data.articles.data_source.remote.ArticlesRemoteDataSourceImp
-import com.example.newsapp.data.articles.data_source.remote.NewsApiServices
 import com.example.newsapp.data.providers.datasource.local.ProvidersLocalDataSource
 import com.example.newsapp.data.providers.datasource.local.ProvidersLocalDataSourceImp
 import com.example.newsapp.data.providers.datasource.remote.ProvidersRemoteDataSource
