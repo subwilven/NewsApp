@@ -71,7 +71,7 @@ additions for future iterations:
 - [ ] Implement Unit tests.
 - [ ] Implement UI tests.
 - [X] Apply [Detekt](https://detekt.dev/) for checking code style.
-- [ ] Use [Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks).
+- [X] Use [Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to run  [Detekt](https://detekt.dev/) on run pre-commit.
 - [ ] Use [GitHub Actions](https://github.com/features/actions) as CI/CD.
 - [ ] 
   Use [Core-splashscreen](https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen)
