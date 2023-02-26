@@ -10,4 +10,4 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
       - name: Build the app
-        run: ./gradlew build
+        uses: gradle/gradle-build-action@v2
