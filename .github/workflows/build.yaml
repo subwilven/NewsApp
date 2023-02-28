@@ -13,6 +13,6 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Upload APK
         uses: actions/upload-artifact@v3
-          with:
-            name: Package
-            path: build/libs
+        with:
+          name: Package
+          path: build/libs
