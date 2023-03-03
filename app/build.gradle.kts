@@ -51,6 +51,10 @@ android {
         }
     }
 }
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
 //for dagger hilt
 kapt {
     correctErrorTypes = true
@@ -66,6 +70,7 @@ dependencies {
     implementation(libs.bundles.compose.material)
     implementation(libs.activity.compose)
     implementation(libs.bundles.hilt)
+
     kapt(libs.dagger.compiler)
     implementation(libs.coil)
     implementation(libs.bundles.retrofit)
@@ -74,6 +79,7 @@ dependencies {
     kapt(libs.room.compiler)
     implementation(libs.bundles.paging)
 
+    testImplementation(libs.bundles.jupiter)
     testImplementation(libs.junit)
     androidTestImplementation(libs.compose.test)
     androidTestImplementation(libs.junit.ext)
