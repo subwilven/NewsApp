@@ -21,6 +21,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Check lint
+        env:
+          api.key: ${{ secrets.API_KEY }}
         run: ./gradlew lintDebug
 
       - name: Build all build type and flavor permutations
