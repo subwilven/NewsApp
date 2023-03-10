@@ -28,11 +28,12 @@ jobs:
         #      - name: Check spotless
         #        run: ./gradlew spotlessCheck --init-script gradle/init.gradle.kts --no-configuration-cache
 
+      - name: Update API from Secrets
+          env:
+            API_KEY: ${{ secrets.API_KEY }}
+          run: echo API_KEY="$API_KEY" > ./local.properties
 
       - name: Check lint
-        env:
-          api.key: ${{ secrets.API_KEY }}
-          API_KEY: ${{ secrets.API_KEY }}
         run: ./gradlew lintDebug
 
       - name: Build all build type and flavor permutations
