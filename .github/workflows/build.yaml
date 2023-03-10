@@ -39,6 +39,14 @@ jobs:
       - name: Run local tests
         run: ./gradlew testDebug
 
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: JUnit Tests
+          path: app/build/test-results/testDevDebugUnitTest/TEST-*.xml# Path to test results
+          reporter: java-junit
+          fail-on-error: false
+
       - name: Upload build outputs (APKs)
         uses: actions/upload-artifact@v3
         with:
