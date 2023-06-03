@@ -41,7 +41,6 @@ jobs:
         if: always()
         with:
           name: JUnit Tests
-          path: app/build/reports/TEST.xml
           reporter: java-junit
           fail-on-error: false
 
