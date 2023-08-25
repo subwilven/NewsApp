@@ -3,6 +3,7 @@ package com.example.newsapp.data.providers.repository
 import com.example.newsapp.data.providers.datasource.local.ProvidersLocalDataSource
 import com.example.newsapp.data.providers.datasource.remote.ProvidersRemoteDataSource
 import com.example.newsapp.model.providers.ProviderEntity
+import com.example.newsapp.model.providers.asEntityModel
 import com.example.newsapp.util.DELAY_DUMMY_LOADING
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -18,20 +19,19 @@ class ProvidersRepositoryImp(
 
     override fun getProviders(): Flow<List<ProviderEntity>> {
        return  flow {
-                localDataSource.getProviders().collect {
+                localDataSource.getProviders().collect { it ->
                     delay(DELAY_DUMMY_LOADING)//to show loading
                     if (it.isEmpty()) {
                         val fetchedSources = remoteDataSource.fetchProviders().providers
-                        localDataSource.insertAllProviders(fetchedSources)
+                        localDataSource.insertAllProviders(fetchedSources.map { it.asEntityModel() })
                     } else emit(it)
                 }
         }
     }
 
     override fun getSelectedProvidersIds() = selectedProvidersIds
+
     override fun updateSelectedProvidersList(providersIds: HashSet<String>) {
         selectedProvidersIds.tryEmit(providersIds)
     }
-
-
 }

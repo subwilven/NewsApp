@@ -50,12 +50,12 @@ data class ArticleEntity(
 
 fun ArticleEntity.asUiModel() = Article(
     id,
-    author,
+    author ?: "",
     title,
-    description,
-    articleUrl,
-    imageUrl,
-    publishedAt?.convertToAgoTime(),
-    content,
+    description?: "",
+    articleUrl?: "",
+    imageUrl?: "",
+    publishedAt?.convertToAgoTime()?: "",
+    content?: "",
     isFavorite
 )
