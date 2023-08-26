@@ -110,7 +110,7 @@ the [News API Documentation](https://newsapi.org/docs/get-started) for instructi
 Once you have the key, add this line to the `gradle.properties` file
 
 ```
-api.key="your newsapi access key"
+API_KEY="your newsapi access key"
 ```
 
 ## Find this repository useful? :heart:
