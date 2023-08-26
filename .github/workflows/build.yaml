@@ -10,49 +10,58 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 11
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp  ~/.gradle/gradle.properties
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: 11
+          java-version: 17`
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build the app
+      - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+
         # can we use spotless to run detekt ?
         #      - name: Check spotless
         #        run: ./gradlew spotlessCheck --init-script gradle/init.gradle.kts --no-configuration-cache
+
 
       - name: Update API_KEY from Secrets
         env:
           API_KEY: ${{ secrets.API_KEY }}
         run: echo API_KEY="$API_KEY" > ./local.properties
 
+      - name: Build all build type and flavor permutations
+        run: ./gradlew assemble
+
       - name: Check lint
         run: ./gradlew lintDebug
 
-      #      - name: Build all build type and flavor permutations
-      #        run: ./gradlew assemble
-
-      - name: Run Tests
-        run: ./gradlew test
+      - name: Run local tests
+        run: ./gradlew testDebug
 
       - name: Generate Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: JUnit Tests
-          path: app/build/test-results/testDebugUnitTest/TEST-*.xml
+          path: 'app/build/test-results/**/TEST-*.xml'
           reporter: java-junit
           fail-on-error: false
 
       - name: Upload build outputs (APKs)
         uses: actions/upload-artifact@v3
         with:
-          name: build-outputs
-          path: app/build/outputs
+          name: APKs
+          path: '**/build/outputs/apk/**/*.apk'
+
 
       - name: Upload build reports
         if: always()
