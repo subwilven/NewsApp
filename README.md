@@ -71,8 +71,9 @@ additions for future iterations:
 - [ ] Implement Unit tests.
 - [ ] Implement UI tests.
 - [X] Apply [Detekt](https://detekt.dev/) for checking code style.
-- [X] Use [Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to run  [Detekt](https://detekt.dev/) on run pre-commit.
-- [ ] Use [GitHub Actions](https://github.com/features/actions) as CI/CD.
+- [X] Use [Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) to
+  run  [Detekt](https://detekt.dev/) on run pre-commit.
+- [X] Use [GitHub Actions](https://github.com/features/actions) as CI/CD.
 - [ ] 
   Use [Core-splashscreen](https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen)
   to replicate the splash screen behavior from Android 12
@@ -110,7 +111,7 @@ the [News API Documentation](https://newsapi.org/docs/get-started) for instructi
 Once you have the key, add this line to the `gradle.properties` file
 
 ```
-api.key="your newsapi access key"
+API_KEY="your newsapi access key"
 ```
 
 ## Find this repository useful? :heart:
