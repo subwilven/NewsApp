@@ -8,6 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import com.example.newsapp.navigation.Destination
 
 @Composable
@@ -33,4 +34,12 @@ fun NavGraphBuilder.composable(
     content: @Composable (NavBackStackEntry) -> Unit
 ) {
     composable(destination.fullRoute, content = content, arguments = arguments)
+}
+
+fun NavGraphBuilder.dialog(
+    destination: Destination,
+    arguments: List<NamedNavArgument> = emptyList(),
+    content: @Composable (NavBackStackEntry) -> Unit
+) {
+    dialog(destination.fullRoute, content = content, arguments = arguments)
 }

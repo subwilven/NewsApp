@@ -20,8 +20,8 @@ class ProvidersRepositoryImp(
     override fun getProviders(): Flow<List<ProviderEntity>> {
        return  flow {
                 localDataSource.getProviders().collect { it ->
-                    delay(DELAY_DUMMY_LOADING)//to show loading
                     if (it.isEmpty()) {
+                        delay(DELAY_DUMMY_LOADING)//to show loading
                         val fetchedSources = remoteDataSource.fetchProviders().providers
                         localDataSource.insertAllProviders(fetchedSources.map { it.asEntityModel() })
                     } else emit(it)

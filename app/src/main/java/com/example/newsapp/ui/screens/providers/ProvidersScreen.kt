@@ -4,11 +4,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,29 +14,24 @@ import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.components.MyDialog
 import com.example.newsapp.ui.components.MyFilterChip
+import com.example.newsapp.ui.main.LocalAppNavigator
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun ProvidersScreen(
     providersViewModel: ProvidersViewModel = hiltViewModel(),
-    dialogState: MutableState<Boolean>, ) {
+) {
+    val appNavigator = LocalAppNavigator.current
 
     MyDialog(
         R.string.providers_filter,
         R.string.apply,
         R.string.reset,
-        dialogState,
+        { appNavigator.tryNavigateBack() },
         onPositiveClicked = providersViewModel::applyFilter,
         onNegativeClicked = providersViewModel::resetFilter
     ) {
         val uiState: ProviderUiState by providersViewModel.uiState.collectAsStateWithLifecycle()
-        val lifeCycleOwner =LocalLifecycleOwner.current
-
-        DisposableEffect(lifeCycleOwner) {
-            onDispose {
-                providersViewModel.resetUserChanges()
-            }
-        }
 
         ProvidersListContent(
             isLoading = uiState.isLoading,
@@ -50,7 +42,7 @@ fun ProvidersScreen(
 }
 
 @Composable
-private fun ProvidersListContent(
+fun ProvidersListContent(
     isLoading: Boolean,
     providersList: List<Provider>,
     onProvidersSelected: (Provider, Int) -> Unit,
@@ -85,6 +77,3 @@ private fun ProvidersChips(
 
     }
 }
-
-
-

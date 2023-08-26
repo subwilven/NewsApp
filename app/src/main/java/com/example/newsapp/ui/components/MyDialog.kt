@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,19 +34,19 @@ fun MyDialog(
     @StringRes title: Int,
     @StringRes positiveButtonText: Int = R.string.ok,
     @StringRes negativeButtonText: Int = R.string.cancel,
-    dialogState: MutableState<Boolean>,
-    onPositiveClicked : () -> Unit,
-    onNegativeClicked : () -> Unit,
+    onDismiss: () -> Unit,
+    onPositiveClicked: () -> Unit,
+    onNegativeClicked: () -> Unit,
     content: @Composable () -> Unit
 ) {
     Dialog(
-        onDismissRequest = { dialogState.value = false },
+        onDismissRequest = { onDismiss() },
         content = {
             DialogContent(
                 stringResource(id = title),
                 stringResource(id = positiveButtonText),
                 stringResource(id = negativeButtonText),
-                dialogState,
+                onDismiss,
                 onPositiveClicked,
                 onNegativeClicked,
                 content
@@ -65,9 +64,9 @@ fun DialogContent(
     title: String,
     positiveButtonText: String,
     negativeButtonText: String,
-    dialogState: MutableState<Boolean>,
-    onPositiveClicked : () -> Unit,
-    onNegativeClicked : () -> Unit,
+    onDismiss: () -> Unit,
+    onPositiveClicked: () -> Unit,
+    onNegativeClicked: () -> Unit,
     content: @Composable () -> Unit
 ) {
     Card(
@@ -82,16 +81,22 @@ fun DialogContent(
                 .fillMaxHeight(1f),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            TitleAndButton(Modifier,title, dialogState)
-            AddBody(Modifier.weight(1f,true),content)
-            BottomButtons(Modifier.align(Alignment.End),
-                positiveButtonText,negativeButtonText, dialogState = dialogState,onPositiveClicked,onNegativeClicked)
+            TitleAndButton(Modifier, title, onDismiss)
+            AddBody(Modifier.weight(1f, true), content)
+            BottomButtons(
+                Modifier.align(Alignment.End),
+                positiveButtonText,
+                negativeButtonText,
+                onDismiss,
+                onPositiveClicked,
+                onNegativeClicked
+            )
         }
     }
 }
 
 @Composable
-private fun TitleAndButton(modifier: Modifier, title: String, dialogState: MutableState<Boolean>) {
+private fun TitleAndButton(modifier: Modifier, title: String, onClose: () -> Unit) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -103,7 +108,7 @@ private fun TitleAndButton(modifier: Modifier, title: String, dialogState: Mutab
         IconButton(
             modifier = Modifier.then(Modifier.size(24.dp)),
             onClick = {
-                dialogState.value = false
+                onClose.invoke()
             }) {
             Icon(
                 Icons.Filled.Close,
@@ -118,7 +123,7 @@ private fun TitleAndButton(modifier: Modifier, title: String, dialogState: Mutab
 private fun BottomButtons(
     modifier: Modifier, positiveButtonText: String,
     negativeButtonText: String,
-    dialogState: MutableState<Boolean>,
+    onDismiss: () -> Unit,
     onPositiveClicked: () -> Unit,
     onNegativeClicked: () -> Unit,
 ) {
@@ -130,7 +135,7 @@ private fun BottomButtons(
         TextButton(
             onClick = {
                 onNegativeClicked.invoke()
-                dialogState.value = false
+                onDismiss.invoke()
             },
             modifier = Modifier
                 .padding(end = 5.dp),
@@ -141,7 +146,7 @@ private fun BottomButtons(
         TextButton(
             onClick = {
                 onPositiveClicked.invoke()
-                dialogState.value = false
+                onDismiss.invoke()
             },
             shape = MaterialTheme.shapes.medium
         ) {
