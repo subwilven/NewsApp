@@ -44,7 +44,7 @@ jobs:
         if: always()
         with:
           name: JUnit Tests
-          path: app/build/test-results/testDebugUnitTest/TEST-*.xml
+          path: app/build/test-results/testDebugUnitTest/TEST-com.example.newsapp.usecases.FetchArticlesUseCaseTest.xml
           reporter: java-junit
           fail-on-error: false
 
