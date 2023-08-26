@@ -23,8 +23,6 @@ class ProvidersViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProviderUiState(isLoading = true))
-
-    //todo do we need to use it hot flow ?
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -54,10 +52,7 @@ class ProvidersViewModel @Inject constructor(
 
     fun toggleProviderSelectionState(provider: Provider, index: Int) {
         viewModelScope.launch(workerDispatcher) {
-            val newProvider = provider.copy().apply {
-                toggleSelection()
-                toggleUpdatesSaved()
-            }
+            val newProvider = provider.copy(isSelected = !provider.isSelected)
             getCurrentProvidersList().toMutableList().also { newList ->
                 newList[index] = newProvider
                 _uiState.value =  _uiState.value.copy(providersList = newList)
@@ -67,38 +62,17 @@ class ProvidersViewModel @Inject constructor(
 
     fun applyFilter() {
         viewModelScope.launch(workerDispatcher) {
-            val selectedProvidersIds = getCurrentProvidersList().run {
-                filter { it.isSelected }.map { it.markAsSaved() ; it.id}.toHashSet()
-            }
+            val selectedProvidersIds =
+                getCurrentProvidersList().filter { it.isSelected }.map { it.id }.toHashSet()
             updateProvidersSelectionUseCase(selectedProvidersIds)
         }
-
     }
 
-    /**
-     * call this func while screen is closing so any user selections without applying the filter
-     * should be reset to the previous state ,
-     * so when user open the screen again it shows only the applied filter
-     * */
-    fun resetUserChanges() {
-        viewModelScope.launch(workerDispatcher) {
-            getCurrentProvidersList().onEach {
-                if (!it.updatesSaved) {
-                    it.toggleSelection()
-                    it.toggleUpdatesSaved()
-                }
-            }
-        }
-    }
 
     fun resetFilter() {
-        viewModelScope.launch(workerDispatcher) {
-            getCurrentProvidersList().onEach {
-                it.isSelected = false
-            }
-            applyFilter()
+        viewModelScope.launch {
+            updateProvidersSelectionUseCase(hashSetOf())
         }
-
     }
 
 }

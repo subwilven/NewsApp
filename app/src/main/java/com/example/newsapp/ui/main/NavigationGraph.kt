@@ -9,9 +9,11 @@ import androidx.navigation.navArgument
 import com.example.newsapp.navigation.Destination
 import com.example.newsapp.ui.components.MyNavHost
 import com.example.newsapp.ui.components.composable
+import com.example.newsapp.ui.components.dialog
 import com.example.newsapp.ui.screens.articleDetail.ArticleDetailScreen
 import com.example.newsapp.ui.screens.articles.ArticlesScreen
 import com.example.newsapp.ui.screens.favorite.MyFavoritesScreen
+import com.example.newsapp.ui.screens.providers.ProvidersScreen
 import com.example.newsapp.util.ARG_ARTICLE_ID
 
 
@@ -24,13 +26,16 @@ fun NavigationGraph(modifier :Modifier = Modifier,
             showToolbarAndBottomBar.value = true
             ArticlesScreen()
         }
+        dialog(Destination.ProvidersDialog) {
+            ProvidersScreen()
+        }
         composable(Destination.FavoritesScreen) {
             showToolbarAndBottomBar.value = true
             MyFavoritesScreen()
 
         }
         composable(
-            Destination.ArticleDetailsScreen ,
+            Destination.ArticleDetailsScreen,
             arguments = listOf(navArgument(name = ARG_ARTICLE_ID) {
                 type = NavType.IntType
             })

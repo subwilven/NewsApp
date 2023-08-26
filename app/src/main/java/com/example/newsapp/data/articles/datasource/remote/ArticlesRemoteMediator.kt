@@ -7,6 +7,7 @@ import androidx.paging.RemoteMediator
 import com.example.newsapp.data.articles.datasource.local.ArticlesLocalDataSource
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticleEntity
+import com.example.newsapp.model.articles.asEntityModel
 import com.example.newsapp.util.DEFAULT_PAGE_SIZE
 import com.example.newsapp.util.DEFAULT_START_PAGE_NUMBER
 import kotlinx.coroutines.delay
@@ -47,9 +48,9 @@ class ArticlesRemoteMediator(
             val response = remoteDatabase.fetchArticles(filterData, pageSize, pageNumber)
             if (pageSize == state.config.initialLoadSize) pageNumber += 2 else pageNumber++
             if (loadType == LoadType.REFRESH) {
-                localDatabase.insertAllArticlesAndDeleteOld(response.articles)
+                localDatabase.insertAllArticlesAndDeleteOld(response.articles.map { it.asEntityModel() })
             } else {
-                localDatabase.insertAllArticles(response.articles)
+                localDatabase.insertAllArticles(response.articles.map { it.asEntityModel() })
             }
 
             val hasMoreData = response.totalResultCount.toDouble().div(DEFAULT_PAGE_SIZE)

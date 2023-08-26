@@ -22,6 +22,8 @@ sealed class Destination(protected val route: String, vararg params: String) {
 
     object FavoritesScreen : NoArgumentsDestination("favorites")
 
+    object ProvidersDialog : NoArgumentsDestination("dialog_provider")
+
     object ArticleDetailsScreen : Destination("article_details", ARG_ARTICLE_ID) {
 
         operator fun invoke(articleId: Int): String = route.appendParams(
@@ -42,8 +44,12 @@ internal fun String.appendParams(vararg params: Pair<String, Any?>): String {
     return builder.toString()
 }
 
-fun navigateToArticleDetails(appNavigator: AppNavigator,article: Article){
+fun navigateToArticleDetails(appNavigator: AppNavigator, article: Article) {
     appNavigator.tryNavigateTo(Destination.ArticleDetailsScreen(article.id))
+}
+
+fun showProvidersDialog(appNavigator: AppNavigator) {
+    appNavigator.tryNavigateTo(Destination.ProvidersDialog())
 }
 
 fun launchWebView(context: Context,url :String?){

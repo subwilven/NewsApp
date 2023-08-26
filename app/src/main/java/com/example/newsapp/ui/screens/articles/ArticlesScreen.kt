@@ -31,10 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
@@ -56,13 +53,13 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.navigateToArticleDetails
+import com.example.newsapp.navigation.showProvidersDialog
 import com.example.newsapp.ui.components.ArticleImage
 import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.main.LocalSnackbarDelegate
-import com.example.newsapp.ui.screens.providers.ProvidersScreen
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -75,15 +72,6 @@ fun ArticlesScreen(
     val uiState: ArticleUiState by articlesViewModel.uiState.collectAsStateWithLifecycle()
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
 
-    // Dialog state Manager
-    val dialogState: MutableState<Boolean> = remember {
-        mutableStateOf(false)
-    }
-
-    // Code to Show and Dismiss Dialog
-    if (dialogState.value) {
-        ProvidersScreen(dialogState = dialogState)
-    }
     articlesList?.let {
         val shouldShowRedBadge = uiState.filterData.selectedProvidersIds.isNotEmpty()
         val appNavigator = LocalAppNavigator.current
@@ -99,7 +87,7 @@ fun ArticlesScreen(
                 navigateToArticleDetails(appNavigator, article)
             },
             onFilterIconClicked = {
-                dialogState.value = true
+                showProvidersDialog(appNavigator)
             },
             onRetryClicked = { articlesList.refresh() }
         )
