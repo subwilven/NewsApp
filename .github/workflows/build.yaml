@@ -36,12 +36,15 @@ jobs:
       #      - name: Build all build type and flavor permutations
       #        run: ./gradlew assemble
 
-      - name: Run local tests
+      - name: Run Tests
+        run: ./gradlew test
+
+      - name: Generate Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: JUnit Tests
-          path: reports/TEST-result.xml
+          path: app/build/test-results/testDebugUnitTest/TEST-*.xml
           reporter: java-junit
           fail-on-error: false
 
