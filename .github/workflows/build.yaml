@@ -13,9 +13,6 @@ jobs:
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Copy CI gradle.properties
-        run: mkdir -p ~/.gradle ; cp  ~/.gradle/gradle.properties
-
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
