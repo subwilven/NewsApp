@@ -118,7 +118,7 @@ private fun Body(article: Article, scroll: ScrollState) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Spacer(Modifier.height(headerHeight))
-        article.publishedAt?.let {
+        article.publishDate?.let {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -4,7 +4,6 @@ import com.example.newsapp.Result
 import com.example.newsapp.asResult
 import com.example.newsapp.data.providers.repository.ProvidersRepository
 import com.example.newsapp.model.providers.Provider
-import com.example.newsapp.model.providers.asUiModel
 import com.example.newsapp.usecases.base.FlowUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +22,7 @@ class FetchProvidersUseCase @Inject constructor(
         ) { providerEntities, selectedProvidersIds ->
             providerEntities.map {
                 val isSelected = selectedProvidersIds.contains(it.id)
-                it.asUiModel(isSelected)
+                it.copy(isSelected = isSelected)
             }
         }.asResult()
     }

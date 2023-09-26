@@ -2,12 +2,9 @@ package com.example.newsapp.usecases
 
 import com.example.newsapp.data.articles.repository.ArticlesRepository
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.model.articles.ArticleEntity
-import com.example.newsapp.model.articles.asUiModel
 import com.example.newsapp.usecases.base.FlowUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetArticleByIdUseCase @Inject constructor(
@@ -17,6 +14,6 @@ class GetArticleByIdUseCase @Inject constructor(
 
 
     override fun doWork(params: Int): Flow<Article> {
-       return repository.getArticleById(params).map(ArticleEntity::asUiModel)
+       return repository.getArticleById(params)
     }
 }

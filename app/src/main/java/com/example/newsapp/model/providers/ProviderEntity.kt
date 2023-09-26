@@ -13,8 +13,8 @@ data  class ProviderEntity(
     val name:String)
 
 
-fun ProviderEntity.asUiModel(isSelected : Boolean) = Provider(
+fun ProviderEntity.asUiModel() = Provider(
     id = id,
     name = name,
-    isSelected = isSelected,
+    isSelected = false,
 )

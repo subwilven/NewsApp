@@ -370,7 +370,7 @@ private fun ArticleItem(
                     onFavoriteButtonClicked.invoke(article)
                 }
             }
-            ArticlePublishedDate(article.publishedAt)
+            ArticlePublishedDate(article.publishDate)
         }
     }
 }

@@ -7,7 +7,7 @@ data class Article(
     val description: String,
     val articleUrl: String,
     val imageUrl: String,
-    val publishedAt: String,
+    val publishDate: String,
     val content: String,
-    val isFavorite :Boolean
+    val isFavorite: Boolean
 )
