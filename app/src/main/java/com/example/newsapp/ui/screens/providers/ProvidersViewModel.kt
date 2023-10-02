@@ -3,15 +3,24 @@ package com.example.newsapp.ui.screens.providers
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.Result
+import com.example.newsapp.asResult
+import com.example.newsapp.data.providers.repository.ProvidersRepository
+import com.example.newsapp.di.Dispatcher
+import com.example.newsapp.di.NewsDispatchers
 import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.usecases.FetchProvidersUseCase
 import com.example.newsapp.usecases.UpdateProvidersSelectionUseCase
+import com.example.newsapp.util.FLOW_SUBSCRIPTION_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,59 +28,67 @@ import javax.inject.Inject
 class ProvidersViewModel @Inject constructor(
     private val fetchProvidersUseCase: FetchProvidersUseCase,
     private val updateProvidersSelectionUseCase: UpdateProvidersSelectionUseCase,
-    private val workerDispatcher: CoroutineDispatcher
+    @Dispatcher(NewsDispatchers.Default) private val workerDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProviderUiState(isLoading = true))
-    val uiState = _uiState.asStateFlow()
+    /**
+     * This Flow acts as a temporary cache for storing the user's changes to the selected providers,
+     * and is distinct from [ProvidersRepository.getSelectedProvidersIds] which holds the previous selected providers.
+     * The changes stored in this Flow are only submitted to the data layer via [applyFilter] when the user clicks on the 'Apply' button.
+     */
+    private val selectedProvidersIdsFlow = MutableStateFlow<HashSet<String>>(hashSetOf())
 
-    init {
-        fetchProvidersList()
-    }
+    val uiState: StateFlow<ProviderUiState> = getProvidersList()
+        .asResult()
+        .map(::mapToUiState)
+        .stateIn(
+            viewModelScope,
+            started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
+            initialValue = ProviderUiState(isLoading = true)
+        )
 
-   private fun fetchProvidersList() {
-        viewModelScope.launch {
-            fetchProvidersUseCase(null)
-            fetchProvidersUseCase.observe().onEach { providersListResult ->
-                _uiState.value = when (providersListResult) {
-                    is Result.Success -> {
-                        ProviderUiState(providersList = providersListResult.data)
-                    }
-                    is Result.Error -> {
-                        ProviderUiState(errorMessage = providersListResult.exception?.message)
-                    }
-                    is Result.Loading -> {
-                        ProviderUiState(isLoading = true)
-                    }
-                }
-            }.launchIn(viewModelScope)
+    private fun getProvidersList() = fetchProvidersUseCase(null)
+        .onEach { providersList ->
+            val selectedProvidersIds =
+                providersList.filter { it.isSelected }.map { it.id }.toHashSet()
+            selectedProvidersIdsFlow.emit(selectedProvidersIds)
+        }.combine(selectedProvidersIdsFlow) { providersList, selectedProvidersIds ->
+            providersList.map { provider ->
+                provider.copy(isSelected = provider.id in selectedProvidersIds)
+            }
+        }.flowOn(workerDispatcher)
+
+    private fun mapToUiState(response: Result<List<Provider>>): ProviderUiState {
+        return when (response) {
+            is Result.Success -> ProviderUiState(providersList = response.data)
+            is Result.Error -> ProviderUiState(errorMessage = response.exception?.message)
+            is Result.Loading -> ProviderUiState(isLoading = true)
         }
     }
 
-    private fun getCurrentProvidersList() = _uiState.value.providersList
-
-    fun toggleProviderSelectionState(provider: Provider, index: Int) {
-        viewModelScope.launch(workerDispatcher) {
-            val newProvider = provider.copy(isSelected = !provider.isSelected)
-            getCurrentProvidersList().toMutableList().also { newList ->
-                newList[index] = newProvider
-                _uiState.value =  _uiState.value.copy(providersList = newList)
+    fun toggleProviderSelectionState(provider: Provider) {
+        viewModelScope.launch {
+            val selectedProvidersSet = HashSet(selectedProvidersIdsFlow.value)
+            if (provider.isSelected) {
+                selectedProvidersSet.remove(provider.id)
+            } else {
+                selectedProvidersSet.add(provider.id)
             }
+            selectedProvidersIdsFlow.emit(selectedProvidersSet)
         }
     }
 
     fun applyFilter() {
-        viewModelScope.launch(workerDispatcher) {
-            val selectedProvidersIds =
-                getCurrentProvidersList().filter { it.isSelected }.map { it.id }.toHashSet()
-            updateProvidersSelectionUseCase(selectedProvidersIds)
-        }
+        updateLocalSelectedProvidersIds(selectedProvidersIdsFlow.value)
     }
 
-
     fun resetFilter() {
+        updateLocalSelectedProvidersIds(hashSetOf())
+    }
+
+    private fun updateLocalSelectedProvidersIds(providersIds: Set<String>) {
         viewModelScope.launch {
-            updateProvidersSelectionUseCase(hashSetOf())
+            updateProvidersSelectionUseCase(providersIds)
         }
     }
 

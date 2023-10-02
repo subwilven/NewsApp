@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProvidersRepository {
     fun getProviders(): Flow<List<Provider>>
-    fun getSelectedProvidersIds(): Flow<HashSet<String>>
-    suspend fun updateSelectedProvidersList(providersIds: HashSet<String>)
+    fun getSelectedProvidersIds(): Flow<Set<String>>
+    suspend fun updateSelectedProvidersList(providersIds: Set<String>)
 }

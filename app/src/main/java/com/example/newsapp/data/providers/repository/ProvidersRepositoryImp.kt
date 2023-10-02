@@ -17,23 +17,29 @@ class ProvidersRepositoryImp(
     private val remoteDataSource: ProvidersRemoteDataSource
 ) : ProvidersRepository {
 
-    private var selectedProvidersIds = MutableStateFlow<HashSet<String>>(hashSetOf())
+    private var selectedProvidersIds = MutableStateFlow<Set<String>>(hashSetOf())
 
     override fun getProviders(): Flow<List<Provider>> {
         return flow {
-            localDataSource.getProviders().collect { it ->
-                if (it.isEmpty()) {
-                    delay(DELAY_DUMMY_LOADING)//to show loading
-                    val fetchedSources = remoteDataSource.fetchProviders().providers
-                    localDataSource.insertAllProviders(fetchedSources.map(ProviderNetwork::asEntityModel))
-                } else emit(it.map { it.asUiModel() })
+            localDataSource.getProviders().collect { localProvidersList ->
+                if (localProvidersList.isEmpty()) {
+                    fetchProviders()
+                } else {
+                    emit(localProvidersList.map { it.asUiModel() })
+                }
             }
         }
     }
 
+    private suspend fun fetchProviders() {
+        delay(DELAY_DUMMY_LOADING)//to show loading
+        val fetchedSources = remoteDataSource.fetchProviders().providers
+        localDataSource.insertAllProviders(fetchedSources.map(ProviderNetwork::asEntityModel))
+    }
+
     override fun getSelectedProvidersIds() = selectedProvidersIds
 
-    override suspend fun updateSelectedProvidersList(providersIds: HashSet<String>) {
+    override suspend fun updateSelectedProvidersList(providersIds: Set<String>) {
         selectedProvidersIds.emit(providersIds)
     }
 }
