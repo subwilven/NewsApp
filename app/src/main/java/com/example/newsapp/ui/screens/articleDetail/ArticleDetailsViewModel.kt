@@ -7,44 +7,35 @@ import com.example.newsapp.model.articles.Article
 import com.example.newsapp.usecases.GetArticleByIdUseCase
 import com.example.newsapp.usecases.ToggleFavoriteStateUseCase
 import com.example.newsapp.util.ARG_ARTICLE_ID
+import com.example.newsapp.util.FLOW_SUBSCRIPTION_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ArticleDetailsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val getArticleByIdUseCase: GetArticleByIdUseCase,
+    getArticleByIdUseCase: GetArticleByIdUseCase,
     private val toggleFavoriteStateUseCase: ToggleFavoriteStateUseCase,
 ) : ViewModel() {
 
-    private val _articleDetails = MutableStateFlow<Article?>(null)
-    val articleDetails = _articleDetails.asStateFlow()
+    val articleDetails: StateFlow<Article?> =
+        getArticleByIdUseCase(getArticleId())
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
+                initialValue = null,
+            )
 
-    init {
-        getArticleDetails()
-    }
+    private fun getArticleId() = savedStateHandle.get<Int>(ARG_ARTICLE_ID) ?: 0
 
-    private fun getArticleDetails(){
-        getArticleId()?.let { articleId ->
-            getArticleByIdUseCase(articleId)
-            getArticleByIdUseCase.observe().onEach {
-                _articleDetails.emit(it)
-            }.launchIn(viewModelScope)
-        }
-    }
-
-    private fun getArticleId() =  savedStateHandle.get<Int>(ARG_ARTICLE_ID)
-
-    fun changeArticleFavoriteState() {
+    fun toggleArticleFavoriteState() {
         viewModelScope.launch {
-            _articleDetails.value?.let { toggleFavoriteStateUseCase(it) }
+            articleDetails.value?.let { toggleFavoriteStateUseCase(it) }
         }
     }
-
 
 }

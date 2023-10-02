@@ -61,7 +61,7 @@ fun ArticleDetailScreen(
     uiState.value?.let { article ->
         CollapsingToolbar(
             article,
-            onFavoriteButtonClicked = articlesViewModel::changeArticleFavoriteState
+            onFavoriteButtonClicked = articlesViewModel::toggleArticleFavoriteState
         )
     }
 
