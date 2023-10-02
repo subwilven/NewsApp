@@ -2,37 +2,38 @@ package com.example.newsapp.ui.screens.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newsapp.Result
+import com.example.newsapp.asResult
+import com.example.newsapp.model.articles.Article
 import com.example.newsapp.usecases.GetFavoritesArticlesUseCase
+import com.example.newsapp.util.FLOW_SUBSCRIPTION_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class MyFavoritesViewModel @Inject constructor(
-    private val getFavoritesArticlesUseCase: GetFavoritesArticlesUseCase,
+    getFavoritesArticlesUseCase: GetFavoritesArticlesUseCase,
 ) : ViewModel() {
 
 
-    private val _uiState = MutableStateFlow(FavoriteUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<FavoriteUiState> = getFavoritesArticlesUseCase(null)
+        .asResult()
+        .map(::mapToUiState)
+        .stateIn(
+            viewModelScope,
+            started = SharingStarted.WhileSubscribed(FLOW_SUBSCRIPTION_TIMEOUT),
+            initialValue = FavoriteUiState(isLoading = true)
+        )
 
-    init {
-        getFavoriteArticles()
+    private fun mapToUiState(response: Result<List<Article>>) = when (response) {
+        is Result.Success -> FavoriteUiState(favoriteArticles = response.data)
+        is Result.Error -> FavoriteUiState(errorMessage = response.exception?.message)
+        is Result.Loading -> FavoriteUiState(isLoading = true)
     }
 
-
-    private fun getFavoriteArticles(){
-        getFavoritesArticlesUseCase(null)
-        getFavoritesArticlesUseCase.observe().onEach {
-            updateUiState(_uiState.value.copy(isLoading = false, favoriteArticles = it))
-        }.launchIn(viewModelScope)
-    }
-
-    private fun updateUiState(favoriteUiState: FavoriteUiState){
-        _uiState.tryEmit(favoriteUiState)
-    }
 
 }

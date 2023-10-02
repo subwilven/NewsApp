@@ -8,4 +8,5 @@ const val DATE_FORMAT_SERVER = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 const val ARG_ARTICLE_ID = "articleId"
 const val DEFAULT_COUNTRY = "us"
 const val DEBOUNCE_SEARCH_INPUT = 400L
-const val DELAY_DUMMY_LOADING = 2500L
+const val DELAY_DUMMY_LOADING = 1500L
+const val FLOW_SUBSCRIPTION_TIMEOUT = 5_000L

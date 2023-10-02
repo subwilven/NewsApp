@@ -5,7 +5,7 @@ import com.example.newsapp.util.DEFAULT_COUNTRY
 
 data class FilterData(
     val searchInput: String?,
-    val selectedProvidersIds: HashSet<String>,
+    val selectedProvidersIds: Set<String>,
 ){
 
     fun convertProvidersToString(): String = TextUtils.join(",", selectedProvidersIds)

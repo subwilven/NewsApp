@@ -77,7 +77,7 @@ private fun FavoriteArticleItem(article: Article, onArticleClicked: (Article) ->
                 modifier = Modifier
                     .padding(vertical = 4.dp)
                     .padding(end = 8.dp),
-                text = article.description ?: "",
+                text = article.description,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
