@@ -2,16 +2,13 @@ package com.example.newsapp.usecases
 
 import com.example.newsapp.data.providers.repository.ProvidersRepository
 import com.example.newsapp.usecases.base.NoResultUseCase
-import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateProvidersSelectionUseCase @Inject constructor(
     private val repository: ProvidersRepository,
-    dispatcher: CoroutineDispatcher
-) : NoResultUseCase<HashSet<String>>(dispatcher) {
+) : NoResultUseCase<Set<String>>() {
 
-
-    override suspend fun run(providersIds: HashSet<String>) {
+    override suspend fun run(providersIds: Set<String>) {
         repository.updateSelectedProvidersList(providersIds)
     }
 }

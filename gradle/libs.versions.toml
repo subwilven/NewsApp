@@ -2,10 +2,11 @@
 # Define the dependency versions
 kotlin = "1.8.10"
 gradleplugin = "7.2.2"
-daggerhiltplugin = "2.44"
+daggerhiltplugin = "2.47"
 daggerhiltCompose = "1.0.0"
 coil = "2.2.2"
 retrofit = "2.9.0"
+corotuines = "1.7.3"
 gson = "2.8.9"
 core_ktx = "1.9.0"
 appcompat = "1.5.1"
@@ -64,6 +65,7 @@ junit_ext = { module = "androidx.test.ext:junit", version.ref = "junit_ext" }
 jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter" }
 jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jupiter" }
 jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "corotuines" }
 
 [bundles]
 # Define bundles/groups of libraries
