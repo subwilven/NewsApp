@@ -38,6 +38,13 @@ class ArticlesRemoteMediator(
                 LoadType.REFRESH -> {
                     pageNumber = DEFAULT_START_PAGE_NUMBER
                 }
+
+                LoadType.PREPEND -> {
+                    return MediatorResult.Success(
+                        endOfPaginationReached = true
+                    )
+                }
+
                 else -> {}
             }
 
