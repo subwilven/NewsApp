@@ -49,26 +49,25 @@ class ArticlesRemoteMediator(
             }
 
 
-            val pageSize = if (pageNumber == DEFAULT_START_PAGE_NUMBER)
-                state.config.initialLoadSize
-            else state.config.pageSize
+            val pageSize = getPageSize(state)
+
             val response = remoteDatabase.fetchArticles(filterData, pageSize, pageNumber)
             if (pageSize == state.config.initialLoadSize) pageNumber += 2 else pageNumber++
+
+            val fetchedArticlesList = response.articles.map { it.asEntityModel() }
             if (loadType == LoadType.REFRESH) {
-                localDatabase.insertAllArticlesAndDeleteOld(response.articles.map { it.asEntityModel() })
+                localDatabase.insertAllArticlesAndDeleteOld(fetchedArticlesList)
             } else {
-                localDatabase.insertAllArticles(response.articles.map { it.asEntityModel() })
+                localDatabase.insertAllArticles(fetchedArticlesList)
             }
 
-            val hasMoreData = response.totalResultCount.toDouble().div(DEFAULT_PAGE_SIZE)
-                .roundToInt() > pageNumber
             // we have found that load state that Paging3 provide make loading hide and show multiple times
             //and this not good experience for the user
             //why this happen? because the loading state of mediator go false then loading state of source go true
             //between theses two states the loading hides for milliseconds so as a temp solution we did this small delay
-            delay(150)
+            delay(250)
             MediatorResult.Success(
-                endOfPaginationReached = !hasMoreData
+                endOfPaginationReached = isDataEndHasBeenReached(response.totalResultCount)
             )
         } catch (e: IOException) {
             MediatorResult.Error(e)
@@ -78,4 +77,14 @@ class ArticlesRemoteMediator(
     }
 
 
+    private fun getPageSize(state: PagingState<Int, ArticleEntity>) =
+        if (pageNumber == DEFAULT_START_PAGE_NUMBER)
+            state.config.initialLoadSize
+        else state.config.pageSize
+
+
+    private fun isDataEndHasBeenReached(totalResultCount: Int): Boolean {
+        return (totalResultCount.toDouble().div(DEFAULT_PAGE_SIZE)
+            .roundToInt() > pageNumber).not()
+    }
 }
