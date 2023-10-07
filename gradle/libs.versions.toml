@@ -1,28 +1,29 @@
 [versions]
 # Define the dependency versions
 kotlin = "1.8.10"
-gradleplugin = "7.2.2"
+gradleplugin = "8.1.1"
 daggerhiltplugin = "2.47"
 daggerhiltCompose = "1.0.0"
 coil = "2.2.2"
 retrofit = "2.9.0"
 corotuines = "1.7.3"
-gson = "2.8.9"
-core_ktx = "1.9.0"
-appcompat = "1.5.1"
-activity-compose = "1.6.1"
-squareupinterceptor = "4.9.0"
-room = "2.4.3"
-navigation = "2.5.3"
-paging_runtime = "3.1.1"
-paging_compose = "1.0.0-alpha17"
-lifecycle_compose = "2.6.0-alpha04"
-compose_ui = "1.3.3"
-compose_runtime = "1.4.0-alpha04"
-compose_accompanist = "0.28.0"
-compose_material = "1.0.1"
+gson = "2.9.1"
+core_ktx = "1.12.0"
+appcompat = "1.6.1"
+activity-compose = "1.7.2"
+squareupinterceptor = "4.10.0"
+room = "2.5.2"
+navigation = "2.7.3"
+paging_runtime = "3.2.1"
+paging_compose = "3.2.1"
+lifecycle_compose = "2.6.2"
+compose_ui = "1.5.3"
+compose_runtime = "1.5.3"
+compose_accompanist = "0.30.1"
+compose_material3 = "1.1.2"
+compose_material = "1.5.3"
 compose_compiler = "1.4.2"
-compose_test = "1.3.3"
+compose_test = "1.5.3"
 espresso = "3.5.1"
 junit_ext = "1.1.5"
 junit = "4.13.2"
@@ -37,8 +38,9 @@ compose_runtime = { module = "androidx.compose.runtime:runtime", version.ref = "
 compose_swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "compose_accompanist" }
 compose_systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "compose_accompanist" }
 compose_flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "compose_accompanist" }
-compose_material3 = { module = "androidx.compose.material3:material3", version.ref = "compose_material" }
-compose_material3_window = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose_material" }
+compose_material = { module = "androidx.compose.material:material", version.ref = "compose_material" }
+compose_material3 = { module = "androidx.compose.material3:material3", version.ref = "compose_material3" }
+compose_material3_window = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose_material3" }
 dagger_hilt = { module = "com.google.dagger:hilt-android", version.ref = "daggerhiltplugin" }
 dagger_compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "daggerhiltplugin" }
 dagger_hilt_compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "daggerhiltCompose" }
@@ -78,7 +80,7 @@ room = ["room.runtime", "room.kts", "room.paging"]
 paging = ["paging.runtime", "paging.compose"]
 lifecycle = ["lifecycle-runtime-compose", "lifecycle-viewmodel-compose"]
 compose_accompanist = ["compose.swiperefresh", "compose.systemuicontroller", "compose.flowlayout"]
-compose_material = ["compose.material3", "compose.material3.window"]
+compose_material = ["compose.material3", "compose.material3.window", "compose.material"]
 
 
 [plugins]

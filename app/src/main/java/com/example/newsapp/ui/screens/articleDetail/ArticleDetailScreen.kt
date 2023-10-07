@@ -118,7 +118,7 @@ private fun Body(article: Article, scroll: ScrollState) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Spacer(Modifier.height(headerHeight))
-        article.publishDate?.let {
+        article.publishDate.let {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,7 +132,7 @@ private fun Body(article: Article, scroll: ScrollState) {
             modifier = Modifier.padding(vertical = 4.dp),
             text = article.title
         )
-        article.author?.let {
+        article.author.let {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -149,7 +149,7 @@ private fun Body(article: Article, scroll: ScrollState) {
             Text(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(vertical = 4.dp),
-                text = article.content ?: ""
+                text = article.content
             )
 
         }
@@ -216,7 +216,7 @@ private fun Toolbar(
                 onFavoriteButtonClicked.invoke()
             }
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = if (showToolbar) MaterialTheme.colorScheme.inverseOnSurface
             else Color.Transparent,
         ),

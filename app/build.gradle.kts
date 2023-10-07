@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.detekt.plugin)
 }
 val apiKey: String = gradleLocalProperties(rootDir).getProperty("API_KEY")
-@Suppress("UnstableApiUsage")
 android {
     compileSdk = 34
     namespace = "com.example.newsapp"
@@ -45,7 +44,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }

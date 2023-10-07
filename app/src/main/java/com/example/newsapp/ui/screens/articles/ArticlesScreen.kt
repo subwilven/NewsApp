@@ -19,9 +19,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -58,11 +62,8 @@ import com.example.newsapp.navigation.showProvidersDialog
 import com.example.newsapp.ui.components.ArticleImage
 import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.FavoriteButton
-import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.main.LocalSnackbarDelegate
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 
 @Composable
@@ -104,7 +105,7 @@ fun ArticlesScreen(
 
 private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
     !shouldShowFullScreenLoading(articlesList.loadState) &&
-            articlesList.itemCount == 0
+            articlesList.itemCount == 0 && articlesList.loadState.append.endOfPaginationReached
 
 @Suppress("BooleanMethodIsAlwaysInverted")
 private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
@@ -127,6 +128,7 @@ private fun getErrorState(loadState: CombinedLoadStates): LoadState.Error? {
         ?: loadState.refresh as? LoadState.Error
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ArticlesContent(
     articles: LazyPagingItems<Article>,
@@ -179,21 +181,28 @@ fun ArticlesContent(
             }
         }
 
-        if (shouldFullLoadingProgressBar) {
-            LoadingFullScreen()
-        } else if (fullScreenError != null) {
+        if (fullScreenError != null) {
             FullScreenError(fullScreenError.error.message ?: "", onRetryClicked)
         } else if (shouldShowEmptyList)
             EmptyScreen(stringResource(id = R.string.no_results_found))
-        else
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(false),
-                onRefresh = { articles.refresh() },
+        else {
+            val pullRefreshState =
+                rememberPullRefreshState(shouldFullLoadingProgressBar, { articles.refresh() })
+            Box(
+                modifier = Modifier
+                    .pullRefresh(pullRefreshState)
+                    .fillMaxSize()
             ) {
-                ArticlesList(articles, lazyListState, onFavoriteButtonClicked, onArticleClicked)
-
+                if (!shouldFullLoadingProgressBar) {
+                    ArticlesList(articles, lazyListState, onFavoriteButtonClicked, onArticleClicked)
+                }
+                PullRefreshIndicator(
+                    shouldFullLoadingProgressBar,
+                    pullRefreshState,
+                    Modifier.align(Alignment.TopCenter)
+                )
             }
-
+        }
     }
 }
 
