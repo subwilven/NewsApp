@@ -31,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterStart
@@ -71,14 +72,21 @@ fun ArticlesScreen(
 
     val uiState: ArticleUiState by articlesViewModel.uiState.collectAsStateWithLifecycle()
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
+    val lazyListState = rememberLazyListState()
 
     articlesList?.let {
-        val shouldShowRedBadge = uiState.filterData.selectedProvidersIds.isNotEmpty()
+        val isTheLastIsRefreshing = shouldShowFullScreenLoading(articlesList.loadState)
+        LaunchedEffect(uiState.filterData, isTheLastIsRefreshing) {
+            if (isTheLastIsRefreshing)
+                lazyListState.scrollToItem(0, 0)
+        }
+        val shouldShowRedBadge = uiState.shouldShowRedBadge()
         val appNavigator = LocalAppNavigator.current
         //todo should we create remember for this callbacks ?
         ArticlesContent(
             articlesList,
             uiState.filterData.searchInput ?: "",
+            lazyListState,
             shouldShowRedBadge,
             articlesViewModel::searchByQuery,
             articlesViewModel::clearSearch,
@@ -123,6 +131,7 @@ private fun getErrorState(loadState: CombinedLoadStates): LoadState.Error? {
 fun ArticlesContent(
     articles: LazyPagingItems<Article>,
     query: String,
+    lazyListState: LazyListState,
     showFilterRedBadge: Boolean,
     onQueryChanged: (String) -> Unit,
     onClearIconClicked: () -> Unit,
@@ -133,7 +142,6 @@ fun ArticlesContent(
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
-    val lazyListState = rememberLazyListState()
     val fullScreenError = fullScreenError(articles.loadState, articles.itemCount)
     if (fullScreenError == null) {
         val errorMessage = getErrorState(articles.loadState)
@@ -141,8 +149,6 @@ fun ArticlesContent(
             LocalSnackbarDelegate.current?.showSnackbar(errorMessage.error.message ?: "")
         }
     }
-
-
 
     Column {
         Row(
