@@ -11,4 +11,8 @@ data class Provider(val id: String, val name: String, val isSelected: Boolean) {
         return id
     }
 
+    fun toggleSelection(isSelected: Boolean): Provider {
+        return copy(isSelected = isSelected)
+    }
+
 }

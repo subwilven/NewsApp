@@ -54,7 +54,7 @@ class ProvidersViewModel @Inject constructor(
             selectedProvidersIdsFlow.emit(selectedProvidersIds)
         }.combine(selectedProvidersIdsFlow) { providersList, selectedProvidersIds ->
             providersList.map { provider ->
-                provider.copy(isSelected = provider.id in selectedProvidersIds)
+                provider.toggleSelection(provider.id in selectedProvidersIds)
             }
         }.flowOn(workerDispatcher)
 
@@ -69,7 +69,7 @@ class ProvidersViewModel @Inject constructor(
     fun toggleProviderSelectionState(provider: Provider) {
         viewModelScope.launch {
             val selectedProvidersSet = HashSet(selectedProvidersIdsFlow.value)
-            if (provider.isSelected) {
+            if (selectedProvidersSet.contains(provider.id)) {
                 selectedProvidersSet.remove(provider.id)
             } else {
                 selectedProvidersSet.add(provider.id)

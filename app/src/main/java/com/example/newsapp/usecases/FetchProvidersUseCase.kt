@@ -18,7 +18,7 @@ class FetchProvidersUseCase @Inject constructor(
         ) { providerEntities, selectedProvidersIds ->
             providerEntities.map {
                 val isSelected = selectedProvidersIds.contains(it.id)
-                it.copy(isSelected = isSelected)
+                it.toggleSelection(isSelected)
             }
         }
     }
