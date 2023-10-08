@@ -15,6 +15,7 @@ import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.components.MyDialog
 import com.example.newsapp.ui.components.MyFilterChip
 import com.example.newsapp.ui.main.LocalAppNavigator
+import com.example.newsapp.ui.main.LocalSnackbarDelegate
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
@@ -45,7 +46,7 @@ fun ProvidersScreen(
 fun ProvidersListContent(
     isLoading: Boolean,
     providersList: List<Provider>,
-    onProvidersSelected: (Provider, Int) -> Unit,
+    onProvidersSelected: (Provider) -> Unit,
 ) {
     if (isLoading) {
         LoadingFullScreen(modifier = Modifier)
@@ -56,7 +57,7 @@ fun ProvidersListContent(
 
 @Composable
 private fun ProvidersChips(
-    providersList: List<Provider>, onChipClicked: (Provider, Int) -> Unit
+    providersList: List<Provider>, onChipClicked: (Provider) -> Unit
 ) {
     val scrollState = rememberScrollState()
     FlowRow(
@@ -66,12 +67,12 @@ private fun ProvidersChips(
             .fillMaxHeight()
             .verticalScroll(scrollState),
     ) {
-        providersList.onEachIndexed { index, sourceUi ->
+        providersList.onEach { sourceUi ->
             MyFilterChip(
                 sourceUi.isSelected,
                 sourceUi.name
             ) {
-                onChipClicked(sourceUi, index)
+                onChipClicked(sourceUi)
             }
         }
 
