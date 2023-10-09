@@ -44,8 +44,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.launchWebView
-import com.example.newsapp.ui.components.ArticleImage
 import com.example.newsapp.ui.components.FavoriteButton
+import com.example.newsapp.ui.components.LoadingAsyncImage
 import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.ui.theme.darkOnBackground
@@ -101,7 +101,7 @@ private fun Header(imageUrl: String?, scroll: ScrollState, headerHeightPx: Float
             alpha = (-1f / headerHeightPx) * scroll.value + 1
         }
     ) {
-        ArticleImage(
+        LoadingAsyncImage(
             imageUrl = imageUrl,
             contentScale = ContentScale.FillHeight,
             modifier = Modifier.fillMaxSize()

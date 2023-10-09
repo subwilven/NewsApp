@@ -23,8 +23,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.navigateToArticleDetails
-import com.example.newsapp.ui.components.ArticleImage
 import com.example.newsapp.ui.components.EmptyScreen
+import com.example.newsapp.ui.components.LoadingAsyncImage
 import com.example.newsapp.ui.components.LoadingFullScreen
 import com.example.newsapp.ui.main.LocalAppNavigator
 
@@ -83,7 +83,7 @@ private fun FavoriteArticleItem(article: Article, onArticleClicked: (Article) ->
             )
 
         }
-        ArticleImage(
+        LoadingAsyncImage(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.small)
                 .height(75.dp)

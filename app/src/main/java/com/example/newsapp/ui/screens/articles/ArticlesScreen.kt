@@ -59,9 +59,9 @@ import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.navigation.navigateToArticleDetails
 import com.example.newsapp.navigation.showProvidersDialog
-import com.example.newsapp.ui.components.ArticleImage
 import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.FavoriteButton
+import com.example.newsapp.ui.components.LoadingAsyncImage
 import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.main.LocalSnackbarDelegate
 
@@ -76,9 +76,9 @@ fun ArticlesScreen(
     val lazyListState = rememberLazyListState()
 
     articlesList?.let {
-        val isTheLastIsRefreshing = shouldShowFullScreenLoading(articlesList.loadState)
-        LaunchedEffect(uiState.filterData, isTheLastIsRefreshing) {
-            if (isTheLastIsRefreshing)
+        val isTheDataIsRefreshing = shouldShowFullScreenLoading(articlesList.loadState)
+        LaunchedEffect(uiState.filterData, isTheDataIsRefreshing) {
+            if (isTheDataIsRefreshing)
                 lazyListState.scrollToItem(0, 0)
         }
         val shouldShowRedBadge = uiState.shouldShowRedBadge()
@@ -362,7 +362,7 @@ private fun ArticleItem(
             modifier = Modifier
                 .padding(12.dp)
         ) {
-            ArticleImage(
+            LoadingAsyncImage(
                 imageUrl = article.imageUrl,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
