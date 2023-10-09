@@ -331,12 +331,15 @@ private fun ArticlesList(
             }
         }
         when (articles.loadState.append) {
-            is LoadState.NotLoading -> Unit
+            is LoadState.NotLoading, is LoadState.Error -> Unit
             LoadState.Loading -> {
-                item { CircularProgressIndicator() }
-            }
-            is LoadState.Error -> {
-
+                item {
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
             }
         }
     }
