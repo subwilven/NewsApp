@@ -20,7 +20,7 @@ class MyFavoritesViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    val uiState: StateFlow<FavoriteUiState> = getFavoritesArticlesUseCase(null)
+    val uiState: StateFlow<FavoriteUiState> = getFavoritesArticlesUseCase(Unit)
         .asResult()
         .map(::mapToUiState)
         .stateIn(

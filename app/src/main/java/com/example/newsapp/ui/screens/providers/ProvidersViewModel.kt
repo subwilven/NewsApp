@@ -47,7 +47,7 @@ class ProvidersViewModel @Inject constructor(
             initialValue = ProviderUiState(isLoading = true)
         )
 
-    private fun getProvidersList() = fetchProvidersUseCase(null)
+    private fun getProvidersList() = fetchProvidersUseCase(Unit)
         .onEach { providersList ->
             val selectedProvidersIds =
                 providersList.filter { it.isSelected }.map { it.id }.toHashSet()

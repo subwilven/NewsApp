@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 class FetchProvidersUseCase @Inject constructor(
     private val repository: ProvidersRepository,
-) : FlowUseCase<List<Provider>, Nothing?>() {
+) : FlowUseCase<List<Provider>, Unit>() {
 
-    override fun doWork(params: Nothing?): Flow<List<Provider>> {
+    override fun doWork(params: Unit): Flow<List<Provider>> {
         return combine(
             repository.getProviders(),
             repository.getSelectedProvidersIds()

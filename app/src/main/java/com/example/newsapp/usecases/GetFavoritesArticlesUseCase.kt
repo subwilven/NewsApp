@@ -8,9 +8,9 @@ import javax.inject.Inject
 
 class GetFavoritesArticlesUseCase @Inject constructor(
     private val repository: ArticlesRepository,
-) : FlowUseCase<List<Article>, Any?>() {
+) : FlowUseCase<List<Article>, Unit>() {
 
-    override fun doWork(params: Any?): Flow<List<Article>> {
+    override fun doWork(params: Unit): Flow<List<Article>> {
         return repository.getFavoritesArticles()
     }
 }

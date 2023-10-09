@@ -10,8 +10,8 @@ class GetArticleByIdUseCase @Inject constructor(
     private val repository: ArticlesRepository,
 ) : FlowUseCase<Article, Int>() {
 
-    override fun doWork(params: Int): Flow<Article> {
-        return repository.getArticleById(params)
+    override fun doWork(articleId: Int): Flow<Article> {
+        return repository.getArticleById(articleId)
     }
 
 }

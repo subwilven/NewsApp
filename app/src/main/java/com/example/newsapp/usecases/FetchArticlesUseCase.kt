@@ -12,7 +12,7 @@ class FetchArticlesUseCase @Inject constructor(
     private val articlesRepository: ArticlesRepository,
 ) : FlowUseCase<PagingData<Article>, FilterData>() {
 
-    override fun doWork(params: FilterData): Flow<PagingData<Article>> {
-        return articlesRepository.getArticlesStream(params)
+    override fun doWork(filterData: FilterData): Flow<PagingData<Article>> {
+        return articlesRepository.getArticlesStream(filterData)
     }
 }
