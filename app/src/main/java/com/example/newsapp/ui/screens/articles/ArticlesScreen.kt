@@ -51,143 +51,115 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.navigation.navigateToArticleDetails
-import com.example.newsapp.navigation.showProvidersDialog
 import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingAsyncImage
-import com.example.newsapp.ui.main.LocalAppNavigator
-import com.example.newsapp.ui.main.LocalSnackbarDelegate
+import com.example.newsapp.util.Constants.Destinations.ARTICLES
+
+
+fun NavGraphBuilder.ArticlesScreen(
+    onShowSnackBar: suspend (String) -> Unit,
+    onArticleClicked: (Article) -> Unit,
+    onFilterIconClicked: () -> Unit
+) {
+
+    composable(
+        route = ARTICLES,
+    ) {
+        ArticlesRoute(onArticleClicked, onShowSnackBar, onFilterIconClicked)
+    }
+}
 
 
 @Composable
-fun ArticlesScreen(
+private fun ArticlesRoute(
+    onArticleClicked: (Article) -> Unit,
+    onShowSnackBar: suspend (String) -> Unit,
+    onFilterIconClicked: () -> Unit,
     articlesViewModel: ArticlesViewModel = hiltViewModel(),
 ) {
 
     val uiState: ArticleUiState by articlesViewModel.uiState.collectAsStateWithLifecycle()
     val articlesList = uiState.articlesDataFlow?.collectAsLazyPagingItems()
-    val lazyListState = rememberLazyListState()
 
     articlesList?.let {
-        val isTheDataIsRefreshing = shouldShowFullScreenLoading(articlesList.loadState)
-        LaunchedEffect(uiState.filterData, isTheDataIsRefreshing) {
-            if (isTheDataIsRefreshing)
-                lazyListState.scrollToItem(0, 0)
-        }
+
         val shouldShowRedBadge = uiState.shouldShowRedBadge()
-        val appNavigator = LocalAppNavigator.current
-        //todo should we create remember for this callbacks ?
-        ArticlesContent(
+        ArticlesScreen(
             articlesList,
-            uiState.filterData.searchInput ?: "",
-            lazyListState,
+            uiState.getSearchFieldInput(),
+            onShowSnackBar,
             shouldShowRedBadge,
             articlesViewModel::searchByQuery,
             articlesViewModel::clearSearch,
             articlesViewModel::changeArticleFavoriteState,
-            onArticleClicked = { article ->
-                navigateToArticleDetails(appNavigator, article)
-            },
-            onFilterIconClicked = {
-                showProvidersDialog(appNavigator)
-            },
-            onRetryClicked = { articlesList.refresh() }
+            onArticleClicked,
+            onFilterIconClicked,
         )
     }
 }
 
-private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
-    !shouldShowFullScreenLoading(articlesList.loadState) &&
-            articlesList.itemCount == 0 && articlesList.loadState.append.endOfPaginationReached
-
-@Suppress("BooleanMethodIsAlwaysInverted")
-private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
-    loadState.mediator?.refresh is LoadState.Loading
-            || loadState.refresh is LoadState.Loading
-
-private fun fullScreenError(
-    loadState: CombinedLoadStates,
-    itemsCount: Int
-): LoadState.Error? {
-    return if (loadState.mediator?.refresh is LoadState.Error && itemsCount == 0)
-        loadState.mediator?.refresh as LoadState.Error
-    else
-        null
-}
-
-private fun getErrorState(loadState: CombinedLoadStates): LoadState.Error? {
-    return loadState.source.append as? LoadState.Error
-        ?: loadState.append as? LoadState.Error
-        ?: loadState.refresh as? LoadState.Error
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ArticlesContent(
+private fun ArticlesScreen(
     articles: LazyPagingItems<Article>,
     query: String,
-    lazyListState: LazyListState,
+    onShowSnackBar: suspend (String) -> Unit,
     showFilterRedBadge: Boolean,
     onQueryChanged: (String) -> Unit,
     onClearIconClicked: () -> Unit,
     onFavoriteButtonClicked: (Article) -> Unit,
     onArticleClicked: (Article) -> Unit,
     onFilterIconClicked: () -> Unit,
-    onRetryClicked: () -> Unit,
 ) {
     val shouldShowEmptyList = shouldShowEmptyList(articles)
     val shouldFullLoadingProgressBar = shouldShowFullScreenLoading(articles.loadState)
     val fullScreenError = fullScreenError(articles.loadState, articles.itemCount)
-    if (fullScreenError == null) {
-        val errorMessage = getErrorState(articles.loadState)
+    val onRetryClicked = { articles.refresh() }
+    val lazyListState = rememberLazyListState()
+    val pullRefreshState = rememberPullRefreshState(
+        shouldFullLoadingProgressBar, onRetryClicked
+    )
+    val errorMessage = getErrorState(articles.loadState)
+
+    LaunchedEffect(key1 = errorMessage?.error) {
+        if (fullScreenError != null) return@LaunchedEffect
         errorMessage?.let {
-            LocalSnackbarDelegate.current?.showSnackbar(errorMessage.error.message ?: "")
+            onShowSnackBar(it.error.message ?: "")
         }
     }
 
+
+    LaunchedEffect(shouldFullLoadingProgressBar) {
+        if (shouldFullLoadingProgressBar)
+            lazyListState.scrollToItem(0, 0)
+    }
+
+
     Column {
-        Row(
-            modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                .height(IntrinsicSize.Min)
-        ) {
-            SearchInputField(Modifier.weight(0.85f), query, onQueryChanged, onClearIconClicked)
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .padding(end = 8.dp)
-                    .weight(0.1f)
-                    .align(Alignment.CenterVertically)
-            ) {
-                IconButton(modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(24.dp),
-                    onClick = { onFilterIconClicked.invoke() }) {
-                    Icon(
-                        painterResource(R.drawable.ic_filter_24),
-                        null,
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                if (showFilterRedBadge)
-                    BadgeRedCircle(Modifier.align(Alignment.TopEnd))
-            }
-        }
+        SearchAndFilter(
+            query,
+            showFilterRedBadge,
+            onQueryChanged,
+            onClearIconClicked,
+            onFilterIconClicked
+        )
 
         if (fullScreenError != null) {
             FullScreenError(fullScreenError.error.message ?: "", onRetryClicked)
         } else if (shouldShowEmptyList)
             EmptyScreen(stringResource(id = R.string.no_results_found))
         else {
-            val pullRefreshState =
-                rememberPullRefreshState(shouldFullLoadingProgressBar, { articles.refresh() })
+
             Box(
                 modifier = Modifier
                     .pullRefresh(pullRefreshState)
@@ -206,6 +178,42 @@ fun ArticlesContent(
     }
 }
 
+@Composable
+fun SearchAndFilter(
+    query: String,
+    showFilterRedBadge: Boolean,
+    onQueryChanged: (String) -> Unit,
+    onClearIconClicked: () -> Unit,
+    onFilterIconClicked: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+            .height(IntrinsicSize.Min)
+    ) {
+        SearchInputField(Modifier.weight(0.85f), query, onQueryChanged, onClearIconClicked)
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .padding(end = 8.dp)
+                .weight(0.1f)
+                .align(Alignment.CenterVertically)
+        ) {
+            IconButton(modifier = Modifier
+                .align(Alignment.Center)
+                .size(24.dp),
+                onClick = { onFilterIconClicked.invoke() }) {
+                Icon(
+                    painterResource(R.drawable.ic_filter_24),
+                    null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            if (showFilterRedBadge)
+                BadgeRedCircle(Modifier.align(Alignment.TopEnd))
+        }
+    }
+}
 
 @Composable
 fun FullScreenError(message: String, onRetryClicked: () -> Unit) {
@@ -425,6 +433,30 @@ private fun ArticleTitle(modifier: Modifier = Modifier, title: String) {
             .padding(vertical = 4.dp),
         text = title
     )
+}
+
+private fun shouldShowEmptyList(articlesList: LazyPagingItems<Article>) =
+    !shouldShowFullScreenLoading(articlesList.loadState) &&
+            articlesList.itemCount == 0 && articlesList.loadState.append.endOfPaginationReached
+
+private fun shouldShowFullScreenLoading(loadState: CombinedLoadStates) =
+    loadState.mediator?.refresh is LoadState.Loading
+            || loadState.refresh is LoadState.Loading
+
+private fun fullScreenError(
+    loadState: CombinedLoadStates,
+    itemsCount: Int
+): LoadState.Error? {
+    return if (loadState.mediator?.refresh is LoadState.Error && itemsCount == 0)
+        loadState.mediator?.refresh as LoadState.Error
+    else
+        null
+}
+
+private fun getErrorState(loadState: CombinedLoadStates): LoadState.Error? {
+    return loadState.source.append as? LoadState.Error
+        ?: loadState.append as? LoadState.Error
+        ?: loadState.refresh as? LoadState.Error
 }
 
 @Preview

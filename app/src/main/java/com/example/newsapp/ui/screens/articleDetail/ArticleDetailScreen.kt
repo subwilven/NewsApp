@@ -41,19 +41,44 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.navigation.launchWebView
 import com.example.newsapp.ui.components.FavoriteButton
 import com.example.newsapp.ui.components.LoadingAsyncImage
-import com.example.newsapp.ui.main.LocalAppNavigator
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.ui.theme.darkOnBackground
 import com.example.newsapp.ui.theme.shadow
+import com.example.newsapp.util.Constants.Args.ARTICLE_ID
+import com.example.newsapp.util.Constants.Destinations.ARTICLE_DETAILS
+import com.example.newsapp.util.launchWebView
+
+fun NavController.navigateToArticleDetail(article: Article) {
+    this.navigate(ARTICLE_DETAILS + "/${article.id}") {
+        launchSingleTop = true
+    }
+}
+
+fun NavGraphBuilder.ArticleDetailScreen(onBackClick: () -> Unit) {
+
+    composable(
+        route = "$ARTICLE_DETAILS/{$ARTICLE_ID}",
+        arguments = listOf(navArgument(name = ARTICLE_ID) {
+            type = NavType.IntType
+        })
+    ) {
+        ArticleDetailRoute(onBackClick)
+    }
+}
 
 
 @Composable
-fun ArticleDetailScreen(
+fun ArticleDetailRoute(
+    onBackClick: () -> Unit,
     articlesViewModel: ArticleDetailsViewModel = hiltViewModel(),
 ) {
 
@@ -61,10 +86,10 @@ fun ArticleDetailScreen(
     uiState.value?.let { article ->
         CollapsingToolbar(
             article,
+            onBackClick,
             onFavoriteButtonClicked = articlesViewModel::toggleArticleFavoriteState
         )
     }
-
 }
 
 private val headerHeight = 250.dp
@@ -72,6 +97,7 @@ private val headerHeight = 250.dp
 @Composable
 fun CollapsingToolbar(
     article: Article,
+    onBackClick: () -> Unit,
     onFavoriteButtonClicked: () -> Unit
 ) {
     val scroll: ScrollState = rememberScrollState(0)
@@ -85,7 +111,11 @@ fun CollapsingToolbar(
         Header(article.imageUrl, scroll, headerHeightPx)
         Body(article, scroll)
         Toolbar(
-            scroll, headerHeightPx, toolbarHeightPx, article.isFavorite,
+            scroll,
+            headerHeightPx,
+            toolbarHeightPx,
+            article.isFavorite,
+            onBackClick,
             onFavoriteButtonClicked
         )
     }
@@ -171,6 +201,7 @@ private fun Toolbar(
     headerHeightPx: Float,
     toolbarHeightPx: Float,
     isFavorite: Boolean,
+    onBackClick: () -> Unit,
     onFavoriteButtonClicked: () -> Unit
 ) {
     val toolbarBottom = headerHeightPx - toolbarHeightPx
@@ -179,13 +210,12 @@ private fun Toolbar(
             scroll.value >= toolbarBottom
         }
     }
-    val appNavigator = LocalAppNavigator.current
     //do not follow dark/light theme because we have a dark background
     val iconTint = darkOnBackground
     TopAppBar(
         navigationIcon = {
             IconButton(
-                onClick = { appNavigator.tryNavigateBack() },
+                onClick = onBackClick,
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .background(

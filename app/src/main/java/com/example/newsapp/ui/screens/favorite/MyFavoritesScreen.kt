@@ -20,22 +20,33 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import com.example.newsapp.R
 import com.example.newsapp.model.articles.Article
-import com.example.newsapp.navigation.navigateToArticleDetails
 import com.example.newsapp.ui.components.EmptyScreen
 import com.example.newsapp.ui.components.LoadingAsyncImage
 import com.example.newsapp.ui.components.LoadingFullScreen
-import com.example.newsapp.ui.main.LocalAppNavigator
+import com.example.newsapp.util.Constants.Destinations.FAVORITES
+
+fun NavGraphBuilder.MyFavoritesScreen(onArticleClicked: (Article) -> Unit) {
+
+    composable(
+        route = FAVORITES,
+    ) {
+        MyFavoritesRoute(onArticleClicked)
+    }
+}
+
 
 @Composable
-fun MyFavoritesScreen(
+private fun MyFavoritesRoute(
+    onArticleClicked: (Article) -> Unit,
     myFavoritesViewModel: MyFavoritesViewModel = hiltViewModel(),
 ) {
     val uiState = myFavoritesViewModel
-        .uiState
-        .collectAsStateWithLifecycle()
-    val appNavigator = LocalAppNavigator.current
+        .uiState.collectAsStateWithLifecycle()
+
     if (uiState.value.isLoading) {
         LoadingFullScreen()
     } else if (uiState.value.favoriteArticles.isEmpty()) {
@@ -43,9 +54,7 @@ fun MyFavoritesScreen(
     } else {
         LazyColumn {
             items(uiState.value.favoriteArticles.count()) { index ->
-                FavoriteArticleItem(uiState.value.favoriteArticles[index]) { article ->
-                    navigateToArticleDetails(appNavigator, article)
-                }
+                FavoriteArticleItem(uiState.value.favoriteArticles[index], onArticleClicked)
             }
         }
     }

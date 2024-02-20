@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.usecases.GetArticleByIdUseCase
 import com.example.newsapp.usecases.ToggleFavoriteStateUseCase
-import com.example.newsapp.util.ARG_ARTICLE_ID
-import com.example.newsapp.util.FLOW_SUBSCRIPTION_TIMEOUT
+import com.example.newsapp.util.Constants.Args.ARTICLE_ID
+import com.example.newsapp.util.Constants.Defaults.FLOW_SUBSCRIPTION_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +30,7 @@ class ArticleDetailsViewModel @Inject constructor(
                 initialValue = null,
             )
 
-    private fun getArticleId() = savedStateHandle.get<Int>(ARG_ARTICLE_ID) ?: 0
+    private fun getArticleId() = savedStateHandle.get<Int>(ARTICLE_ID) ?: 0
 
     fun toggleArticleFavoriteState() {
         viewModelScope.launch {

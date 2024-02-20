@@ -6,7 +6,7 @@ import com.example.newsapp.Result
 import com.example.newsapp.asResult
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.usecases.GetFavoritesArticlesUseCase
-import com.example.newsapp.util.FLOW_SUBSCRIPTION_TIMEOUT
+import com.example.newsapp.util.Constants.Defaults.FLOW_SUBSCRIPTION_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

@@ -3,7 +3,7 @@ package com.example.newsapp.ui.screens.favorite
 import com.example.newsapp.model.articles.Article
 
 data class FavoriteUiState(
-    var isLoading: Boolean = false,
-    var errorMessage: String? = null,
-    var favoriteArticles: List<Article> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val favoriteArticles: List<Article> = emptyList(),
 )

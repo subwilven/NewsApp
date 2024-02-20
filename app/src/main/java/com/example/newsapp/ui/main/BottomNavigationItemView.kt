@@ -7,26 +7,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.newsapp.model.BottomNavItem
-import com.example.newsapp.navigation.AppNavigator
 
 @Composable
 fun RowScope.BottomNavigationItemView(
     item: BottomNavItem,
     currentRoute: String?,
-    appNavigator: AppNavigator
+    onBottomBarItemClicked: (String) -> Unit,
 )  {
+
     val title = stringResource(id = item.titleRes)
     NavigationBarItem(
-        icon = bottomNavItemIcon(title,item.icon),
-        selected = currentRoute == item.destination.fullRoute,
+        icon = { Icon(painterResource(id = item.icon), contentDescription = title) },
+        selected = currentRoute == item.route,
         onClick = {
-            appNavigator.tryNavigateToBottomBarScreen(item.destination.fullRoute)
+            onBottomBarItemClicked(item.route)
         }
     )
-}
-
-@Composable
-private fun bottomNavItemIcon(title :String,icon :Int) : @Composable (() -> Unit) {
-    return { Icon(painterResource(id = icon), contentDescription = title) }
 }
 

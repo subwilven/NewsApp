@@ -2,20 +2,25 @@ package com.example.newsapp.model
 
 import androidx.annotation.StringRes
 import com.example.newsapp.R
-import com.example.newsapp.navigation.Destination
+import com.example.newsapp.util.Constants.Destinations.ARTICLES
+import com.example.newsapp.util.Constants.Destinations.FAVORITES
 
 
-sealed class BottomNavItem(@StringRes var titleRes: Int, var icon: Int, var destination: Destination) {
+enum class BottomNavItem(
+    @StringRes val titleRes: Int,
+    val icon: Int,
+    val route: String,
+) {
 
-    object Articles : BottomNavItem(
+    Articles(
         R.string.home,
         R.drawable.ic_home_24,
-        Destination.ArticlesScreen
-    )
+        ARTICLES,
+    ),
 
-    object MyFavorites : BottomNavItem(
+    MyFavorites(
         R.string.favorites,
         R.drawable.ic_favorite_24,
-        Destination.FavoritesScreen
+        FAVORITES,
     )
 }

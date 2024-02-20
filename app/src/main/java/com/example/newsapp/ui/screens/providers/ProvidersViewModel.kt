@@ -10,7 +10,7 @@ import com.example.newsapp.di.NewsDispatchers
 import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.usecases.FetchProvidersUseCase
 import com.example.newsapp.usecases.UpdateProvidersSelectionUseCase
-import com.example.newsapp.util.FLOW_SUBSCRIPTION_TIMEOUT
+import com.example.newsapp.util.Constants.Defaults.FLOW_SUBSCRIPTION_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow

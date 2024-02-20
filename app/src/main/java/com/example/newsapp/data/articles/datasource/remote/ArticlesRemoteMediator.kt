@@ -8,8 +8,8 @@ import com.example.newsapp.data.articles.datasource.local.ArticlesLocalDataSourc
 import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.ArticleEntity
 import com.example.newsapp.model.articles.asEntityModel
-import com.example.newsapp.util.DEFAULT_PAGE_SIZE
-import com.example.newsapp.util.DEFAULT_START_PAGE_NUMBER
+import com.example.newsapp.util.Constants.Defaults.PAGE_SIZE
+import com.example.newsapp.util.Constants.Defaults.START_PAGE_NUMBER
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.roundToInt
@@ -22,7 +22,7 @@ class ArticlesRemoteMediator(
     private val localDatabase: ArticlesLocalDataSource,
 ) : RemoteMediator<Int, ArticleEntity>() {
 
-    private var pageNumber = DEFAULT_START_PAGE_NUMBER
+    private var pageNumber = START_PAGE_NUMBER
 
     override suspend fun initialize(): InitializeAction {
         return InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -35,7 +35,7 @@ class ArticlesRemoteMediator(
         return try {
             when (loadType) {
                 LoadType.REFRESH -> {
-                    pageNumber = DEFAULT_START_PAGE_NUMBER
+                    pageNumber = START_PAGE_NUMBER
                 }
 
                 LoadType.PREPEND -> {
@@ -72,13 +72,13 @@ class ArticlesRemoteMediator(
 
 
     private fun getPageSize(state: PagingState<Int, ArticleEntity>) =
-        if (pageNumber == DEFAULT_START_PAGE_NUMBER)
+        if (pageNumber == START_PAGE_NUMBER)
             state.config.initialLoadSize
         else state.config.pageSize
 
 
     private fun isDataEndHasBeenReached(totalResultCount: Int): Boolean {
-        return (totalResultCount.toDouble().div(DEFAULT_PAGE_SIZE)
+        return (totalResultCount.toDouble().div(PAGE_SIZE)
             .roundToInt() > pageNumber).not()
     }
 }

@@ -1,48 +1,34 @@
 package com.example.newsapp.ui.main
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
-import com.example.newsapp.navigation.Destination
 import com.example.newsapp.ui.components.MyNavHost
-import com.example.newsapp.ui.components.composable
-import com.example.newsapp.ui.components.dialog
 import com.example.newsapp.ui.screens.articleDetail.ArticleDetailScreen
+import com.example.newsapp.ui.screens.articleDetail.navigateToArticleDetail
 import com.example.newsapp.ui.screens.articles.ArticlesScreen
 import com.example.newsapp.ui.screens.favorite.MyFavoritesScreen
-import com.example.newsapp.ui.screens.providers.ProvidersScreen
-import com.example.newsapp.util.ARG_ARTICLE_ID
+import com.example.newsapp.ui.screens.providers.ProvidersDialog
+import com.example.newsapp.ui.screens.providers.navigateToProviders
+import com.example.newsapp.util.Constants.Destinations.ARTICLES
 
 
 @Composable
-fun NavigationGraph(modifier :Modifier = Modifier,
-                    navController: NavHostController,
-                    showToolbarAndBottomBar: MutableState<Boolean>) {
-    MyNavHost(navController, startDestination = Destination.ArticlesScreen,modifier) {
-        composable(Destination.ArticlesScreen) {
-            showToolbarAndBottomBar.value = true
-            ArticlesScreen()
-        }
-        dialog(Destination.ProvidersDialog) {
-            ProvidersScreen()
-        }
-        composable(Destination.FavoritesScreen) {
-            showToolbarAndBottomBar.value = true
-            MyFavoritesScreen()
+fun NavigationGraph(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    onShowSnackBar: suspend (String) -> Unit,
+) {
+    MyNavHost(navController, startDestination = ARTICLES, modifier) {
 
-        }
-        composable(
-            Destination.ArticleDetailsScreen,
-            arguments = listOf(navArgument(name = ARG_ARTICLE_ID) {
-                type = NavType.IntType
-            })
-        ) {
-            showToolbarAndBottomBar.value = false
-            ArticleDetailScreen()
+        ArticlesScreen(
+            onShowSnackBar,
+            navController::navigateToArticleDetail,
+            navController::navigateToProviders
+        )
 
-        }
+        MyFavoritesScreen(navController::navigateToArticleDetail)
+        ProvidersDialog(navController::popBackStack, onShowSnackBar)
+        ArticleDetailScreen(navController::popBackStack)
     }
 }

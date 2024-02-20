@@ -15,7 +15,7 @@ fun MyTopAppBar(isVisible: Boolean) {
         visible = isVisible,
         content = {
             TopAppBar(
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.inverseOnSurface
                 ),
                 title = { Text("News App") },

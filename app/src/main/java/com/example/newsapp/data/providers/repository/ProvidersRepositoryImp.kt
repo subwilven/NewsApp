@@ -6,7 +6,7 @@ import com.example.newsapp.model.providers.Provider
 import com.example.newsapp.model.providers.ProviderNetwork
 import com.example.newsapp.model.providers.asEntityModel
 import com.example.newsapp.model.providers.asUiModel
-import com.example.newsapp.util.DELAY_DUMMY_LOADING
+import com.example.newsapp.util.Constants.Defaults.DELAY_DUMMY_LOADING
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +32,7 @@ class ProvidersRepositoryImp(
     }
 
     private suspend fun fetchProviders() {
-        delay(DELAY_DUMMY_LOADING)//to show loading
+        delay(DELAY_DUMMY_LOADING)//to show more loading time
         val fetchedSources = remoteDataSource.fetchProviders().providers
         localDataSource.insertAllProviders(fetchedSources.map(ProviderNetwork::asEntityModel))
     }

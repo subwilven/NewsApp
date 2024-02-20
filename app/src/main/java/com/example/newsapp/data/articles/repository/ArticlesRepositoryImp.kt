@@ -12,8 +12,8 @@ import com.example.newsapp.model.FilterData
 import com.example.newsapp.model.articles.Article
 import com.example.newsapp.model.articles.ArticleEntity
 import com.example.newsapp.model.articles.asUiModel
-import com.example.newsapp.util.DEFAULT_INITIAL_PAGE_MULTIPLIER
-import com.example.newsapp.util.DEFAULT_PAGE_SIZE
+import com.example.newsapp.util.Constants.Defaults.INITIAL_PAGE_MULTIPLIER
+import com.example.newsapp.util.Constants.Defaults.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -28,8 +28,8 @@ class ArticlesRepositoryImp @Inject constructor(
     override fun getArticlesStream(filterData: FilterData): Flow<PagingData<Article>> {
         return Pager(
             config = PagingConfig(
-                initialLoadSize = DEFAULT_PAGE_SIZE * DEFAULT_INITIAL_PAGE_MULTIPLIER,
-                pageSize = DEFAULT_PAGE_SIZE,
+                initialLoadSize = PAGE_SIZE * INITIAL_PAGE_MULTIPLIER,
+                pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
             remoteMediator = ArticlesRemoteMediator(filterData, remoteDataSource, localDataSource),
